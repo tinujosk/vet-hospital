@@ -8,13 +8,11 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Drawer,
-  Button,
   Typography,
-  Grid,
-  Divider,
 } from '@mui/material';
-import NoImage from '../images/noimage.png'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import PatientDetails from '../components/PatientDetails';
 
 // Hardcoding for now
 const data = [
@@ -116,7 +114,7 @@ function DoctorPage() {
       }}
     >
       <Typography variant='h4' component='h2' sx={{ marginBottom: '50px' }}>
-        Your Appointments
+        Your Recent Appointments
       </Typography>
 
       <TableContainer component={Paper} sx={{ maxWidth: '80%' }}>
@@ -147,133 +145,21 @@ function DoctorPage() {
                 <TableCell>{row.reason}</TableCell>
                 <TableCell>{row.appointment_date}</TableCell>
                 <TableCell>{row.status}</TableCell>
+                <TableCell>
+                  <FontAwesomeIcon icon={faEdit} />
+                </TableCell>
+                <TableCell>Open Case</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
 
-      <Drawer anchor='right' open={drawerOpen} onClose={handleCloseDrawer}>
-        <Box sx={{ width: 500, padding: 3 }}>
-          <Typography variant='h5' component='h2' gutterBottom sx={{ mb: 4 }}>
-            Patient Details
-          </Typography>
-          <Box
-            component='img'
-            sx={{
-              width: '100%',
-            }}
-            alt='Patient Image'
-            src={NoImage}
-          />
-          <Paper elevation={3} sx={{ padding: 2, marginBottom: 6 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Typography variant='body1'>
-                  <strong>Name:</strong> {patientData.name}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant='body1'>
-                  <strong>Species:</strong> {patientData.species}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant='body1'>
-                  <strong>Breed:</strong> {patientData.breed}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant='body1'>
-                  <strong>Age:</strong> {patientData.age} years
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant='body1'>
-                  <strong>Gender:</strong> {patientData.gender}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant='body1'>
-                  <strong>Weight:</strong> {patientData.weight}
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Divider />
-              </Grid>
-
-              <Grid item xs={12}>
-                <Typography variant='h6' component='h3' gutterBottom>
-                  Medical History:
-                </Typography>
-                <ul>
-                  {patientData.medicalHistory.map((item, index) => (
-                    <li key={index}>
-                      <Typography variant='body2'>{item}</Typography>
-                    </li>
-                  ))}
-                </ul>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Divider sx={{ marginY: 2 }} />
-                <Typography variant='body2' color='textSecondary'>
-                  <strong>Last Updated:</strong> {patientData.lastUpdated}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Paper>
-
-          <Typography variant='h5' component='h2' gutterBottom sx={{ mb: 4 }}>
-            Owner Details
-          </Typography>
-          <Paper elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Typography variant='body1'>
-                  <strong>First Name:</strong> {ownerData.firstName}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant='body1'>
-                  <strong>Last Name:</strong> {ownerData.lastName}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant='body1'>
-                  <strong>Phone:</strong> {ownerData.phone}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant='body1'>
-                  <strong>Email:</strong> {ownerData.email}
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant='body1'>
-                  <strong>Address:</strong> {ownerData.address}
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Divider sx={{ marginY: 2 }} />
-                <Typography variant='body2' color='textSecondary'>
-                  <strong>Last Updated:</strong> {ownerData.lastUpdated}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Paper>
-
-          <Button
-            variant='contained'
-            color='primary'
-            onClick={handleCloseDrawer}
-            fullWidth
-            sx={{ marginTop: 2 }}
-          >
-            Close
-          </Button>
-        </Box>
-      </Drawer>
+      <PatientDetails
+        patientDetails={{ patientData, ownerData }}
+        drawerOpen={drawerOpen}
+        handleCloseDrawer={handleCloseDrawer}
+      />
     </Box>
   );
 }

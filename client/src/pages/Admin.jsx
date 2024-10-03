@@ -17,7 +17,7 @@ import {
   Drawer,
   Box,
   Menu,
-  MenuItem
+  MenuItem,
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import EditIcon from '@mui/icons-material/Edit';
@@ -28,13 +28,17 @@ const Admin = () => {
   const [users, setUsers] = useState([
     { name: 'Dr. John Doe', role: 'Doctor', contact: '123-456-7890' },
     { name: 'Nurse Jane Smith', role: 'Nurse', contact: '987-654-3210' },
-    { name: 'Lab Assistant Emily Davis', role: 'Lab Assistant', contact: '555-123-4567' }
+    {
+      name: 'Lab Assistant Emily Davis',
+      role: 'Lab Assistant',
+      contact: '555-123-4567',
+    },
   ]);
   const [newUser, setNewUser] = useState({ name: '', role: '', contact: '' });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = e => {
     const { name, value } = e.target;
     setNewUser({ ...newUser, [name]: value });
   };
@@ -49,12 +53,12 @@ const Admin = () => {
     }
   };
 
-  const handleDeleteUser = (index) => {
+  const handleDeleteUser = index => {
     setUsers(users.filter((_, i) => i !== index));
   };
 
   // Menu handlers
-  const handleMenuClick = (event) => {
+  const handleMenuClick = event => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -70,13 +74,12 @@ const Admin = () => {
 
   return (
     <>
-      {/* Header */}
-      <AppBar position="static" color="transparent" elevation={0}>
+      <AppBar position='static' color='transparent' elevation={0}>
         <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          <Typography variant='h6' sx={{ flexGrow: 1 }}>
             Vetclinic Pro
           </Typography>
-          <IconButton color="inherit" onClick={handleMenuClick}>
+          <IconButton color='inherit' onClick={handleMenuClick}>
             <PersonIcon />
           </IconButton>
           <Menu
@@ -91,10 +94,10 @@ const Admin = () => {
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth="md" sx={{ marginTop: 4 }}>
+      <Container maxWidth='md' sx={{ marginTop: 4 }}>
         <Button
-          variant="contained"
-          color="primary"
+          variant='contained'
+          color='primary'
           startIcon={<AddIcon />}
           onClick={() => setDrawerOpen(true)}
           sx={{ marginBottom: 2 }}
@@ -120,11 +123,11 @@ const Admin = () => {
                   <TableCell>{user.role}</TableCell>
                   <TableCell>{user.contact}</TableCell>
                   <TableCell>
-                    <IconButton color="primary">
+                    <IconButton color='primary'>
                       <EditIcon />
                     </IconButton>
                     <IconButton
-                      color="secondary"
+                      color='secondary'
                       onClick={() => handleDeleteUser(index)}
                     >
                       <DeleteIcon />
@@ -139,44 +142,44 @@ const Admin = () => {
 
       {/* Side Panel Drawer for Adding Users */}
       <Drawer
-        anchor="right"
+        anchor='right'
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
       >
         <Box sx={{ width: 300, padding: 3 }}>
-          <Typography variant="h6" sx={{ marginBottom: 2 }}>
+          <Typography variant='h6' sx={{ marginBottom: 2 }}>
             Add New User
           </Typography>
           <TextField
             fullWidth
-            label="Name"
-            variant="outlined"
-            name="name"
+            label='Name'
+            variant='outlined'
+            name='name'
             value={newUser.name}
             onChange={handleInputChange}
-            margin="normal"
+            margin='normal'
           />
           <TextField
             fullWidth
-            label="Role (Doctor, Nurse, etc.)"
-            variant="outlined"
-            name="role"
+            label='Role (Doctor, Nurse, etc.)'
+            variant='outlined'
+            name='role'
             value={newUser.role}
             onChange={handleInputChange}
-            margin="normal"
+            margin='normal'
           />
           <TextField
             fullWidth
-            label="Contact Information"
-            variant="outlined"
-            name="contact"
+            label='Contact Information'
+            variant='outlined'
+            name='contact'
             value={newUser.contact}
             onChange={handleInputChange}
-            margin="normal"
+            margin='normal'
           />
           <Button
-            variant="contained"
-            color="primary"
+            variant='contained'
+            color='primary'
             onClick={handleAddUser}
             sx={{ marginTop: 2 }}
           >
