@@ -10,10 +10,15 @@ import {
   Menu,
   MenuItem,
 } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { clearUserData } from '../slices/authSlice';
 import { Link as RouterLink } from 'react-router-dom';
 
-const Header = ({ username = 'Tinu Jos' }) => {
+const Header = ({ username = 'Username' }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleMenuOpen = event => {
     setAnchorEl(event.currentTarget);
@@ -21,6 +26,13 @@ const Header = ({ username = 'Tinu Jos' }) => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    dispatch(clearUserData());
+    handleMenuClose();
+    navigate('/login');
   };
 
   const isMenuOpen = Boolean(anchorEl);
@@ -37,8 +49,8 @@ const Header = ({ username = 'Tinu Jos' }) => {
             <Link
               component={RouterLink}
               to='/'
-              color='primary'
-              underline='hover'
+              color='secondary'
+              underline='none'
             >
               VetClinic Pro
             </Link>
@@ -67,7 +79,7 @@ const Header = ({ username = 'Tinu Jos' }) => {
             }}
           >
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>

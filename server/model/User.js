@@ -4,11 +4,6 @@ const Schema = mongoose.Schema;
 // var uniqueValidator = require('mongoose-unique-validator');
 
 const UserSchema = new Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-  },
   email: {
     type: String,
     required: true,
@@ -16,7 +11,7 @@ const UserSchema = new Schema({
   },
   password: { type: String, required: true },
   role: { type: String, required: true },
-  createdAt: { type: Date, default: new Date() },
+  lastUpdated: { type: Date, default: new Date() },
 });
 
 UserSchema.pre('save', function (next) {

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
 import {
   Container,
   TextField,
@@ -9,17 +10,40 @@ import {
   Link,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { useDispatch } from 'react-redux';
+import { setUserData } from '../slices/authSlice';
+import { loginUser } from '../services/authService';
+import { useNavigation } from '../hooks/useNavigation';
 import Logo from '../images/logo2.png';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
+  const { redirectToDashboard } = useNavigation();
 
-  const handleSubmit = event => {
+  const handleSubmit = async event => {
     event.preventDefault();
 
-    console.log('Email:', email);
-    console.log('Password:', password);
+    try {
+      const { token } = await loginUser(email, password);
+      localStorage.setItem('token', token);
+      const decodedToken = jwtDecode(token);
+      const role = decodedToken.role;
+
+      // dispatch into redux store
+      dispatch(
+        setUserData({
+          userId: decodedToken.userId,
+          email: decodedToken.email,
+          role,
+        })
+      );
+
+      redirectToDashboard(role);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

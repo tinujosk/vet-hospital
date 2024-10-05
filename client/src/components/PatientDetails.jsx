@@ -8,7 +8,9 @@ import {
   Box,
   Paper,
   TextField,
+  IconButton,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 import NoImage from '../images/noimage.png';
 
@@ -23,9 +25,19 @@ function PatientDetails({
   return (
     <Drawer anchor='right' open={drawerOpen} onClose={handleCloseDrawer}>
       <Box sx={{ width: 600, padding: 3 }}>
-        <Typography variant='h5' component='h2' gutterBottom sx={{ mb: 4 }}>
-          Patient Details
-        </Typography>
+        <Box
+          display='flex'
+          justifyContent='space-between'
+          alignItems='center'
+          marginBottom={2}
+        >
+          <Typography variant='h5' component='h2' gutterBottom>
+            Patient Details
+          </Typography>
+          <IconButton onClick={handleCloseDrawer}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
         <Box
           component='img'
           sx={{
