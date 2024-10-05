@@ -212,9 +212,6 @@ function Nursedashboard() {
 
   return (
     <Box sx={{ padding: 4 }}>
-      <Typography variant='h4' component='h2' sx={{ marginBottom: '20px' }}>
-        Nurse Dashboard
-      </Typography>
       <Grid container spacing={2} sx={{ marginBottom: '20px' }}>
         <Grid item>
           <Button variant='contained' color='primary' onClick={handleModalOpen}>

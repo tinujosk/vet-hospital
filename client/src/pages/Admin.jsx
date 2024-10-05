@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import {
-  AppBar,
-  Toolbar,
   Typography,
   Container,
   IconButton,
@@ -16,10 +14,7 @@ import {
   Paper,
   Drawer,
   Box,
-  Menu,
-  MenuItem,
 } from '@mui/material';
-import PersonIcon from '@mui/icons-material/Person';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -36,7 +31,6 @@ const Admin = () => {
   ]);
   const [newUser, setNewUser] = useState({ name: '', role: '', contact: '' });
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleInputChange = e => {
     const { name, value } = e.target;
@@ -57,43 +51,16 @@ const Admin = () => {
     setUsers(users.filter((_, i) => i !== index));
   };
 
-  // Menu handlers
-  const handleMenuClick = event => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleLogout = () => {
-    // Logic for logging out the admin can be added here
-    console.log('Logging out...');
-    handleMenuClose();
-  };
-
   return (
-    <>
-      <AppBar position='static' color='transparent' elevation={0}>
-        <Toolbar>
-          <Typography variant='h6' sx={{ flexGrow: 1 }}>
-            Vetclinic Pro
-          </Typography>
-          <IconButton color='inherit' onClick={handleMenuClick}>
-            <PersonIcon />
-          </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-          >
-            <MenuItem onClick={handleMenuClose}>Admin Info</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Change Password</MenuItem>
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
-          </Menu>
-        </Toolbar>
-      </AppBar>
-
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 4,
+      }}
+    >
       <Container maxWidth='md' sx={{ marginTop: 4 }}>
         <Button
           variant='contained'
@@ -187,7 +154,7 @@ const Admin = () => {
           </Button>
         </Box>
       </Drawer>
-    </>
+    </Box>
   );
 };
 

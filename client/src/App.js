@@ -1,7 +1,7 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout';
+import { useDispatch } from 'react-redux';
 import Login from './pages/Login';
 import Admin from './pages/Admin';
 import Doctor from './pages/Doctor';
@@ -9,6 +9,10 @@ import Nurse from './pages/Nurse';
 import Lab from './pages/Lab';
 import Pharmacy from './pages/Pharmacy';
 import PatientList from './pages/PatientList';
+import NotFound from './pages/NotFound';
+import ProtectedRoute from './components/ProtectedRoute';
+import { getUserDetailsFromToken } from './util';
+import { setUserData, clearUserData } from './slices/authSlice';
 
 const theme = createTheme({
   palette: {
@@ -43,6 +47,19 @@ const theme = createTheme({
 });
 
 export default function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    try {
+      const { userId, email, role } = getUserDetailsFromToken() || {};
+      if (userId) dispatch(setUserData({ userId, email, role }));
+    } catch (error) {
+      console.error('Invalid token', error);
+      dispatch(clearUserData());
+      localStorage.removeItem('token');
+    }
+  }, [dispatch]);
+
   return (
     <ThemeProvider theme={theme}>
       <Router>
@@ -51,49 +68,87 @@ export default function App() {
           <Route
             path='/'
             element={
-              <Layout title='Treatment Dashboard'>
-                <Doctor />
-              </Layout>
+              <ProtectedRoute
+                element={<Doctor />}
+                title="Doctor's Dashboard"
+                path='/'
+              />
             }
           />
           <Route
             path='/admin'
             element={
-              <Layout title='Admin Dashboard'>
-                <Admin />
-              </Layout>
+              <ProtectedRoute
+                element={<Admin />}
+                title='Admin Dashboard'
+                path='/admin'
+              />
             }
           />
           <Route
             path='/nursing'
             element={
-              <Layout title='Nursing Dashboard'>
-                <Nurse />
-              </Layout>
-            }
-          />
-          <Route
-            path='/patients'
-            element={
-              <Layout title="Patient's List">
-                <PatientList />
-              </Layout>
+              <ProtectedRoute
+                element={<Nurse />}
+                title='Nursing Dashboard'
+                path='/nursing'
+              />
             }
           />
           <Route
             path='/lab'
             element={
-              <Layout title='Lab Dashboard'>
-                <Lab />
-              </Layout>
+              <ProtectedRoute
+                element={<Lab />}
+                title='Lab Dashboard'
+                path='/lab'
+              />
             }
           />
           <Route
             path='/pharmacy'
             element={
-              <Layout title='Pharmacy Dashboard'>
-                <Pharmacy />
-              </Layout>
+              <ProtectedRoute
+                element={<Pharmacy />}
+                title='Pharmacy Dashboard'
+                path='/pharmacy'
+              />
+            }
+          />
+          <Route
+            path='/patients'
+            element={
+              <ProtectedRoute
+                element={<PatientList />}
+                title="Patient's List"
+                path='/patients'
+              />
+            }
+          />
+          <Route
+            path='/unauthorized'
+            element={
+              <NotFound
+                reason={{
+                  reasonCode: '401',
+                  reasonTitle: 'Unauthorized Access',
+                  reasonDescription:
+                    'You do not have permission to view this page.',
+                }}
+              />
+            }
+          />
+          <Route
+            path='*'
+            element={
+              <NotFound
+                reason={{
+                  reasonCode: '404',
+                  reasonTitle: 'Page Not Found',
+                  reasonDescription:
+                    "Sorry, the page you're looking for doesn't exist",
+                }}
+              />
             }
           />
         </Routes>
