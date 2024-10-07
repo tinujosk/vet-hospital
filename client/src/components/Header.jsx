@@ -52,7 +52,7 @@ const Header = ({ username = 'Username' }) => {
           <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
             <Link
               component={RouterLink}
-              to='/'
+              // to='/'
               color='secondary'
               underline='none'
             >
