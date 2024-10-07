@@ -32,7 +32,7 @@ const Header = ({ username = 'Username' }) => {
     localStorage.removeItem('token');
     dispatch(clearUserData());
     handleMenuClose();
-    navigate('/login');
+    navigate('/');
   };
 
   const isMenuOpen = Boolean(anchorEl);

@@ -64,14 +64,14 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
-          <Route path='/login' element={<Login />} />
+          <Route path='/' element={<Login />} />
           <Route
-            path='/'
+            path='/doctor'
             element={
               <ProtectedRoute
                 element={<Doctor />}
                 title="Doctor's Dashboard"
-                path='/'
+                path='/doctor'
               />
             }
           />

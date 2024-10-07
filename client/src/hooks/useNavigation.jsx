@@ -4,13 +4,13 @@ export const useNavigation = () => {
   const navigate = useNavigate();
 
   const redirectToLogin = () => {
-    navigate('/login');
+    navigate('/');
   };
 
   const redirectToDashboard = role => {
     switch (role) {
       case 'doctor':
-        navigate('/');
+        navigate('/doctor');
         break;
       case 'admin':
         navigate('/admin');
@@ -25,7 +25,7 @@ export const useNavigation = () => {
         navigate('/pharmacy');
         break;
       default:
-        navigate('/login');
+        navigate('/');
     }
   };
 

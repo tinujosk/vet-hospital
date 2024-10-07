@@ -3,13 +3,13 @@ import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Layout from './Layout';
 
-// Role Based Access (RBAC)
+// Role Based Access Control(RBAC)
 const hasPermission = (path, role) => {
   console.log({ path }, { role });
   const permissions = {
     admin: ['/admin', '/patients'],
-    doctor: ['/', '/patients'],
-    nurse: ['/nursing', '/patients'],
+    doctor: ['/doctor', '/patients'],
+    nurse: ['/nurse', '/patients'],
     lab: ['/lab', '/patients'],
     pharmacist: ['/pharmacy', '/patients'],
   };
