@@ -10,15 +10,19 @@ import {
   Menu,
   MenuItem,
 } from '@mui/material';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { clearUserData } from '../slices/authSlice';
 import { Link as RouterLink } from 'react-router-dom';
+import { getNavItemsForUser } from '../util';
 
 const Header = ({ username = 'Username' }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const role = useSelector(state => state.auth.role);
+
+  const navLinks = getNavItemsForUser(role);
 
   const handleMenuOpen = event => {
     setAnchorEl(event.currentTarget);
@@ -55,6 +59,19 @@ const Header = ({ username = 'Username' }) => {
               VetClinic Pro
             </Link>
           </Typography>
+          <Box sx={{ flexGrow: 1, display: 'flex' }}>
+            {navLinks.map((page, index) => (
+              <Link
+                component={RouterLink}
+                to={page}
+                color='secondary'
+                underline='none'
+                marginRight={2}
+              >
+                {page.charAt(1).toUpperCase() + page.slice(2)}
+              </Link>
+            ))}
+          </Box>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Chip
               avatar={<Avatar>{username.charAt(0)}</Avatar>}

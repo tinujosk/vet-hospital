@@ -4,22 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Layout from './Layout';
 import { isTokenExpired } from '../util';
 import { clearUserData } from '../slices/authSlice';
-
-// Role Based Access Control(RBAC)
-const hasPermission = (path, role) => {
-  console.log({ path }, { role });
-  const permissions = {
-    admin: ['/admin', '/patients'],
-    doctor: ['/doctor', '/patients'],
-    nurse: ['/nurse', '/patients'],
-    lab: ['/lab', '/patients'],
-    pharmacist: ['/pharmacy', '/patients'],
-  };
-  if (role && permissions[role]) {
-    return permissions[role].includes(path);
-  }
-  return false;
-};
+import { hasPermission } from '../util';
 
 const ProtectedRoute = ({ element, path, title }) => {
   const dispatch = useDispatch();

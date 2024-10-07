@@ -1,5 +1,13 @@
 import { jwtDecode } from 'jwt-decode';
 
+const permissions = {
+  admin: ['/admin', '/patients'],
+  doctor: ['/doctor', '/patients'],
+  nurse: ['/nurse', '/patients'],
+  lab: ['/lab', '/patients'],
+  pharmacist: ['/pharmacy', '/patients'],
+};
+
 export const getUserDetailsFromToken = () => {
   const token = localStorage.getItem('token');
   if (token) return jwtDecode(token);
@@ -15,4 +23,15 @@ export const isTokenExpired = () => {
     }
   }
   return false;
+};
+
+export const hasPermission = (path, role) => {
+  if (role && permissions[role]) {
+    return permissions[role].includes(path);
+  }
+  return false;
+};
+
+export const getNavItemsForUser = role => {
+  return permissions[role];
 };
