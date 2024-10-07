@@ -86,12 +86,12 @@ export default function App() {
             }
           />
           <Route
-            path='/nursing'
+            path='/nurse'
             element={
               <ProtectedRoute
                 element={<Nurse />}
-                title='Nursing Dashboard'
-                path='/nursing'
+                title="Nurse's Dashboard"
+                path='/nurse'
               />
             }
           />
