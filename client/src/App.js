@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import Login from './pages/Login';
 import Admin from './pages/Admin';
 import Doctor from './pages/Doctor';
+import Treatment from './pages/Treatment';
 import Nurse from './pages/Nurse';
 import Lab from './pages/Lab';
 import Pharmacy from './pages/Pharmacy';
@@ -72,6 +73,16 @@ export default function App() {
                 element={<Doctor />}
                 title="Doctor's Dashboard"
                 path='/doctor'
+              />
+            }
+          />
+          <Route
+            path='/treatment'
+            element={
+              <ProtectedRoute
+                element={<Treatment />}
+                title='Patient Treatment'
+                path='/treatment'
               />
             }
           />
