@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -24,7 +24,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import PatientDetails from '../components/PatientDetails';
 import { createPatient } from '../services/patientService';
-import { createAppointment,getAppointments } from '../services/appointmentService';
+import { createAppointment, getAppointments, updateAppointment } from '../services/appointmentService';
 
 
 
@@ -57,9 +57,11 @@ function NursePage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [editMode, setEditMode] = useState(false);
-  const [createModalOpen, setCreateModalOpen] = useState(false); // Create patient modal state
-  const [appointmentModalOpen, setAppointmentModalOpen] = useState(false); // Create appointment modal state
+  const [createModalOpen, setCreateModalOpen] = useState(false); 
+  const [appointmentModalOpen, setAppointmentModalOpen] = useState(false); 
   const [appointments, setAppointments] = useState([]);
+  const [editAppointmentModalOpen, setEditAppointmentModalOpen] = useState(false);
+
 
   const initialPatientState = {
     patientname: '',
@@ -83,18 +85,19 @@ function NursePage() {
     timeSlot: '',
     patientId: '',
     reason: '',
-    status: 'Pending', // Default to 'Pending'
+    status: 'Pending', 
   };
 
   const [newPatient, setNewPatient] = useState(initialPatientState);
   const [newAppointment, setNewAppointment] = useState(initialAppointmentState);
+  const [editedAppointment, setEditedAppointment] = useState(initialAppointmentState);
+
 
   useEffect(() => {
-    // Fetch appointments from the backend when the component loads
     const fetchAppointments = async () => {
       try {
         const data = await getAppointments();
-        setAppointments(data); // Set the fetched appointments
+        setAppointments(data);
       } catch (error) {
         console.error('Failed to fetch appointments:', error);
       }
@@ -132,6 +135,16 @@ function NursePage() {
     setNewAppointment(initialAppointmentState);
   };
 
+  const handleOpenEditAppointmentModal = (appointment) => {
+    setEditedAppointment(appointment); 
+    setEditAppointmentModalOpen(true);
+  };
+
+  const handleCloseEditAppointmentModal = () => {
+    setEditAppointmentModalOpen(false);
+    setEditedAppointment(initialAppointmentState);
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewPatient({ ...newPatient, [name]: value });
@@ -140,6 +153,11 @@ function NursePage() {
   const handleAppointmentInputChange = (e) => {
     const { name, value } = e.target;
     setNewAppointment({ ...newAppointment, [name]: value });
+  };
+
+  const handleEditAppointmentInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditedAppointment({ ...editedAppointment, [name]: value });
   };
 
   const handleSubmit = async () => {
@@ -167,7 +185,6 @@ function NursePage() {
 
     try {
       const createdPatient = await createPatient(newPatient);
-      console.log("New Patient Details: ", createdPatient);
       setCreateModalOpen(false);
       setNewPatient(initialPatientState);
     } catch (error) {
@@ -176,6 +193,7 @@ function NursePage() {
   };
 
   const handleAppointmentSubmit = async () => {
+
     const requiredFields = [
       newAppointment.doctorId,
       newAppointment.appointmentDate,
@@ -194,13 +212,29 @@ function NursePage() {
 
     try {
       const createdAppointment = await createAppointment(newAppointment);
-      console.log("New Appointment Details: ", createdAppointment);
+      setAppointments(prev => [...prev, createdAppointment]);
       setAppointmentModalOpen(false);
       setNewAppointment(initialAppointmentState);
     } catch (error) {
       console.error('Failed to create appointment:', error);
     }
   };
+  const handleEditAppointmentSubmit = async (id, updatedData) => {
+    handleCloseEditAppointmentModal(); 
+    try {
+      // Call the update function with the correct ID
+      const updatedAppointment = await updateAppointment(id, updatedData);
+      setAppointments(prev => 
+        prev.map(appointment => 
+          appointment._id === id ? updatedAppointment : appointment
+        )
+      );
+    } catch (error) {
+      console.error('Failed to update appointment:', error);
+    }
+  };
+
+
 
   return (
     <Box
@@ -224,43 +258,50 @@ function NursePage() {
       <Typography variant='h4' component='h2' sx={{ marginBottom: '50px' }}>
         Appointments
       </Typography>
-
       <TableContainer component={Paper} sx={{ maxWidth: '95%', marginTop: 3 }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Appointment ID</TableCell>
-              <TableCell>Doctor ID</TableCell>
-              <TableCell>Appointment Date</TableCell>
-              <TableCell>Patient Name</TableCell>
-              <TableCell>Slot</TableCell>
-              <TableCell>Reason</TableCell>
-              <TableCell>Status</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {appointments.map((row) => (
-              <TableRow
-              key={row._id} // Assuming _id is the appointment's unique identifier from MongoDB
-              hover
-              onClick={() => handleRowClick(row)}
-              sx={{ cursor: 'pointer' }}
-            >
-              <TableCell>{row.appointmentId}</TableCell>
-              <TableCell>{row.doctorId}</TableCell>
-              <TableCell>{new Date(row.appointmentDate).toLocaleString()}</TableCell>
-              <TableCell>{row.patientId}</TableCell>
-              <TableCell>{row.timeSlot}</TableCell>
-              <TableCell>{row.reason}</TableCell>
-              <TableCell>{row.status}</TableCell>
-              <TableCell>
-                <FontAwesomeIcon icon={faEdit} />
-              </TableCell>
-            </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+  <Table>
+    <TableHead>
+      <TableRow sx={{ backgroundColor: '#1976d2', color: '#fff' }}>
+        <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>Appointment ID</TableCell>
+        <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>Doctor ID</TableCell>
+        <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>Appointment Date</TableCell>
+        <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>Patient Name</TableCell>
+        <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>Slot</TableCell>
+        <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>Reason</TableCell>
+        <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>Status</TableCell>
+        <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>Action</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {appointments.map((row) => (
+        <TableRow
+          key={row._id}
+          hover
+          onClick={() => handleRowClick(row)}
+          sx={{ cursor: 'pointer' }}
+        >
+          <TableCell>{row.appointmentId}</TableCell>
+          <TableCell>{row.doctorId}</TableCell>
+          <TableCell>{new Date(row.appointmentDate).toLocaleString()}</TableCell>
+          <TableCell>{row.patientId}</TableCell>
+          <TableCell>{row.timeSlot}</TableCell>
+          <TableCell>{row.reason}</TableCell>
+          <TableCell>{row.status}</TableCell>
+          <TableCell>
+            <FontAwesomeIcon
+              icon={faEdit}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleOpenEditAppointmentModal(row);
+              }}
+            />
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+</TableContainer>
+
 
       <PatientDetails
         patientDetails={{ patientData, ownerData }}
@@ -272,7 +313,12 @@ function NursePage() {
       {/* Create Patient Modal */}
       <Dialog open={createModalOpen} onClose={handleCloseCreateModal}>
         <DialogTitle>Create New Patient</DialogTitle>
+
+
         <DialogContent>
+          <Typography>
+            Patient Details
+          </Typography>
           <TextField
             margin="dense"
             label="Patient Name"
@@ -341,6 +387,9 @@ function NursePage() {
             fullWidth
             required
           />
+          <Typography variant="subtitle1" gutterBottom>
+            Owner Details
+          </Typography>
           <TextField
             margin="dense"
             label="Owner First Name"
@@ -447,20 +496,7 @@ function NursePage() {
             fullWidth
             required
           />
-          <FormControl fullWidth margin="dense">
-            <InputLabel id="status-label">Status</InputLabel>
-            <Select
-              labelId="status-label"
-              name="status"
-              value={newAppointment.status}
-              onChange={handleAppointmentInputChange}
-              label="Status"
-            >
-              <MenuItem value="Pending">Pending</MenuItem>
-              <MenuItem value="Confirmed">Confirmed</MenuItem>
-              <MenuItem value="Cancelled">Cancelled</MenuItem>
-            </Select>
-          </FormControl>
+
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseAppointmentModal} color="primary">
@@ -471,6 +507,79 @@ function NursePage() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog open={editAppointmentModalOpen} onClose={handleCloseEditAppointmentModal}>
+        <DialogTitle>Edit Appointment</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense"
+            label="Doctor ID"
+            name="doctorId"
+            value={editedAppointment.doctorId}
+            onChange={handleEditAppointmentInputChange}
+            fullWidth
+            required
+          />
+          <TextField
+            margin="dense"
+            label="Appointment Date"
+            type="datetime-local"
+            name="appointmentDate"
+            value={editedAppointment.appointmentDate}
+            onChange={handleEditAppointmentInputChange}
+            fullWidth
+            required
+          />
+          <TextField
+            margin="dense"
+            label="Time Slot"
+            name="timeSlot"
+            value={editedAppointment.timeSlot}
+            onChange={handleEditAppointmentInputChange}
+            fullWidth
+            required
+          />
+          <TextField
+            margin="dense"
+            label="Patient ID"
+            name="patientId"
+            value={editedAppointment.patientId}
+            onChange={handleEditAppointmentInputChange}
+            fullWidth
+            required
+          />
+          <TextField
+            margin="dense"
+            label="Reason"
+            name="reason"
+            value={editedAppointment.reason}
+            onChange={handleEditAppointmentInputChange}
+            fullWidth
+            required
+          />
+          <FormControl fullWidth sx={{ marginTop: 2 }}>
+            <InputLabel>Status</InputLabel>
+            <Select
+              name="status"
+              value={editedAppointment.status}
+              onChange={handleEditAppointmentInputChange}
+              fullWidth
+              required
+            >
+              <MenuItem value="Pending">Pending</MenuItem>
+              <MenuItem value="Completed">Completed</MenuItem>
+              <MenuItem value="Cancelled">Cancelled</MenuItem>
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseEditAppointmentModal}>Cancel</Button>
+          <Button onClick={() => handleEditAppointmentSubmit(editedAppointment._id, editedAppointment)}>Submit</Button>
+        </DialogActions>
+
+
+      </Dialog>
+
     </Box>
   );
 }

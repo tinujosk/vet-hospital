@@ -4,7 +4,7 @@ import cors from 'cors';
 import {} from './model/db.js';
 import login from './controller/login.js';
 import { createPatient,getAllPatients,getPatientById} from './controller/patientController.js';
-import { createAppointment,getAppointments } from './controller/AppointmentController.js';
+import { createAppointment,getAppointments,updateAppointment } from './controller/AppointmentController.js';
 
 
 const app = express();
@@ -26,7 +26,9 @@ app.get('/patients', getAllPatients);
 app.get('/patients/:id', getPatientById);
 
 app.post('/createappointments', createAppointment);
-app.get('/nurse', getAppointments);
+app.get('/appointments', getAppointments);
+
+app.put('/appointments/:id', updateAppointment); 
 
 app.listen(3001, () => {
   console.log('Server listening on port 3001');

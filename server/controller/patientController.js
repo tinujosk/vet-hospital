@@ -1,7 +1,5 @@
-import Patient from '../model/patient.js';
-import Owner from '../model/owner.js';
-
-// Create a new patient and link it to the owner
+import Patient from '../model/Patient.js';
+import Owner from '../model/Owner.js';
 export const createPatient = async (req, res) => {
     console.log('Creating patient with data:', req.body);
     
@@ -14,23 +12,20 @@ export const createPatient = async (req, res) => {
             gender, 
             weight, 
             medicalHistory, 
-            ownerfname, // Changed from owner.firstName to ownerfName
-            ownerlname, // Changed from owner.lastName to ownerlName
+            ownerfname, 
+            ownerlname, 
             address, 
             phone, 
             email 
         } = req.body;
-
-        // Check if owner exists by email
         const existingOwner = await Owner.findOne({ email });
         console.log('Existing Owner:', existingOwner);
 
         let ownerData;
         if (existingOwner) {
-            ownerData = existingOwner; // If owner exists, link patient to this owner
+            ownerData = existingOwner; //
             console.log('Existing Owner:', ownerData);
         } else {
-            // Create new owner if doesn't exist
             ownerData = new Owner({
                 firstName: ownerfname,
                 lastName: ownerlname,
@@ -42,7 +37,6 @@ export const createPatient = async (req, res) => {
             console.log('Created Owner:', ownerData);
         }
 
-        // Create new patient
         const newPatient = new Patient({
             name: patientname,
             species,
@@ -62,21 +56,19 @@ export const createPatient = async (req, res) => {
     }
 };
 
-// Get all patients
 export const getAllPatients = async (req, res) => {
     console.log('Fetching all patients...');
     try {
-        const patients = await Patient.find().populate('owner'); // Populate the owner field
+        const patients = await Patient.find().populate('owner');
         res.json(patients);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 };
-  // Get a single patient by ID
 
 export const getPatientById = async (req, res) => {
     try {
-        const patient = await Patient.findById(req.params.id).populate('owner'); // Populate the owner field
+        const patient = await Patient.findById(req.params.id).populate('owner');
         if (!patient) return res.status(404).json({ message: 'Patient not found' });
         res.json(patient);
     } catch (err) {
