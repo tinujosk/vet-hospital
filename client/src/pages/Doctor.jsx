@@ -14,7 +14,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolderOpen } from '@fortawesome/free-solid-svg-icons';
 import PatientDetails from '../components/PatientDetails';
-import { getAppointments } from '../services/appointmentService';
+import { getAppointments } from '../services/appointment';
 
 // Hardcoding for now
 const patientData = {
@@ -104,7 +104,7 @@ function DoctorPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {appointments.map(row => (
+            {appointments?.map(row => (
               <TableRow
                 key={row.id}
                 hover

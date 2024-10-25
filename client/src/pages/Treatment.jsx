@@ -14,11 +14,6 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 
-// const steps = [
-//   'Appointment Scheduled',
-//   'Prescription Given',
-//   'Treatment Follow-up',
-// ];
 const steps = [
   {
     label: 'Case Opened',
@@ -213,23 +208,23 @@ const Treatment = ({ appointmentId }) => {
             // </Paper>
           )}
         </Grid>
-        <Box sx={{ mb: 2 }}>
+        {/* <Box sx={{ mb: 2 }}>
           <Button
             variant='contained'
             onClick={handleNext}
             sx={{ mt: 1, mr: 1 }}
           >
             Continue
-            {/* {index === steps.length - 1 ? 'Sign and Complete' : 'Continue'} */}
+            {index === steps.length - 1 ? 'Sign and Complete' : 'Continue'}
           </Button>
           <Button
-            // disabled={index === 0}
+            disabled={index === 0}
             onClick={handleBack}
             sx={{ mt: 1, mr: 1 }}
           >
             Back
           </Button>
-        </Box>
+        </Box> */}
       </Grid>
     </Box>
   );

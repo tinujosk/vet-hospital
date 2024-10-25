@@ -1,6 +1,5 @@
 import Owner from '../models/Owner.js';
 
-
 export const getOwner = async (req, res) => {
   try {
     const owner = await Owner.findById(req.params.id);

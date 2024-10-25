@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { clearUserData } from '../slices/authSlice';
+import { clearUserData } from '../slices/auth';
 import { Link as RouterLink } from 'react-router-dom';
 import { getNavItemsForUser } from '../util';
 

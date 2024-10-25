@@ -13,7 +13,7 @@ import PatientList from './pages/PatientList';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import { getUserDetailsFromToken } from './util';
-import { setUserData, clearUserData } from './slices/authSlice';
+import { setUserData, clearUserData } from './slices/auth';
 
 const theme = createTheme({
   palette: {
