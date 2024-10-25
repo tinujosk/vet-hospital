@@ -77,7 +77,7 @@ export default function App() {
             }
           />
           <Route
-            path='/treatment'
+            path='/treatment/:id'
             element={
               <ProtectedRoute
                 element={<Treatment />}

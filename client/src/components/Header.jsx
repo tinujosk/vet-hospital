@@ -62,6 +62,7 @@ const Header = ({ username = 'Username' }) => {
           <Box sx={{ flexGrow: 1, display: 'flex' }}>
             {navLinks.map((page, index) => (
               <Link
+                key={index}
                 component={RouterLink}
                 to={page}
                 color='secondary'
