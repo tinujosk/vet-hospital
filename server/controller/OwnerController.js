@@ -1,6 +1,6 @@
-import Owner from '../models/owner.js';
+import Owner from '../models/Owner.js';
 
-// Get a specific owner by ID
+
 export const getOwner = async (req, res) => {
   try {
     const owner = await Owner.findById(req.params.id);

@@ -1,4 +1,3 @@
-// src/pages/PatientPage.js
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -33,13 +32,13 @@ function PatientPage() {
   }, []);
 
   const handleRowClick = (patient) => {
-    setSelectedPatient(patient); // Set the selected patient
-    setDrawerOpen(true); // Open the drawer
+    setSelectedPatient(patient); 
+    setDrawerOpen(true); 
   };
 
   const handleCloseDrawer = () => {
-    setDrawerOpen(false); // Close the drawer
-    setSelectedPatient(null); // Reset the selected patient
+    setDrawerOpen(false); 
+    setSelectedPatient(null);
   };
 
   return (
@@ -72,7 +71,7 @@ function PatientPage() {
               <TableRow
                 key={patient._id}
                 hover
-                onClick={() => handleRowClick(patient)} // Open details on row click
+                onClick={() => handleRowClick(patient)} 
                 sx={{ cursor: 'pointer', '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' } }}
               >
                 <TableCell>{patient.name}</TableCell>
