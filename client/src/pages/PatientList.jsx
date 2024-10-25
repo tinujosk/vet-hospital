@@ -10,7 +10,7 @@ import {
   Paper,
   Typography,
 } from '@mui/material';
-import { getPatients } from '../services/patientService';
+import { getPatients } from '../services/patient';
 import PatientDetails from '../components/PatientDetails';
 
 function PatientPage() {
@@ -31,13 +31,13 @@ function PatientPage() {
     fetchPatients();
   }, []);
 
-  const handleRowClick = (patient) => {
-    setSelectedPatient(patient); 
-    setDrawerOpen(true); 
+  const handleRowClick = patient => {
+    setSelectedPatient(patient);
+    setDrawerOpen(true);
   };
 
   const handleCloseDrawer = () => {
-    setDrawerOpen(false); 
+    setDrawerOpen(false);
     setSelectedPatient(null);
   };
 
@@ -59,20 +59,33 @@ function PatientPage() {
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: '#1976d2', color: '#fff' }}>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>Patient Name</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>Species</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>Age</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>Owner Name</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>Owner Phone</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
+                Patient Name
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
+                Species
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
+                Age
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
+                Owner Name
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
+                Owner Phone
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {patients.map((patient) => (
+            {patients.map(patient => (
               <TableRow
                 key={patient._id}
                 hover
-                onClick={() => handleRowClick(patient)} 
-                sx={{ cursor: 'pointer', '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' } }}
+                onClick={() => handleRowClick(patient)}
+                sx={{
+                  cursor: 'pointer',
+                  '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' },
+                }}
               >
                 <TableCell>{patient.name}</TableCell>
                 <TableCell>{patient.species}</TableCell>
@@ -85,12 +98,11 @@ function PatientPage() {
         </Table>
       </TableContainer>
 
-
       {selectedPatient && (
         <PatientDetails
           patientDetails={{
             patientData: selectedPatient,
-            ownerData: selectedPatient.owner
+            ownerData: selectedPatient.owner,
           }}
           drawerOpen={drawerOpen}
           handleCloseDrawer={handleCloseDrawer}

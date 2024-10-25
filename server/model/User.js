@@ -1,18 +1,20 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
-const Schema = mongoose.Schema;
-// var uniqueValidator = require('mongoose-unique-validator');
 
-const UserSchema = new Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
+const Schema = mongoose.Schema;
+
+const UserSchema = new Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: { type: String, required: true },
+    role: { type: String, required: true },
   },
-  password: { type: String, required: true },
-  role: { type: String, required: true },
-  lastUpdated: { type: Date, default: new Date() },
-});
+  { timestamps: true }
+);
 
 UserSchema.pre('save', function (next) {
   const user = this;
@@ -21,8 +23,6 @@ UserSchema.pre('save', function (next) {
     next();
   });
 });
-
-// UserSchema.plugin(uniqueValidator);
 
 const User = mongoose.model('User', UserSchema);
 export default User;

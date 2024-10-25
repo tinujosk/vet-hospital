@@ -11,8 +11,8 @@ import {
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useDispatch } from 'react-redux';
-import { setUserData } from '../slices/authSlice';
-import { loginUser } from '../services/authService';
+import { setUserData } from '../slices/auth';
+import { loginUser } from '../services/auth';
 import { useNavigation } from '../hooks/useNavigation';
 import Logo from '../images/logo2.png';
 

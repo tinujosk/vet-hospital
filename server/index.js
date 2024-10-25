@@ -1,34 +1,35 @@
 import express from 'express';
 import cors from 'cors';
 
-import {} from './model/db.js';
+import {} from './configs/db.js';
 import login from './controller/login.js';
-import { createPatient,getAllPatients,getPatientById} from './controller/patientController.js';
-import { createAppointment,getAppointments,updateAppointment } from './controller/AppointmentController.js';
-
+import {
+  createPatient,
+  getPatients,
+  getPatient,
+} from './controller/patient.js';
+import {
+  createAppointment,
+  getAppointments,
+  updateAppointment,
+} from './controller/appointment.js';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded());
 
-app.get('/', (req, res) => {
-  res.json({ message: 'Vet Clinic Pro' });
-});
-
 app.post('/login', login);
 
+// Patient routes and handlers
+app.get('/patients', getPatients);
+app.post('/patients', createPatient);
+app.get('/patients/:id', getPatient);
 
-
-app.post('/createpatient', createPatient);
-
-app.get('/patients', getAllPatients);
-app.get('/patients/:id', getPatientById);
-
-app.post('/createappointments', createAppointment);
+// Appointment routes and handlers
 app.get('/appointments', getAppointments);
-
-app.put('/appointments/:id', updateAppointment); 
+app.post('/appointments', createAppointment);
+app.put('/appointments/:id', updateAppointment);
 
 app.listen(3001, () => {
   console.log('Server listening on port 3001');

@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import Login from './pages/Login';
 import Admin from './pages/Admin';
 import Doctor from './pages/Doctor';
+import Treatment from './pages/Treatment';
 import Nurse from './pages/Nurse';
 import Lab from './pages/Lab';
 import Pharmacy from './pages/Pharmacy';
@@ -12,7 +13,7 @@ import PatientList from './pages/PatientList';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import { getUserDetailsFromToken } from './util';
-import { setUserData, clearUserData } from './slices/authSlice';
+import { setUserData, clearUserData } from './slices/auth';
 
 const theme = createTheme({
   palette: {
@@ -72,6 +73,16 @@ export default function App() {
                 element={<Doctor />}
                 title="Doctor's Dashboard"
                 path='/doctor'
+              />
+            }
+          />
+          <Route
+            path='/treatment/:id'
+            element={
+              <ProtectedRoute
+                element={<Treatment />}
+                title='Patient Treatment'
+                path='/treatment'
               />
             }
           />

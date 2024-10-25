@@ -3,7 +3,7 @@ import { useNavigate, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import Layout from './Layout';
 import { isTokenExpired } from '../util';
-import { clearUserData } from '../slices/authSlice';
+import { clearUserData } from '../slices/auth';
 import { hasPermission } from '../util';
 
 const ProtectedRoute = ({ element, path, title }) => {

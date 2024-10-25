@@ -135,7 +135,7 @@ function PatientDetails({
                 Medical History:
               </Typography>
               <ul>
-                {patientData.medicalHistory.map((item, index) => (
+                {patientData.medicalHistory?.map((item, index) => (
                   <li key={index}>
                     <Typography variant='body2'>{item}</Typography>
                   </li>

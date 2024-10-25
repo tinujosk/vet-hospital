@@ -1,10 +1,13 @@
 import axios from 'axios';
+import { API_URL } from '../constants';
 
-const API_URL = 'http://localhost:3001'; 
-export const createAppointment = async (appointmentData) => {
+export const createAppointment = async appointmentData => {
   console.log('Creating appointment:', appointmentData);
   try {
-    const response = await axios.post(`${API_URL}/createappointments`, appointmentData);
+    const response = await axios.post(
+      `${API_URL}/appointments`,
+      appointmentData
+    );
     return response.data;
   } catch (error) {
     console.error('Error creating appointment:', error);
@@ -22,7 +25,7 @@ export const getAppointments = async () => {
   }
 };
 
-export const getAppointment = async (id) => {
+export const getAppointment = async id => {
   try {
     const response = await axios.get(`${API_URL}/appointment/${id}`);
     return response.data;
@@ -32,10 +35,12 @@ export const getAppointment = async (id) => {
   }
 };
 
-
 export const updateAppointment = async (id, updatedData) => {
   try {
-    const response = await axios.put(`${API_URL}/appointments/${id}`, updatedData);
+    const response = await axios.put(
+      `${API_URL}/appointments/${id}`,
+      updatedData
+    );
     console.log('Updated Appointment:', response.data);
     return response.data;
   } catch (error) {
