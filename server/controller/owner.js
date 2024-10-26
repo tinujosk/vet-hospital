@@ -1,11 +1,10 @@
-import Owner from '../models/Owner.js';
+import Owner from '../model/Owner.js';
 
-export const getOwner = async (req, res) => {
+export const getOwners = async (req, res) => {
+
   try {
-    const owner = await Owner.findById(req.params.id);
-    if (!owner) return res.status(404).json({ message: 'Owner not found' });
-
-    res.json(owner);
+    const owners = await Owner.find();
+    res.json(owners);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

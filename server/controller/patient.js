@@ -2,6 +2,7 @@ import Patient from '../model/Patient.js';
 import Owner from '../model/Owner.js';
 
 export const createPatient = async (req, res) => {
+  
   console.log('Creating patient with data:', req.body);
 
   try {
@@ -76,3 +77,53 @@ export const getPatient = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+
+// export const updatePatient = async (req, res) => {
+//   console.log('Updating patient with data:', req.body);
+
+//   try {
+//       const { 
+//           patientname, 
+//           species, 
+//           breed, 
+//           age, 
+//           gender, 
+//           weight, 
+//           medicalHistory 
+//       } = req.body;
+
+//       const patient = await Patient.findById(req.params.id);
+//       if (!patient) return res.status(404).json({ message: 'Patient not found' });
+//       patient.name = patientname;
+//       patient.species = species;
+//       patient.breed = breed;
+//       patient.age = age;
+//       patient.gender = gender;
+//       patient.weight = weight;
+//       patient.medicalHistory = medicalHistory;
+
+//       await patient.save();
+//       res.status(200).json(patient);
+//   } catch (error) {
+//       console.error('Error updating patient:', error);
+//       res.status(500).json({ message: error.message });
+//   }
+// };
+
+// export const deletePatient = async (req, res) => {
+//   try {
+//       const { id } = req.params; 
+//       const patient = await Patient.findByIdAndDelete(id);  
+
+//       if (!patient) {
+//           return res.status(404).json({ message: 'Patient not found' });
+//       }
+
+//       res.status(200).json({ message: 'Patient deleted successfully' });  
+//   } catch (error) {
+//       console.error('Error deleting patient:', error);
+//       res.status(500).json({ message: error.message });  
+//   }
+// };

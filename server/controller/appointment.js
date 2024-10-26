@@ -1,6 +1,7 @@
 import Appointment from '../model/Appointment.js';
 
 export const createAppointment = async (req, res) => {
+  console.log('Creating appointment with data:', req.body);
   try {
     const newAppointment = new Appointment(req.body);
     const savedAppointment = await newAppointment.save();
@@ -20,9 +21,9 @@ export const getAppointments = async (req, res) => {
     if (appointments.length === 0) {
       console.log('No appointments found.');
     } else {
-      console.log('Fetched appointments:');
+      
       appointments.forEach((appointment, index) => {
-        console.log(`Appointment ${index + 1}:`, appointment);
+        
       });
     }
 
