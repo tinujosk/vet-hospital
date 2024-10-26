@@ -50,12 +50,7 @@ const Header = ({ username = 'Username' }) => {
       >
         <Toolbar>
           <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
-            <Link
-              component={RouterLink}
-              // to='/'
-              color='secondary'
-              underline='none'
-            >
+            <Link component={RouterLink} color='secondary' underline='none'>
               VetClinic Pro
             </Link>
           </Typography>

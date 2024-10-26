@@ -10,7 +10,7 @@ const Layout = ({ title, children }) => {
       <Container
         maxWidth={false}
         component='main'
-        sx={{ py: 4, backgroundColor: '#F1F4F7', height: '80vh' }}
+        sx={{ py: 4, backgroundColor: '#F1F4F7', height: '100vh' }}
       >
         <Typography
           variant='h5'

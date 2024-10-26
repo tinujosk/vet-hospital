@@ -8,6 +8,8 @@ const permissions = {
   pharmacist: ['/pharmacy', '/patients'],
 };
 
+const hideFromNav = ['/treatment'];
+
 export const getUserDetailsFromToken = () => {
   const token = localStorage.getItem('token');
   if (token) return jwtDecode(token);
@@ -33,5 +35,5 @@ export const hasPermission = (path, role) => {
 };
 
 export const getNavItemsForUser = role => {
-  return permissions[role];
+  return permissions[role].filter(item => !hideFromNav.includes(item));
 };

@@ -115,10 +115,12 @@ function DoctorPage() {
                 <TableCell>
                   {new Date(row.appointmentDate).toLocaleString()}
                 </TableCell>
-                <TableCell>{row.patientId?.name}</TableCell>
+                <TableCell>{row.patient?.name}</TableCell>
                 <TableCell>{row.timeSlot}</TableCell>
                 <TableCell>{row.reason}</TableCell>
-                <TableCell>{row.appointmentDate}</TableCell>
+                <TableCell>
+                  {new Date(row.createdAt).toLocaleString()}
+                </TableCell>
                 <TableCell>{row.status}</TableCell>
                 <TableCell onClick={() => handleTreatment(row._id)}>
                   <FontAwesomeIcon
@@ -135,7 +137,7 @@ function DoctorPage() {
 
       <PatientDetails
         patientDetails={{
-          patientData: selectedRow?.patientId || patientData,
+          patientData: selectedRow?.patient || patientData,
           ownerData,
         }}
         drawerOpen={drawerOpen}
