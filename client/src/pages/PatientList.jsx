@@ -11,7 +11,7 @@ import {
   Typography,
 
 } from '@mui/material';
-import { getPatients } from '../services/patient';
+import { getPatients,updatePatient } from '../services/patient';
 
 import PatientDetails from '../components/PatientDetails';
 
@@ -41,6 +41,16 @@ function PatientPage() {
     setDrawerOpen(false);
     setSelectedPatient(null);
   };
+  const handleUpdatePatient = async (updatedPatient) => {
+    try {
+        await updatePatient(updatedPatient._id, updatedPatient);
+        const updatedPatients = await getPatients();
+        setPatients(updatedPatients);
+    } catch (error) {
+        console.error("Failed to update patient:", error);
+    }
+};
+
 
 
   return (
@@ -102,6 +112,8 @@ function PatientPage() {
           }}
           drawerOpen={drawerOpen}
           handleCloseDrawer={handleCloseDrawer}
+          handleUpdatePatient={handleUpdatePatient}
+          editMode={true}
         />
       )}
     </Box>

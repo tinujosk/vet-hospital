@@ -7,6 +7,7 @@ import {
   createPatient,
   getPatients,
   getPatient,
+  updatePatient,
 
 } from './controller/patient.js';
 import {
@@ -35,6 +36,7 @@ app.post('/login', login);
 app.get('/patients', getPatients);
 app.post('/patients', createPatient);
 app.get('/patients/:id', getPatient);
+app.put('/patients/:id', updatePatient);
 
 
 // Appointment routes and handlers
