@@ -22,7 +22,7 @@ OwnerSchema.pre('save', async function (next) {
         { $inc: { seq: 1 } },
         { new: true, upsert: true }
       );
-      this.ownerId = `VCPRO-P${counter.seq}`;
+      this.ownerId = `VCPRO-O${counter.seq}`;
     } catch (error) {
       return next(error);
     }

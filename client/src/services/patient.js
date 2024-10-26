@@ -1,12 +1,11 @@
 import axios from 'axios';
-
-const API_URL = 'http://localhost:3001';
+import { API_URL } from '../constants';
 
 
 export const createPatient = async (patientData) => {
   console.log('Creating patient with data:', patientData);
     try {
-        const response = await axios.post(`${API_URL}/patient`, patientData);
+        const response = await axios.post(`${API_URL}/patients`, patientData);
         return response.data; 
     } catch (error) {
         console.error('Error creating patient:', error);

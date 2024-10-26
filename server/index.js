@@ -33,13 +33,14 @@ app.post('/login', login);
 
 // Patient routes and handlers
 app.get('/patients', getPatients);
-app.post('/patient', createPatient);
+app.post('/patients', createPatient);
 app.get('/patients/:id', getPatient);
 
 
 // Appointment routes and handlers
 app.get('/appointments', getAppointments);
 app.post('/appointments', createAppointment);
+app.get('/appointments/:id', getAppointment);
 app.put('/appointments/:id', updateAppointment); 
 
 // Owner routes and handlers
