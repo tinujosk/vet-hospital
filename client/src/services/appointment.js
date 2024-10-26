@@ -20,17 +20,17 @@ export const getAppointments = async () => {
     const response = await axios.get(`${API_URL}/appointments`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching Appointments:', error);
+    console.error('Error fetching appointments:', error);
     throw error;
   }
 };
 
 export const getAppointment = async id => {
   try {
-    const response = await axios.get(`${API_URL}/appointment/${id}`);
+    const response = await axios.get(`${API_URL}/appointments/${id}`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching Appointment details:', error);
+    console.error('Error fetching appointment details:', error);
     throw error;
   }
 };

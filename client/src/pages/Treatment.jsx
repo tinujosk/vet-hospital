@@ -1,5 +1,4 @@
-// Treatment.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   TextField,
   Button,
@@ -12,7 +11,14 @@ import {
   StepContent,
   Box,
 } from '@mui/material';
-import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import Loading from '../components/Loading';
+import AddMedications from '../components/AddMedication';
+import MedicationTable from '../components/MedicationTable';
+import { getAppointment } from '../services/appointment';
+import { createPrescription, getPrescription } from '../services/prescription';
+import { showSnackbar } from '../slices/snackbar';
 
 const steps = [
   {
@@ -46,32 +52,58 @@ const steps = [
   },
 ];
 
-const Treatment = ({ appointmentId }) => {
-  const [prescriptionDetails, setPrescriptionDetails] = useState({
-    medication: '',
-    dosage: '',
-    frequency: '',
-    instructions: '',
-  });
+const statusMap = {
+  Pending: 0,
+  Completed: 1,
+};
 
-  const [activeStep, setActiveStep] = useState(0); // Stepper state
+const Treatment = () => {
+  const [appointment, setAppointment] = useState();
+  const [medications, setMedications] = useState([]);
+  const [prescription, setPrescription] = useState({});
+  const [activeStep, setActiveStep] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const { id } = useParams();
+  const dispatch = useDispatch();
 
-  const handleNext = () => {
-    setActiveStep(prevActiveStep => prevActiveStep + 1);
-  };
+  useEffect(() => {
+    const fetchAppointment = async () => {
+      try {
+        const result = await getAppointment(id);
+        setAppointment(result);
+      } catch (error) {
+      } finally {
+        setLoading(false);
+      }
+    };
+    const fetchPrescription = async () => {
+      try {
+        const result = await getPrescription(id);
+        // console.log({ result });
+        if (result) setPrescription(result);
+      } catch (error) {
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAppointment();
+    fetchPrescription();
+  }, [id]);
 
-  const handleBack = () => {
-    setActiveStep(prevActiveStep => prevActiveStep - 1);
-  };
+  useEffect(() => {
+    console.log({ prescription: prescription.medications, medications });
+    setMedications(prescription?.medications || []);
+  }, [prescription]);
 
-  const handleReset = () => {
-    setActiveStep(0);
-  };
+  useEffect(() => {
+    setActiveStep(statusMap[appointment?.status]);
+  }, [appointment]);
 
   const handleChange = e => {
     const { name, value } = e.target;
-    setPrescriptionDetails({
-      ...prescriptionDetails,
+    setPrescription({
+      ...prescription,
       [name]: value,
     });
   };
@@ -79,26 +111,27 @@ const Treatment = ({ appointmentId }) => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/prescriptions', {
-        appointmentId,
-        ...prescriptionDetails,
-      });
-      console.log('Prescription added:', response.data);
-      // Move to the next step after successful submission
-      setActiveStep(prevActiveStep =>
-        Math.min(prevActiveStep + 1, steps.length - 1)
-      );
-      // Reset form
-      setPrescriptionDetails({
-        medication: '',
-        dosage: '',
-        frequency: '',
-        instructions: '',
-      });
+      const newPrescription = {
+        ...prescription,
+        medications,
+        appointment: appointment._id,
+      };
+
+      setLoading(true);
+      const result = await createPrescription(newPrescription);
+      if (result) {
+        setLoading(false);
+        dispatch(
+          showSnackbar({ message: 'Prescription added', severity: 'success' })
+        );
+      }
     } catch (error) {
       console.error('Error adding prescription:', error);
     }
   };
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <Box
@@ -106,53 +139,77 @@ const Treatment = ({ appointmentId }) => {
         padding: 4,
       }}
     >
-      <Typography variant='h5' gutterBottom textAlign={'center'}>
-        Case #2333
+      <Typography variant='h5' marginBottom={4}>
+        Case #{appointment?.appointmentId}
+        <span
+          style={{
+            display: 'inline',
+            marginLeft: '10px',
+            fontWeight: 'normal',
+            fontSize: '20px',
+          }}
+        >
+          (
+          {`Appointment for: ${appointment?.patient?.name}, ${appointment?.patient?.species}, ${appointment?.patient?.age} yrs`}
+          )
+        </span>
       </Typography>
+
       <Grid container spacing={4} columns={12} justifyContent={'center'}>
         <Grid size={4}>
-          <Paper style={{ padding: '20px', height: '100%' }}>
+          <Paper
+            style={{ padding: '20px', height: '100%' }}
+            sx={{ minWidth: 400 }}
+          >
             <Typography variant='h5' gutterBottom marginBottom={4}>
               Prescription
             </Typography>
             <form onSubmit={handleSubmit}>
               <Grid container spacing={2} direction={'column'}>
                 <Grid xs={12}>
+                  <Button
+                    variant='contained'
+                    color='secondary'
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    Add Medications
+                  </Button>
+                  <AddMedications
+                    isModalOpen={isModalOpen}
+                    closeModal={() => setIsModalOpen(false)}
+                    setMedications={medication =>
+                      setMedications([...medications, medication])
+                    }
+                  />
+                  {medications?.length !== 0 ? (
+                    <MedicationTable medications={medications} />
+                  ) : (
+                    <Typography
+                      variant='h6'
+                      color='gray'
+                      textAlign='center'
+                      padding={5}
+                    >
+                      {' '}
+                      No Medications Added
+                    </Typography>
+                  )}
+                </Grid>
+                <Grid xs={12}>
                   <TextField
-                    label='Medication'
-                    name='medication'
-                    value={prescriptionDetails.medication}
+                    label='Medical Condition'
+                    name='medicalCondition'
+                    value={prescription.medicalCondition}
                     onChange={handleChange}
                     fullWidth
                     required
-                    disabled
                   />
                 </Grid>
                 <Grid xs={12}>
                   <TextField
-                    label='Dosage'
-                    name='dosage'
-                    value={prescriptionDetails.dosage}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                  />
-                </Grid>
-                <Grid xs={12}>
-                  <TextField
-                    label='Frequency'
-                    name='frequency'
-                    value={prescriptionDetails.frequency}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                  />
-                </Grid>
-                <Grid xs={12}>
-                  <TextField
-                    label='Instructions'
-                    name='instructions'
-                    value={prescriptionDetails.instructions}
+                    label='Notes'
+                    name='notes'
+                    value={prescription.notes}
                     onChange={handleChange}
                     fullWidth
                     multiline
@@ -164,7 +221,7 @@ const Treatment = ({ appointmentId }) => {
                     type='submit'
                     variant='contained'
                     color='primary'
-                    disabled
+                    // disabled
                   >
                     Submit Prescription
                   </Button>

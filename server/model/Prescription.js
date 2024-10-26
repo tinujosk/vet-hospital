@@ -9,6 +9,7 @@ const PrescriptionSchema = Schema(
     medications: [
       {
         medication: { type: mongoose.Schema.Types.ObjectId, ref: 'Medication' },
+        name: String,
         dosage: String,
         frequency: String,
         duration: String,
