@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactSelect from 'react-select';
 import {
   Box,
   Button,
@@ -17,18 +18,19 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  RadioGroup,
+  Radio,
+  FormControlLabel,
+
   Paper,
   Typography,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import PatientDetails from '../components/PatientDetails';
-import { createPatient } from '../services/patient';
-import {
-  createAppointment,
-  getAppointments,
-  updateAppointment,
-} from '../services/appointment';
+import { createPatient, getPatients } from '../services/patient';
+import { createAppointment, getAppointments, updateAppointment } from '../services/appointment';
+import { getOwners } from '../services/owner';
 
 // Hardcoding for now
 const patientData = {
@@ -47,13 +49,7 @@ const patientData = {
 };
 
 // Hardcoding for now
-const ownerData = {
-  firstName: 'Tinu',
-  lastName: 'Jos',
-  address: 'B12, 110 Activa Avenue, Kitchener, Ontario',
-  phone: '5195880153',
-  email: 'josk.tinu@gmail.com',
-};
+let ownerData = [];
 
 function NursePage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -62,8 +58,12 @@ function NursePage() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [appointmentModalOpen, setAppointmentModalOpen] = useState(false);
   const [appointments, setAppointments] = useState([]);
-  const [editAppointmentModalOpen, setEditAppointmentModalOpen] =
-    useState(false);
+  const [editAppointmentModalOpen, setEditAppointmentModalOpen] = useState(false);
+  const [isSameOwner, setIsSameOwner] = useState(true);
+  const [ownerOptions, setOwnerOptions] = useState([]);
+  const [patientMap, setPatientMap] = useState({});
+
+
 
   const initialPatientState = {
     patientname: '',
@@ -73,6 +73,7 @@ function NursePage() {
     gender: '',
     weight: '',
     medicalHistory: '',
+    ownerId: '',
     ownerfname: '',
     ownerlname: '',
     address: '',
@@ -82,20 +83,46 @@ function NursePage() {
 
   const initialAppointmentState = {
     appointmentId: '',
-    doctorId: '',
+    doctorID: '',
     appointmentDate: '',
     timeSlot: '',
-    patientId: '',
+    patient: '',
+    patientName: '',
     reason: '',
     status: 'Pending',
   };
 
   const [newPatient, setNewPatient] = useState(initialPatientState);
   const [newAppointment, setNewAppointment] = useState(initialAppointmentState);
-  const [editedAppointment, setEditedAppointment] = useState(
-    initialAppointmentState
-  );
+  const [editedAppointment, setEditedAppointment] = useState(initialAppointmentState);
+  const [patients, setPatients] = useState([]);
+  const [patientOptions, setPatientOptions] = useState([]);
 
+  {/*To fetch patients data*/}
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        const data = await getPatients();
+        const options = data.map(patient => ({
+          value: patient._id,
+          label: `${patient.name} (${patient.patientId})`
+        }));
+        const map = data.reduce((acc, patient) => {
+          acc[patient._id] = patient.name;
+          return acc;
+        }, {});
+        setPatients(data);
+        setPatientOptions(options);
+        setPatientMap(map);
+      } catch (error) {
+        console.error('Failed to fetch patients:', error);
+      }
+    };
+
+    fetchPatients();
+  }, []);
+
+  {/*To fetch appointments data*/}
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -107,6 +134,26 @@ function NursePage() {
     };
 
     fetchAppointments();
+  }, []);
+
+
+{/*To fetch owners data*/}
+  useEffect(() => {
+    const fetchOwners = async () => {
+      try {
+        const data = await getOwners(); 
+        ownerData = data;
+        const options = data.map(owner => ({
+          value: owner.ownerId, 
+          label: `${owner.firstName} ${owner.lastName} (${owner.email})` 
+        }));
+        setOwnerOptions(options);
+      } catch (error) {
+        console.error('Failed to fetch owners:', error);
+      }
+    };
+
+    fetchOwners();
   }, []);
 
   const handleRowClick = row => {
@@ -138,7 +185,7 @@ function NursePage() {
     setNewAppointment(initialAppointmentState);
   };
 
-  const handleOpenEditAppointmentModal = appointment => {
+  const handleOpenEditAppointmentModal = (appointment) => {
     setEditedAppointment(appointment);
     setEditAppointmentModalOpen(true);
   };
@@ -163,6 +210,7 @@ function NursePage() {
     setEditedAppointment({ ...editedAppointment, [name]: value });
   };
 
+  {/*To create a new patient*/}
   const handleSubmit = async () => {
     const requiredFields = [
       newPatient.patientname,
@@ -171,13 +219,14 @@ function NursePage() {
       newPatient.age,
       newPatient.gender,
       newPatient.weight,
-      newPatient.medicalHistory,
       newPatient.ownerfname,
       newPatient.ownerlname,
       newPatient.address,
       newPatient.phone,
       newPatient.email,
     ];
+
+    console.log('Required fields:', requiredFields);
 
     const isAnyFieldEmpty = requiredFields.some(field => !field);
 
@@ -195,12 +244,14 @@ function NursePage() {
     }
   };
 
+  {/*To create a new appointment*/}
   const handleAppointmentSubmit = async () => {
+    console.log('New Appointment:', newAppointment);
     const requiredFields = [
-      newAppointment.doctorId,
+      newAppointment.doctorID,
       newAppointment.appointmentDate,
       newAppointment.timeSlot,
-      newAppointment.patientId,
+      newAppointment.patient,
       newAppointment.reason,
       newAppointment.status,
     ];
@@ -221,6 +272,8 @@ function NursePage() {
       console.error('Failed to create appointment:', error);
     }
   };
+
+  {/*To update an appointment*/}
   const handleEditAppointmentSubmit = async (id, updatedData) => {
     handleCloseEditAppointmentModal();
     try {
@@ -252,7 +305,7 @@ function NursePage() {
           color='primary'
           onClick={handleOpenCreateModal}
         >
-          Create Patient
+          Register Patient
         </Button>
         <Button
           variant='contained'
@@ -263,64 +316,39 @@ function NursePage() {
         </Button>
       </Box>
 
-      <Typography variant='h4' component='h2' sx={{ marginBottom: '50px' }}>
+      <Typography variant='h4' component='h2' sx={{ marginTop: '1px' }}>
         Appointments
       </Typography>
-      <TableContainer component={Paper} sx={{ maxWidth: '95%', marginTop: 3 }}>
-        <Table>
+
+      {/* Table to display appointments */}
+      <TableContainer component={Paper} sx={{ maxWidth: '95%', marginTop: 3, maxHeight: 310, overflowY: 'auto' }}>
+        <Table aria-label="scrollable table">
           <TableHead>
-            <TableRow sx={{ backgroundColor: '#1976d2', color: '#fff' }}>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
-                Appointment ID
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
-                Doctor ID
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
-                Appointment Date
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
-                Patient Name
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
-                Slot
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
-                Reason
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
-                Status
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
-                Action
-              </TableCell>
+            <TableRow>
+              <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#1976d2', color: '#fff', position: 'sticky', top: 0, zIndex: 1 }}>Appointment ID</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#1976d2', color: '#fff', position: 'sticky', top: 0, zIndex: 1 }}>Doctor ID</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#1976d2', color: '#fff', position: 'sticky', top: 0, zIndex: 1 }}>Appointment Date</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#1976d2', color: '#fff', position: 'sticky', top: 0, zIndex: 1 }}>Patient Name</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#1976d2', color: '#fff', position: 'sticky', top: 0, zIndex: 1 }}>Slot</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#1976d2', color: '#fff', position: 'sticky', top: 0, zIndex: 1 }}>Reason</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#1976d2', color: '#fff', position: 'sticky', top: 0, zIndex: 1 }}>Status</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#1976d2', color: '#fff', position: 'sticky', top: 0, zIndex: 1 }}>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {appointments.map(row => (
-              <TableRow
-                key={row._id}
-                hover
-                onClick={() => handleRowClick(row)}
-                sx={{ cursor: 'pointer' }}
-              >
+            {appointments.map((row) => (
+              <TableRow key={row._id} hover onClick={() => handleRowClick(row)} sx={{ cursor: 'pointer' }}>
                 <TableCell>{row.appointmentId}</TableCell>
-                <TableCell>{row.doctorId}</TableCell>
-                <TableCell>
-                  {new Date(row.appointmentDate).toLocaleString()}
+                <TableCell>Hard Coded Value</TableCell>
+                <TableCell>{new Date(row.appointmentDate).toLocaleString()}</TableCell>
+                <TableCell key={row.patient}>
+                  {patientMap[row.patient] || 'Unknown Patient'}
                 </TableCell>
-                <TableCell>{row.patientId}</TableCell>
                 <TableCell>{row.timeSlot}</TableCell>
                 <TableCell>{row.reason}</TableCell>
                 <TableCell>{row.status}</TableCell>
                 <TableCell>
-                  <FontAwesomeIcon
-                    icon={faEdit}
-                    onClick={e => {
-                      e.stopPropagation();
-                      handleOpenEditAppointmentModal(row);
-                    }}
-                  />
+                  <FontAwesomeIcon icon={faEdit} onClick={(e) => { e.stopPropagation(); handleOpenEditAppointmentModal(row); }} />
                 </TableCell>
               </TableRow>
             ))}
@@ -328,16 +356,17 @@ function NursePage() {
         </Table>
       </TableContainer>
 
+      {/* Patient Details Drawer */}
       <PatientDetails
         patientDetails={{ patientData, ownerData }}
         drawerOpen={drawerOpen}
         handleCloseDrawer={handleCloseDrawer}
-        editMode={editMode}
+        
       />
 
       {/* Create Patient Modal */}
       <Dialog open={createModalOpen} onClose={handleCloseCreateModal}>
-        <DialogTitle>Create New Patient</DialogTitle>
+        <DialogTitle>Register Patient</DialogTitle>
 
         <DialogContent>
           <Typography>Patient Details</Typography>
@@ -400,63 +429,98 @@ function NursePage() {
             fullWidth
             required
           />
-          <TextField
-            margin='dense'
-            label='Medical History'
-            name='medicalHistory'
-            value={newPatient.medicalHistory}
-            onChange={handleInputChange}
-            fullWidth
-            required
-          />
+
           <Typography variant='subtitle1' gutterBottom>
             Owner Details
           </Typography>
-          <TextField
-            margin='dense'
-            label='Owner First Name'
-            name='ownerfname'
-            value={newPatient.ownerfname}
-            onChange={handleInputChange}
-            fullWidth
-            required
-          />
-          <TextField
-            margin='dense'
-            label='Owner Last Name'
-            name='ownerlname'
-            value={newPatient.ownerlname}
-            onChange={handleInputChange}
-            fullWidth
-            required
-          />
-          <TextField
-            margin='dense'
-            label='Address'
-            name='address'
-            value={newPatient.address}
-            onChange={handleInputChange}
-            fullWidth
-            required
-          />
-          <TextField
-            margin='dense'
-            label='Phone'
-            name='phone'
-            value={newPatient.phone}
-            onChange={handleInputChange}
-            fullWidth
-            required
-          />
-          <TextField
-            margin='dense'
-            label='Email'
-            name='email'
-            value={newPatient.email}
-            onChange={handleInputChange}
-            fullWidth
-            required
-          />
+
+          {/* Radio buttons to select owner option */}
+          <FormControl>
+            <RadioGroup
+              row
+              value={isSameOwner ? 'same' : 'new'}
+              onChange={(e) => setIsSameOwner(e.target.value === 'same')}
+            >
+              <FormControlLabel value="same" control={<Radio />} label="Existing Owner" />
+              <FormControlLabel value="new" control={<Radio />} label="New Owner" />
+            </RadioGroup>
+          </FormControl>
+          {isSameOwner ? (
+            <div style={{ marginBottom: '25px' }}>
+              <ReactSelect
+                options={ownerOptions}
+                onChange={(selectedOption) => {
+                  console.log('Selected Option:', selectedOption);
+                  const tst = ownerData.find(owner => owner.ownerId === selectedOption.value);
+                  setNewPatient({
+                    ...newPatient,
+                    ownerId: tst.ownerId,
+                    ownerfname: tst.firstName,
+                    ownerlname: tst.lastName,
+                    address: tst.address,
+                    phone: tst.phone,
+                    email: tst.email,
+                  });
+                }}
+                placeholder="Select Owner"
+                isSearchable
+                required
+              />
+            </div>
+          ) : (
+
+            <>
+              <TextField
+                margin="dense"
+                label="Owner First Name"
+                name="ownerfname"
+                value={newPatient.ownerfname}
+                onChange={handleInputChange}
+                fullWidth
+                required
+              />
+
+              <TextField
+                margin="dense"
+                label="Owner Last Name"
+                name="ownerlname"
+                value={newPatient.ownerlname}
+                onChange={handleInputChange}
+                fullWidth
+                required
+              />
+              <TextField
+                margin="dense"
+                label="Address"
+                name="address"
+                value={newPatient.address}
+                onChange={handleInputChange}
+                fullWidth
+                required
+              />
+
+
+              <TextField
+                margin="dense"
+                label="Owner Email"
+                name="email"
+                value={newPatient.email}
+                onChange={handleInputChange}
+                fullWidth
+                required
+              />
+
+              <TextField
+                margin="dense"
+                label="Owner Phone Number"
+                name="phone"
+                value={newPatient.phone}
+                onChange={handleInputChange}
+                fullWidth
+                required
+              />
+            </>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseCreateModal} color='primary'>
@@ -472,20 +536,50 @@ function NursePage() {
       <Dialog open={appointmentModalOpen} onClose={handleCloseAppointmentModal}>
         <DialogTitle>Create New Appointment</DialogTitle>
         <DialogContent>
+          <div style={{ marginBottom: '25px' }}>
+            <ReactSelect
+              options={patientOptions}
+              onChange={(selectedOption) => {
+                setNewAppointment({ ...newAppointment, patient: selectedOption.value, patientName: selectedOption.label.split(" (")[0] });
+              }}
+              placeholder="Select Patient"
+              isSearchable
+              required
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  marginTop: '8px',
+                  marginBottom: '8px',
+                }),
+                menu: (base) => ({
+                  ...base,
+                  maxHeight: 200,
+                  overflowY: 'auto',
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  zIndex: 1000,
+                }),
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isFocused ? 'rgba(224, 224, 224, 0.9)' : 'transparent',
+                  color: state.isSelected ? '#000' : '#333',
+                  padding: 10,
+                }),
+              }}
+            />
+          </div>
           <TextField
             margin='dense'
             label='Doctor ID'
-            name='doctorId'
-            value={newAppointment.doctorId}
+            name='doctorID'
+            value={newAppointment.doctor}
             onChange={handleAppointmentInputChange}
             fullWidth
             required
           />
           <TextField
-            margin='dense'
-            label='Appointment Date'
-            type='datetime-local'
-            name='appointmentDate'
+            margin="dense"
+            type="date"
+            name="appointmentDate"
             value={newAppointment.appointmentDate}
             onChange={handleAppointmentInputChange}
             fullWidth
@@ -501,18 +595,9 @@ function NursePage() {
             required
           />
           <TextField
-            margin='dense'
-            label='Patient ID'
-            name='patientId'
-            value={newAppointment.patientId}
-            onChange={handleAppointmentInputChange}
-            fullWidth
-            required
-          />
-          <TextField
-            margin='dense'
-            label='Reason'
-            name='reason'
+            margin="dense"
+            label="Reason"
+            name="reason"
             value={newAppointment.reason}
             onChange={handleAppointmentInputChange}
             fullWidth
@@ -529,17 +614,15 @@ function NursePage() {
         </DialogActions>
       </Dialog>
 
-      <Dialog
-        open={editAppointmentModalOpen}
-        onClose={handleCloseEditAppointmentModal}
-      >
+      {/* Edit Appointment Modal */}
+      <Dialog open={editAppointmentModalOpen} onClose={handleCloseEditAppointmentModal}>
         <DialogTitle>Edit Appointment</DialogTitle>
         <DialogContent>
           <TextField
             margin='dense'
             label='Doctor ID'
-            name='doctorId'
-            value={editedAppointment.doctorId}
+            name='doctorID'
+            value={editedAppointment.doctor}
             onChange={handleEditAppointmentInputChange}
             fullWidth
             required
@@ -563,15 +646,10 @@ function NursePage() {
             fullWidth
             required
           />
-          <TextField
-            margin='dense'
-            label='Patient ID'
-            name='patientId'
-            value={editedAppointment.patientId}
-            onChange={handleEditAppointmentInputChange}
-            fullWidth
-            required
-          />
+
+
+
+
           <TextField
             margin='dense'
             label='Reason'

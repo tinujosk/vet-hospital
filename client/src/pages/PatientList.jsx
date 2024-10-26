@@ -9,8 +9,10 @@ import {
   TableRow,
   Paper,
   Typography,
+
 } from '@mui/material';
 import { getPatients } from '../services/patient';
+
 import PatientDetails from '../components/PatientDetails';
 
 function PatientPage() {
@@ -27,11 +29,10 @@ function PatientPage() {
         console.error('Failed to fetch patients:', error);
       }
     };
-
     fetchPatients();
   }, []);
 
-  const handleRowClick = patient => {
+  const handleRowClick = (patient) => {
     setSelectedPatient(patient);
     setDrawerOpen(true);
   };
@@ -40,6 +41,7 @@ function PatientPage() {
     setDrawerOpen(false);
     setSelectedPatient(null);
   };
+
 
   return (
     <Box
@@ -55,25 +57,16 @@ function PatientPage() {
         Patients List
       </Typography>
 
-      <TableContainer component={Paper} sx={{ maxWidth: '80%' }}>
-        <Table>
+      <TableContainer component={Paper} sx={{ maxWidth: '85%', marginTop: 3, maxHeight: 310, overflowY: 'auto' }}>
+        <Table  aria-label="scrollable table">
           <TableHead>
-            <TableRow sx={{ backgroundColor: '#1976d2', color: '#fff' }}>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
-                Patient Name
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
-                Species
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
-                Age
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
-                Owner Name
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff' }}>
-                Owner Phone
-              </TableCell>
+            <TableRow>
+              <TableCell sx={{ fontWeight: 'bold', color: '#fff', position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#1976d2' }}>Patient Name</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: '#fff', position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#1976d2' }}>Species</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: '#fff', position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#1976d2' }}>Age</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: '#fff', position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#1976d2' }}>Owner Name</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: '#fff', position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#1976d2' }}>Owner Phone</TableCell>
+
             </TableRow>
           </TableHead>
           <TableBody>
@@ -87,11 +80,14 @@ function PatientPage() {
                   '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' },
                 }}
               >
-                <TableCell>{patient.name}</TableCell>
-                <TableCell>{patient.species}</TableCell>
-                <TableCell>{patient.age}</TableCell>
-                <TableCell>{`${patient.owner.firstName} ${patient.owner.lastName}`}</TableCell>
-                <TableCell>{patient.owner.phone}</TableCell>
+                <TableCell onClick={() => handleRowClick(patient)}>{patient.name}</TableCell>
+                <TableCell onClick={() => handleRowClick(patient)}>{patient.species}</TableCell>
+                <TableCell onClick={() => handleRowClick(patient)}>{patient.age}</TableCell>
+                <TableCell onClick={() => handleRowClick(patient)}>
+                  {`${patient.owner.firstName} ${patient.owner.lastName}`}
+                </TableCell>
+                <TableCell onClick={() => handleRowClick(patient)}>{patient.owner.phone}</TableCell>
+
               </TableRow>
             ))}
           </TableBody>
