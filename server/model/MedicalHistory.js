@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const MedicalHistorySchema = Schema(
   {
-    medicalHistory: String,
+    conditionName: String,
     appointment: { type: mongoose.Schema.Types.ObjectId, ref: 'Appointment' },
     patient: { type: Schema.Types.ObjectId, ref: 'Patient' },
   },

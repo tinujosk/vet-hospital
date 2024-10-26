@@ -12,11 +12,17 @@ import {
 import {
   createAppointment,
   getAppointments,
+  getAppointment,
   updateAppointment,
 } from './controller/appointment.js';
 import { 
   getOwners
 } from './controller/owner.js';
+import { getMedications } from './controller/medication.js';
+import {
+  createPrescription,
+  getPrescription,
+} from './controller/prescription.js';
 
 const app = express();
 app.use(cors());
@@ -39,6 +45,12 @@ app.put('/appointments/:id', updateAppointment);
 // Owner routes and handlers
 app.get('/owners', getOwners);
 
+// Medication routes and handlers
+app.get('/medications/search', getMedications);
+
+// Prescription routes and handlers
+app.post('/prescriptions', createPrescription);
+app.get('/prescriptions/:id', getPrescription);
 
 app.listen(3001, () => {
   console.log('Server listening on port 3001');

@@ -16,7 +16,7 @@ export const createAppointment = async (req, res) => {
 
 export const getAppointments = async (req, res) => {
   try {
-    const appointments = await Appointment.find();
+    const appointments = await Appointment.find().populate('patient');
 
     if (appointments.length === 0) {
       console.log('No appointments found.');
@@ -36,7 +36,9 @@ export const getAppointments = async (req, res) => {
 
 export const getAppointment = async (req, res) => {
   try {
-    const appointment = await Appointment.findById(req.params.id);
+    const appointment = await Appointment.findById(req.params.id).populate(
+      'patient'
+    );
     if (!appointment)
       return res.status(404).json({ message: 'Appointment not found' });
     res.status(200).json(appointment);
