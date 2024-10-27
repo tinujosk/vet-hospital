@@ -107,13 +107,9 @@ function NursePage() {
           value: patient._id,
           label: `${patient.name} (${patient.patientId})`
         }));
-        const map = data.reduce((acc, patient) => {
-          acc[patient._id] = patient.name;
-          return acc;
-        }, {});
+
         setPatients(data);
         setPatientOptions(options);
-        setPatientMap(map);
       } catch (error) {
         console.error('Failed to fetch patients:', error);
       }
@@ -275,9 +271,8 @@ function NursePage() {
 
   {/*To update an appointment*/}
   const handleEditAppointmentSubmit = async (id, updatedData) => {
-    handleCloseEditAppointmentModal();
     try {
-      // Call the update function with the correct ID
+      handleCloseEditAppointmentModal();
       const updatedAppointment = await updateAppointment(id, updatedData);
       setAppointments(prev =>
         prev.map(appointment =>
@@ -288,6 +283,7 @@ function NursePage() {
       console.error('Failed to update appointment:', error);
     }
   };
+  
 
   return (
     <Box
@@ -341,9 +337,7 @@ function NursePage() {
                 <TableCell>{row.appointmentId}</TableCell>
                 <TableCell>Hard Coded Value</TableCell>
                 <TableCell>{new Date(row.appointmentDate).toLocaleString()}</TableCell>
-                <TableCell key={row.patient}>
-                  {patientMap[row.patient] || 'Unknown Patient'}
-                </TableCell>
+                <TableCell> {row.patient.name}</TableCell>
                 <TableCell>{row.timeSlot}</TableCell>
                 <TableCell>{row.reason}</TableCell>
                 <TableCell>{row.status}</TableCell>
