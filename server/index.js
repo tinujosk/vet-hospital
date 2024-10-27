@@ -22,6 +22,9 @@ import {
   getPrescription,
 } from './controller/prescription.js';
 
+import { createUser, getUserDetails
+ } from './controller/user.js';
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -50,6 +53,10 @@ app.get('/medications/search', getMedications);
 // Prescription routes and handlers
 app.post('/prescriptions', createPrescription);
 app.get('/prescriptions/:id', getPrescription);
+
+// User registration and admin handler
+app.post('/createUser', createUser);
+app.get('/getUserDetails', getUserDetails)
 
 app.listen(3001, () => {
   console.log('Server listening on port 3001');

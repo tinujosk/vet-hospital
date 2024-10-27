@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   Container,
@@ -14,57 +14,97 @@ import {
   Paper,
   Drawer,
   Box,
-} from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import { createUser, getUserDetails } from "../services/user.js";
 
 const Admin = () => {
-  const [users, setUsers] = useState([
-    { name: 'Dr. John Doe', role: 'Doctor', contact: '123-456-7890' },
-    { name: 'Nurse Jane Smith', role: 'Nurse', contact: '987-654-3210' },
-    {
-      name: 'Lab Assistant Emily Davis',
-      role: 'Lab Assistant',
-      contact: '555-123-4567',
-    },
-  ]);
-  const [newUser, setNewUser] = useState({ name: '', role: '', contact: '' });
+  const [users, setUsers] = useState([]);
+  const [newUser, setNewUser] = useState({ email: "", role: "", password: "" });
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [emailError, setEmailError] = useState(false);
 
-  const handleInputChange = e => {
-    const { name, value } = e.target;
-    setNewUser({ ...newUser, [name]: value });
+  //function to Auto generate the password...
+  const generatePassword = () => {
+    const charset =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+    let password = "";
+    for (let i = 0; i < 10; i++) {
+      password += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+    return password;
   };
 
-  const handleAddUser = () => {
-    if (newUser.name && newUser.role && newUser.contact) {
-      setUsers([...users, newUser]);
-      setNewUser({ name: '', role: '', contact: '' }); // reset form
-      setDrawerOpen(false); // close drawer after adding user
-    } else {
-      alert('Please fill out all fields before adding a new user.');
+  // fetch the user data from the database...
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const userData = await getUserDetails();
+        setUsers(userData);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewUser({ ...newUser, [name]: value });
+    if (name === "email") {
+      setEmailError(!validateEmail(value)); 
     }
   };
 
-  const handleDeleteUser = index => {
+  const handleRoleChange = (e) => {
+    setNewUser({ ...newUser, role: e.target.value });
+  };
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email); 
+  };
+
+  const handleAddUser = async () => {
+    const password = generatePassword();
+    const userWithPassword = { ...newUser, password };
+    try {
+      await createUser(userWithPassword);
+      alert(`User registered successfully!\nPassword: ${password}`);
+      setUsers([...users, userWithPassword]);
+      setNewUser({ email: "", password: "", role: "" });
+      setDrawerOpen(false);
+    } catch (error) {
+      alert("Failed to register user.");
+    }
+  };
+
+  const handleDeleteUser = (index) => {
     setUsers(users.filter((_, i) => i !== index));
   };
 
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
         padding: 4,
       }}
     >
-      <Container maxWidth='md' sx={{ marginTop: 4 }}>
+      <Container maxWidth="lg" sx={{ marginTop: 4 }}>
         <Button
-          variant='contained'
-          color='primary'
+          variant="contained"
+          color="primary"
           startIcon={<AddIcon />}
           onClick={() => setDrawerOpen(true)}
           sx={{ marginBottom: 2 }}
@@ -77,24 +117,24 @@ const Admin = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Name</TableCell>
+                <TableCell>User Name</TableCell>
                 <TableCell>Role</TableCell>
-                <TableCell>Contact</TableCell>
+                <TableCell>Password</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {users.map((user, index) => (
                 <TableRow key={index}>
-                  <TableCell>{user.name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
                   <TableCell>{user.role}</TableCell>
-                  <TableCell>{user.contact}</TableCell>
+                  <TableCell>{"**********"}</TableCell>
                   <TableCell>
-                    <IconButton color='primary'>
+                    <IconButton color="primary">
                       <EditIcon />
                     </IconButton>
                     <IconButton
-                      color='secondary'
+                      color="secondary"
                       onClick={() => handleDeleteUser(index)}
                     >
                       <DeleteIcon />
@@ -109,44 +149,52 @@ const Admin = () => {
 
       {/* Side Panel Drawer for Adding Users */}
       <Drawer
-        anchor='right'
+        anchor="right"
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
       >
         <Box sx={{ width: 300, padding: 3 }}>
-          <Typography variant='h6' sx={{ marginBottom: 2 }}>
+          <Typography variant="h6" sx={{ marginBottom: 2 }}>
             Add New User
           </Typography>
           <TextField
             fullWidth
-            label='Name'
-            variant='outlined'
-            name='name'
-            value={newUser.name}
+            label="Email"
+            variant="outlined"
+            name="email"
+            value={newUser.email}
             onChange={handleInputChange}
-            margin='normal'
+            margin="normal"
+            error={emailError}
+            helperText={emailError ? "Please enter a valid email address" : ""}
           />
-          <TextField
+          {/* <TextField
             fullWidth
-            label='Role (Doctor, Nurse, etc.)'
-            variant='outlined'
-            name='role'
+            label="Role (Doctor, Nurse, etc.)"
+            variant="outlined"
+            name="role"
             value={newUser.role}
             onChange={handleInputChange}
-            margin='normal'
-          />
-          <TextField
-            fullWidth
-            label='Contact Information'
-            variant='outlined'
-            name='contact'
-            value={newUser.contact}
-            onChange={handleInputChange}
-            margin='normal'
-          />
+            margin="normal"
+          /> */}
+
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Role</InputLabel>
+            <Select
+              value={newUser.role}
+              onChange={handleRoleChange}
+              label="Role"
+            >
+              <MenuItem value="doctor">Doctor</MenuItem>
+              <MenuItem value="nurse">Nurse</MenuItem>
+              <MenuItem value="lab">Lab</MenuItem>
+              <MenuItem value="pharmacist">Pharmacist</MenuItem>
+            </Select>
+          </FormControl>
+
           <Button
-            variant='contained'
-            color='primary'
+            variant="contained"
+            color="primary"
             onClick={handleAddUser}
             sx={{ marginTop: 2 }}
           >
