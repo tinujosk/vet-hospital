@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const PrescriptionSchema = Schema(
   {
     notes: String,
-    medicalCondition: String,
+    medicalCondition: { type: String, required: true },
     medications: [
       {
         medication: { type: mongoose.Schema.Types.ObjectId, ref: 'Medication' },
@@ -15,7 +15,6 @@ const PrescriptionSchema = Schema(
         duration: String,
       },
     ],
-    appointment: { type: mongoose.Schema.Types.ObjectId, ref: 'Appointment' },
   },
   { timestamps: true }
 );

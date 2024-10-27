@@ -51,11 +51,14 @@ function PatientPage() {
         padding: 4,
       }}
     >
-      <Typography variant='h4' component='h2' sx={{ marginBottom: '50px' }}>
+      <Typography variant="h4" component="h2" sx={{ marginBottom: '50px' }}>
         Patients List
       </Typography>
 
-      <TableContainer component={Paper} sx={{ maxWidth: '80%' }}>
+      <TableContainer
+        component={Paper}
+        sx={{ maxWidth: '80%', maxHeight: '500px' }}
+      >
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: '#1976d2', color: '#fff' }}>

@@ -1,9 +1,25 @@
 import Prescription from '../model/Prescription.js';
+import Appointment from '../model/Appointment.js';
 
 export const createPrescription = async (req, res) => {
   try {
-    const newPrescription = new Prescription(req.body);
+    const { appointment, medications, medicalCondition, notes } = req.body;
+    const newPrescription = new Prescription({
+      medications,
+      notes,
+      medicalCondition,
+    });
     const savedPrescription = await newPrescription.save();
+
+    const updatedAppointment = await Appointment.findByIdAndUpdate(
+      appointment,
+      { prescription: savedPrescription._id },
+      { new: true }
+    );
+
+    if (!updatedAppointment) {
+      return res.status(404).json({ message: 'Appointment not found' });
+    }
     return res.status(201).json(savedPrescription);
   } catch (error) {
     console.error('Error creating prescription:', error);

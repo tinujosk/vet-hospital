@@ -16,6 +16,12 @@ const AppointmentSchema = new Schema(
     },
     doctor: { type: Schema.Types.ObjectId, ref: 'Staff' },
     patient: { type: Schema.Types.ObjectId, ref: 'Patient' },
+    prescription: {
+      type: Schema.Types.ObjectId,
+      ref: 'Prescription',
+      default: null,
+    },
+    labreport: { type: Schema.Types.ObjectId, ref: 'LabReport', default: null },
   },
   { timestamps: true }
 );

@@ -16,7 +16,7 @@ export const useNavigation = () => {
         navigate('/admin');
         break;
       case 'nurse':
-        navigate('/nursing');
+        navigate('/nurse');
         break;
       case 'lab':
         navigate('/lab');

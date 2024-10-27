@@ -13,7 +13,6 @@ const LabReportSchema = Schema(
         unit: { type: String },
       },
     ],
-    appointment: { type: mongoose.Schema.Types.ObjectId, ref: 'Appointment' },
   },
   { timestamps: true }
 );

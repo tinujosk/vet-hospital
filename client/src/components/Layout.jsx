@@ -9,12 +9,12 @@ const Layout = ({ title, children }) => {
       <Header />
       <Container
         maxWidth={false}
-        component='main'
-        sx={{ py: 4, backgroundColor: '#F1F4F7', height: '100vh' }}
+        component="main"
+        sx={{ py: 4, backgroundColor: '#F1F4F7', minHeight: '80vh' }}
       >
         <Typography
-          variant='h5'
-          component='h5'
+          variant="h5"
+          component="h5"
           gutterBottom
           sx={{
             fontWeight: 'bold',
