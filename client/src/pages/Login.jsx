@@ -9,41 +9,72 @@ import {
   Avatar,
   Link,
 } from '@mui/material';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useDispatch } from 'react-redux';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { setUserData } from '../slices/auth';
 import { loginUser } from '../services/auth';
 import { useNavigation } from '../hooks/useNavigation';
 import Logo from '../images/logo2.png';
+import { showSnackbar } from '../slices/snackbar';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const dispatch = useDispatch();
+  const [errors, setErrors] = useState({ email: '', password: '' });
   const { redirectToDashboard } = useNavigation();
+  const dispatch = useDispatch();
 
   const handleSubmit = async event => {
     event.preventDefault();
+    if (validate()) {
+      try {
+        const { token } = await loginUser(email, password);
+        localStorage.setItem('token', token);
+        const decodedToken = jwtDecode(token);
+        const role = decodedToken.role;
 
-    try {
-      const { token } = await loginUser(email, password);
-      localStorage.setItem('token', token);
-      const decodedToken = jwtDecode(token);
-      const role = decodedToken.role;
+        // dispatch into redux store
+        dispatch(
+          setUserData({
+            userId: decodedToken.userId,
+            email: decodedToken.email,
+            role,
+          })
+        );
 
-      // dispatch into redux store
-      dispatch(
-        setUserData({
-          userId: decodedToken.userId,
-          email: decodedToken.email,
-          role,
-        })
-      );
-
-      redirectToDashboard(role);
-    } catch (error) {
-      console.error(error);
+        redirectToDashboard(role);
+      } catch (error) {
+        dispatch(
+          showSnackbar({ message: 'Authentication failed', severity: 'error' })
+        );
+        console.error(error);
+      }
     }
+  };
+
+  // Function to validate the input fields
+  const validate = () => {
+    let tempErrors = { email: '', password: '' };
+    let isValid = true;
+
+    if (!email) {
+      tempErrors.email = 'Email is required';
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      tempErrors.email = 'Email is not valid';
+      isValid = false;
+    }
+
+    if (!password) {
+      tempErrors.password = 'Password is required';
+      isValid = false;
+    } else if (password.length < 3) {
+      tempErrors.password = 'Password must be at least 3 characters';
+      isValid = false;
+    }
+
+    setErrors(tempErrors);
+    return isValid;
   };
 
   return (
@@ -92,6 +123,8 @@ const Login = () => {
             autoFocus
             value={email}
             onChange={e => setEmail(e.target.value)}
+            error={!!errors.email}
+            helperText={errors.email}
           />
           <TextField
             margin='normal'
@@ -104,6 +137,8 @@ const Login = () => {
             autoComplete='current-password'
             value={password}
             onChange={e => setPassword(e.target.value)}
+            error={!!errors.password}
+            helperText={errors.password}
           />
           <Button
             type='submit'

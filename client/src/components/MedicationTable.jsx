@@ -10,6 +10,8 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const darkTheme = createTheme({
   palette: {
@@ -25,22 +27,23 @@ const darkTheme = createTheme({
   },
 });
 
-export default function MedicationTable({ medications }) {
+export default function MedicationTable({ medications, handleDeleteMedicine }) {
   return (
     <ThemeProvider theme={darkTheme}>
       <TableContainer component={Paper} sx={{ marginTop: 2 }}>
         <Table
           stickyHeader
           sx={{ maxHeight: 100 }}
-          size='small'
-          aria-label='a dense table'
+          size="small"
+          aria-label="a dense table"
         >
           <TableHead>
             <TableRow>
               <TableCell>Medicine</TableCell>
-              <TableCell align='right'>Dosage</TableCell>
-              <TableCell align='right'>Frequency</TableCell>
-              <TableCell align='right'>Duration</TableCell>
+              <TableCell align="right">Dosage</TableCell>
+              <TableCell align="right">Frequency</TableCell>
+              <TableCell align="right">Duration</TableCell>
+              <TableCell align="right"></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -50,14 +53,23 @@ export default function MedicationTable({ medications }) {
                 sx={{
                   '&:last-child td, &:last-child th': { border: 0 },
                 }}
-                color='text.secondary'
+                color="text.secondary"
               >
-                <TableCell component='th' scope='row'>
+                <TableCell component="th" scope="row">
                   {medication.name}
                 </TableCell>
-                <TableCell align='right'>{medication.dosage}</TableCell>
-                <TableCell align='right'>{medication.frequency}</TableCell>
-                <TableCell align='right'>{medication.duration}</TableCell>
+                <TableCell align="right">{medication.dosage}</TableCell>
+                <TableCell align="right">{medication.frequency}</TableCell>
+                <TableCell align="right">{medication.duration}</TableCell>
+
+                <TableCell>
+                  <FontAwesomeIcon
+                    cursor="pointer"
+                    onClick={() => handleDeleteMedicine(medication._id)}
+                    icon={faTrash}
+                    style={{ marginRight: '5px' }}
+                  />
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

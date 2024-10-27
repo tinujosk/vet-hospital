@@ -18,7 +18,45 @@ const AddMedicationsForm = ({ isModalOpen, closeModal, setMedications }) => {
   const [dosage, setDosage] = useState('');
   const [frequency, setFrequency] = useState('');
   const [duration, setDuration] = useState('');
+  const [errors, setErrors] = useState({
+    selectedMedicine: '',
+    dosage: '',
+    frequency: '',
+    duration: '',
+  });
   // const [medication, setMedication] = useState([]);
+
+  const validate = () => {
+    let tempErrors = {
+      selectedMedicine: '',
+      dosage: '',
+      frequency: '',
+      duration: '',
+    };
+    let isValid = true;
+
+    if (!selectedMedicine) {
+      tempErrors.selectedMedicine = 'Please select a medicine';
+      isValid = false;
+    }
+    if (!dosage) {
+      tempErrors.dosage = 'Please select a dosage';
+      isValid = false;
+    }
+
+    if (!frequency) {
+      tempErrors.frequency = 'Please select a frequency';
+      isValid = false;
+    }
+
+    if (!duration) {
+      tempErrors.duration = 'Please select a duration';
+      isValid = false;
+    }
+
+    setErrors(tempErrors);
+    return isValid;
+  };
 
   const handleSearch = async e => {
     const term = e.target.value;
@@ -37,31 +75,28 @@ const AddMedicationsForm = ({ isModalOpen, closeModal, setMedications }) => {
   // }, [medication]);
 
   const handleAddMedicine = () => {
-    if (!selectedMedicine || !dosage || !frequency || !duration) {
-      alert('Please select a medicine, dosage, frequency, and duration.');
-      return;
+    if (validate()) {
+      const newMedication = {
+        medicineId: selectedMedicine._id,
+        name: selectedMedicine.name,
+        dosage,
+        frequency,
+        duration,
+      };
+
+      // setMedication(newMedication);
+      setMedications(newMedication);
+      setSelectedMedicine(null);
+      setSearchTerm('');
+      setDosage('');
+      setFrequency('');
+      setDuration('');
+      closeModal();
     }
-
-    const newMedication = {
-      medicineId: selectedMedicine._id,
-      name: selectedMedicine.name,
-      dosage,
-      frequency,
-      duration,
-    };
-
-    // setMedication(newMedication);
-    setMedications(newMedication);
-    setSelectedMedicine(null);
-    setSearchTerm('');
-    setDosage('');
-    setFrequency('');
-    setDuration('');
-    closeModal();
   };
 
   return (
-    <Dialog open={isModalOpen} onClose={closeModal} fullWidth maxWidth='sm'>
+    <Dialog open={isModalOpen} onClose={closeModal} fullWidth maxWidth="sm">
       <DialogTitle>Add Medications</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
@@ -75,49 +110,57 @@ const AddMedicationsForm = ({ isModalOpen, closeModal, setMedications }) => {
               renderInput={params => (
                 <TextField
                   {...params}
-                  label='Search Medicine'
-                  variant='outlined'
+                  label="Search Medicine"
+                  variant="outlined"
                   fullWidth
                   onChange={handleSearch}
-                  placeholder='Type to search...'
+                  placeholder="Type to search..."
+                  error={!!errors.selectedMedicine}
+                  helperText={errors.selectedMedicine}
                 />
               )}
             />
           </Grid>
           <Grid item xs={4}>
             <TextField
-              label='Dosage'
-              variant='outlined'
+              label="Dosage"
+              variant="outlined"
               fullWidth
               value={dosage}
               onChange={e => setDosage(e.target.value)}
-              placeholder='e.g., 500mg'
+              placeholder="e.g., 500mg"
+              error={!!errors.dosage}
+              helperText={errors.dosage}
             />
           </Grid>
           <Grid item xs={4}>
             <TextField
-              label='Frequency'
-              variant='outlined'
+              label="Frequency"
+              variant="outlined"
               fullWidth
               value={frequency}
               onChange={e => setFrequency(e.target.value)}
-              placeholder='e.g., twice a day'
+              placeholder="e.g., twice a day"
+              error={!!errors.frequency}
+              helperText={errors.frequency}
             />
           </Grid>
           <Grid item xs={4}>
             <TextField
-              label='Duration'
-              variant='outlined'
+              label="Duration"
+              variant="outlined"
               fullWidth
               value={duration}
               onChange={e => setDuration(e.target.value)}
-              placeholder='e.g., for a week'
+              placeholder="e.g., for a week"
+              error={!!errors.duration}
+              helperText={errors.duration}
             />
           </Grid>
           <Grid item xs={12}>
             <Button
-              variant='contained'
-              color='primary'
+              variant="contained"
+              color="primary"
               onClick={handleAddMedicine}
               fullWidth
             >
@@ -127,7 +170,7 @@ const AddMedicationsForm = ({ isModalOpen, closeModal, setMedications }) => {
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={closeModal} color='secondary'>
+        <Button onClick={closeModal} color="secondary">
           Cancel
         </Button>
       </DialogActions>

@@ -63,11 +63,11 @@ function PatientPage() {
         padding: 4,
       }}
     >
-      <Typography variant='h4' component='h2' sx={{ marginBottom: '50px' }}>
+      <Typography variant="h4" component="h2" sx={{ marginBottom: '50px' }}>
         Patients List
       </Typography>
 
-      <TableContainer component={Paper} sx={{ maxWidth: '85%', marginTop: 3, maxHeight: 310, overflowY: 'auto' }}>
+      <TableContainer component={Paper} sx={{ maxWidth: '80%', marginTop: 3, maxHeight: 500, overflowY: 'auto' }}>
         <Table  aria-label="scrollable table">
           <TableHead>
             <TableRow>
