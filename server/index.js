@@ -7,6 +7,8 @@ import {
   createPatient,
   getPatients,
   getPatient,
+  updatePatient,
+
 } from './controller/patient.js';
 import {
   createAppointment,
@@ -14,6 +16,9 @@ import {
   getAppointment,
   updateAppointment,
 } from './controller/appointment.js';
+import { 
+  getOwners
+} from './controller/owner.js';
 import { getMedications } from './controller/medication.js';
 import {
   createPrescription,
@@ -31,12 +36,17 @@ app.post('/login', login);
 app.get('/patients', getPatients);
 app.post('/patients', createPatient);
 app.get('/patients/:id', getPatient);
+app.put('/patients/:id', updatePatient);
+
 
 // Appointment routes and handlers
 app.get('/appointments', getAppointments);
 app.post('/appointments', createAppointment);
 app.get('/appointments/:id', getAppointment);
-app.put('/appointments/:id', updateAppointment);
+app.put('/appointments/:id', updateAppointment); 
+
+// Owner routes and handlers
+app.get('/owners', getOwners);
 
 // Medication routes and handlers
 app.get('/medications/search', getMedications);

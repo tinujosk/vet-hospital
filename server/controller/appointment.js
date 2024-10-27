@@ -1,17 +1,19 @@
 import Appointment from '../model/Appointment.js';
 
 export const createAppointment = async (req, res) => {
+  console.log('Creating appointment with data:', req.body);
   try {
     const newAppointment = new Appointment(req.body);
     const savedAppointment = await newAppointment.save();
-    return res.status(201).json(savedAppointment);
+    const populatedAppointment = await Appointment.findById(savedAppointment._id).populate('patient');
+    return res.status(201).json(populatedAppointment);
   } catch (error) {
     console.error('Error creating appointment:', error);
-    return res
-      .status(500)
-      .json({ message: 'Failed to create appointment', error: error.message });
+    return res.status(500).json({ message: 'Failed to create appointment', error: error.message });
   }
 };
+
+
 
 export const getAppointments = async (req, res) => {
   try {
@@ -20,9 +22,9 @@ export const getAppointments = async (req, res) => {
     if (appointments.length === 0) {
       console.log('No appointments found.');
     } else {
-      console.log('Fetched appointments:');
+      
       appointments.forEach((appointment, index) => {
-        console.log(`Appointment ${index + 1}:`, appointment);
+        
       });
     }
 
@@ -56,7 +58,7 @@ export const updateAppointment = async (req, res) => {
       _id,
       updateData,
       { new: true }
-    );
+    ).populate('patient');
     return res.status(200).json(updatedAppointment);
   } catch (error) {
     console.error('Error updating appointment:', error);
