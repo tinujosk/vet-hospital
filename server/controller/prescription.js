@@ -13,7 +13,7 @@ export const createPrescription = async (req, res) => {
 
     const updatedAppointment = await Appointment.findByIdAndUpdate(
       appointment,
-      { prescription: savedPrescription._id },
+      { prescription: savedPrescription._id, status: 'Diagnosed' },
       { new: true }
     );
 

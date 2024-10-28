@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import {
   createTheme,
   ThemeProvider,
@@ -27,7 +27,10 @@ const darkTheme = createTheme({
   },
 });
 
-export default function MedicationTable({ medications, handleDeleteMedicine }) {
+export default function MedicationTable({
+  medications,
+  handleDeleteMedications,
+}) {
   return (
     <ThemeProvider theme={darkTheme}>
       <TableContainer component={Paper} sx={{ marginTop: 2 }}>
@@ -47,9 +50,9 @@ export default function MedicationTable({ medications, handleDeleteMedicine }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {medications?.map(medication => (
+            {medications?.map((medication, index) => (
               <TableRow
-                key={medication.name}
+                key={index}
                 sx={{
                   '&:last-child td, &:last-child th': { border: 0 },
                 }}
@@ -65,7 +68,9 @@ export default function MedicationTable({ medications, handleDeleteMedicine }) {
                 <TableCell>
                   <FontAwesomeIcon
                     cursor="pointer"
-                    onClick={() => handleDeleteMedicine(medication._id)}
+                    onClick={() =>
+                      handleDeleteMedications(medication.medication)
+                    }
                     icon={faTrash}
                     style={{ marginRight: '5px' }}
                   />
