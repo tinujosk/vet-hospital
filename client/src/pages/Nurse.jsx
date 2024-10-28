@@ -21,7 +21,6 @@ import {
   RadioGroup,
   Radio,
   FormControlLabel,
-
   Paper,
   Typography,
 } from '@mui/material';
@@ -29,7 +28,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import PatientDetails from '../components/PatientDetails';
 import { createPatient, getPatients } from '../services/patient';
-import { createAppointment, getAppointments, updateAppointment } from '../services/appointment';
+import {
+  createAppointment,
+  getAppointments,
+  updateAppointment,
+} from '../services/appointment';
 import { getOwners } from '../services/owner';
 
 // Hardcoding for now
@@ -58,12 +61,11 @@ function NursePage() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [appointmentModalOpen, setAppointmentModalOpen] = useState(false);
   const [appointments, setAppointments] = useState([]);
-  const [editAppointmentModalOpen, setEditAppointmentModalOpen] = useState(false);
+  const [editAppointmentModalOpen, setEditAppointmentModalOpen] =
+    useState(false);
   const [isSameOwner, setIsSameOwner] = useState(true);
   const [ownerOptions, setOwnerOptions] = useState([]);
   const [patientMap, setPatientMap] = useState({});
-
-
 
   const initialPatientState = {
     patientname: '',
@@ -94,18 +96,22 @@ function NursePage() {
 
   const [newPatient, setNewPatient] = useState(initialPatientState);
   const [newAppointment, setNewAppointment] = useState(initialAppointmentState);
-  const [editedAppointment, setEditedAppointment] = useState(initialAppointmentState);
+  const [editedAppointment, setEditedAppointment] = useState(
+    initialAppointmentState
+  );
   const [patients, setPatients] = useState([]);
   const [patientOptions, setPatientOptions] = useState([]);
 
-  {/*To fetch patients data*/}
+  {
+    /*To fetch patients data*/
+  }
   useEffect(() => {
     const fetchPatients = async () => {
       try {
         const data = await getPatients();
         const options = data.map(patient => ({
           value: patient._id,
-          label: `${patient.name} (${patient.patientId})`
+          label: `${patient.name} (${patient.patientId})`,
         }));
 
         setPatients(data);
@@ -118,7 +124,9 @@ function NursePage() {
     fetchPatients();
   }, []);
 
-  {/*To fetch appointments data*/}
+  {
+    /*To fetch appointments data*/
+  }
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -132,16 +140,17 @@ function NursePage() {
     fetchAppointments();
   }, []);
 
-
-{/*To fetch owners data*/}
+  {
+    /*To fetch owners data*/
+  }
   useEffect(() => {
     const fetchOwners = async () => {
       try {
-        const data = await getOwners(); 
+        const data = await getOwners();
         ownerData = data;
         const options = data.map(owner => ({
-          value: owner.ownerId, 
-          label: `${owner.firstName} ${owner.lastName} (${owner.email})` 
+          value: owner.ownerId,
+          label: `${owner.firstName} ${owner.lastName} (${owner.email})`,
         }));
         setOwnerOptions(options);
       } catch (error) {
@@ -181,7 +190,7 @@ function NursePage() {
     setNewAppointment(initialAppointmentState);
   };
 
-  const handleOpenEditAppointmentModal = (appointment) => {
+  const handleOpenEditAppointmentModal = appointment => {
     setEditedAppointment(appointment);
     setEditAppointmentModalOpen(true);
   };
@@ -206,7 +215,9 @@ function NursePage() {
     setEditedAppointment({ ...editedAppointment, [name]: value });
   };
 
-  {/*To create a new patient*/}
+  {
+    /*To create a new patient*/
+  }
   const handleSubmit = async () => {
     const requiredFields = [
       newPatient.patientname,
@@ -240,7 +251,9 @@ function NursePage() {
     }
   };
 
-  {/*To create a new appointment*/}
+  {
+    /*To create a new appointment*/
+  }
   const handleAppointmentSubmit = async () => {
     console.log('New Appointment:', newAppointment);
     const requiredFields = [
@@ -269,7 +282,9 @@ function NursePage() {
     }
   };
 
-  {/*To update an appointment*/}
+  {
+    /*To update an appointment*/
+  }
   const handleEditAppointmentSubmit = async (id, updatedData) => {
     try {
       handleCloseEditAppointmentModal();
@@ -283,7 +298,6 @@ function NursePage() {
       console.error('Failed to update appointment:', error);
     }
   };
-  
 
   return (
     <Box
@@ -297,52 +311,161 @@ function NursePage() {
     >
       <Box sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
         <Button
-          variant='contained'
-          color='primary'
+          variant="contained"
+          color="primary"
           onClick={handleOpenCreateModal}
         >
           Register Patient
         </Button>
         <Button
-          variant='contained'
-          color='secondary'
+          variant="contained"
+          color="secondary"
           onClick={handleOpenAppointmentModal}
         >
           Create Appointment
         </Button>
       </Box>
 
-      <Typography variant='h4' component='h2' sx={{ marginTop: '1px' }}>
+      <Typography variant="h4" component="h2" sx={{ marginTop: '1px' }}>
         Appointments
       </Typography>
 
       {/* Table to display appointments */}
-      <TableContainer component={Paper} sx={{ maxWidth: '95%', marginTop: 3, maxHeight: 310, overflowY: 'auto' }}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          maxWidth: '95%',
+          marginTop: 3,
+          maxHeight: 310,
+          overflowY: 'auto',
+        }}
+      >
         <Table aria-label="scrollable table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#1976d2', color: '#fff', position: 'sticky', top: 0, zIndex: 1 }}>Appointment ID</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#1976d2', color: '#fff', position: 'sticky', top: 0, zIndex: 1 }}>Doctor ID</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#1976d2', color: '#fff', position: 'sticky', top: 0, zIndex: 1 }}>Appointment Date</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#1976d2', color: '#fff', position: 'sticky', top: 0, zIndex: 1 }}>Patient Name</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#1976d2', color: '#fff', position: 'sticky', top: 0, zIndex: 1 }}>Slot</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#1976d2', color: '#fff', position: 'sticky', top: 0, zIndex: 1 }}>Reason</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#1976d2', color: '#fff', position: 'sticky', top: 0, zIndex: 1 }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', backgroundColor: '#1976d2', color: '#fff', position: 'sticky', top: 0, zIndex: 1 }}>Action</TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: 'bold',
+                  backgroundColor: '#1976d2',
+                  color: '#fff',
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
+                Appointment ID
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: 'bold',
+                  backgroundColor: '#1976d2',
+                  color: '#fff',
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
+                Doctor ID
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: 'bold',
+                  backgroundColor: '#1976d2',
+                  color: '#fff',
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
+                Appointment Date
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: 'bold',
+                  backgroundColor: '#1976d2',
+                  color: '#fff',
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
+                Patient Name
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: 'bold',
+                  backgroundColor: '#1976d2',
+                  color: '#fff',
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
+                Slot
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: 'bold',
+                  backgroundColor: '#1976d2',
+                  color: '#fff',
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
+                Reason
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: 'bold',
+                  backgroundColor: '#1976d2',
+                  color: '#fff',
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
+                Status
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: 'bold',
+                  backgroundColor: '#1976d2',
+                  color: '#fff',
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
+                Action
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {appointments.map((row) => (
-              <TableRow key={row._id} hover onClick={() => handleRowClick(row)} sx={{ cursor: 'pointer' }}>
+            {appointments?.map(row => (
+              <TableRow
+                key={row._id}
+                hover
+                onClick={() => handleRowClick(row)}
+                sx={{ cursor: 'pointer' }}
+              >
                 <TableCell>{row.appointmentId}</TableCell>
                 <TableCell>Hard Coded Value</TableCell>
-                <TableCell>{new Date(row.appointmentDate).toLocaleString()}</TableCell>
-                <TableCell> {row.patient.name}</TableCell>
+                <TableCell>
+                  {new Date(row.appointmentDate).toLocaleString()}
+                </TableCell>
+                <TableCell> {row.patient?.name}</TableCell>
                 <TableCell>{row.timeSlot}</TableCell>
                 <TableCell>{row.reason}</TableCell>
                 <TableCell>{row.status}</TableCell>
                 <TableCell>
-                  <FontAwesomeIcon icon={faEdit} onClick={(e) => { e.stopPropagation(); handleOpenEditAppointmentModal(row); }} />
+                  <FontAwesomeIcon
+                    icon={faEdit}
+                    onClick={e => {
+                      e.stopPropagation();
+                      handleOpenEditAppointmentModal(row);
+                    }}
+                  />
                 </TableCell>
               </TableRow>
             ))}
@@ -355,7 +478,6 @@ function NursePage() {
         patientDetails={{ patientData, ownerData }}
         drawerOpen={drawerOpen}
         handleCloseDrawer={handleCloseDrawer}
-        
       />
 
       {/* Create Patient Modal */}
@@ -365,66 +487,66 @@ function NursePage() {
         <DialogContent>
           <Typography>Patient Details</Typography>
           <TextField
-            margin='dense'
-            label='Patient Name'
-            name='patientname'
+            margin="dense"
+            label="Patient Name"
+            name="patientname"
             value={newPatient.patientname}
             onChange={handleInputChange}
             fullWidth
             required
           />
           <TextField
-            margin='dense'
-            label='Species'
-            name='species'
+            margin="dense"
+            label="Species"
+            name="species"
             value={newPatient.species}
             onChange={handleInputChange}
             fullWidth
             required
           />
           <TextField
-            margin='dense'
-            label='Breed'
-            name='breed'
+            margin="dense"
+            label="Breed"
+            name="breed"
             value={newPatient.breed}
             onChange={handleInputChange}
             fullWidth
             required
           />
           <TextField
-            margin='dense'
-            label='Age'
-            name='age'
+            margin="dense"
+            label="Age"
+            name="age"
             value={newPatient.age}
             onChange={handleInputChange}
             fullWidth
             required
-            type='number'
+            type="number"
           />
-          <FormControl fullWidth margin='dense' required>
-            <InputLabel id='gender-label'>Gender</InputLabel>
+          <FormControl fullWidth margin="dense" required>
+            <InputLabel id="gender-label">Gender</InputLabel>
             <Select
-              labelId='gender-label'
-              name='gender'
+              labelId="gender-label"
+              name="gender"
               value={newPatient.gender}
               onChange={handleInputChange}
-              label='Gender'
+              label="Gender"
             >
-              <MenuItem value='Male'>Male</MenuItem>
-              <MenuItem value='Female'>Female</MenuItem>
+              <MenuItem value="Male">Male</MenuItem>
+              <MenuItem value="Female">Female</MenuItem>
             </Select>
           </FormControl>
           <TextField
-            margin='dense'
-            label='Weight'
-            name='weight'
+            margin="dense"
+            label="Weight"
+            name="weight"
             value={newPatient.weight}
             onChange={handleInputChange}
             fullWidth
             required
           />
 
-          <Typography variant='subtitle1' gutterBottom>
+          <Typography variant="subtitle1" gutterBottom>
             Owner Details
           </Typography>
 
@@ -433,19 +555,29 @@ function NursePage() {
             <RadioGroup
               row
               value={isSameOwner ? 'same' : 'new'}
-              onChange={(e) => setIsSameOwner(e.target.value === 'same')}
+              onChange={e => setIsSameOwner(e.target.value === 'same')}
             >
-              <FormControlLabel value="same" control={<Radio />} label="Existing Owner" />
-              <FormControlLabel value="new" control={<Radio />} label="New Owner" />
+              <FormControlLabel
+                value="same"
+                control={<Radio />}
+                label="Existing Owner"
+              />
+              <FormControlLabel
+                value="new"
+                control={<Radio />}
+                label="New Owner"
+              />
             </RadioGroup>
           </FormControl>
           {isSameOwner ? (
             <div style={{ marginBottom: '25px' }}>
               <ReactSelect
                 options={ownerOptions}
-                onChange={(selectedOption) => {
+                onChange={selectedOption => {
                   console.log('Selected Option:', selectedOption);
-                  const tst = ownerData.find(owner => owner.ownerId === selectedOption.value);
+                  const tst = ownerData.find(
+                    owner => owner.ownerId === selectedOption.value
+                  );
                   setNewPatient({
                     ...newPatient,
                     ownerId: tst.ownerId,
@@ -462,7 +594,6 @@ function NursePage() {
               />
             </div>
           ) : (
-
             <>
               <TextField
                 margin="dense"
@@ -493,7 +624,6 @@ function NursePage() {
                 required
               />
 
-
               <TextField
                 margin="dense"
                 label="Owner Email"
@@ -517,10 +647,10 @@ function NursePage() {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseCreateModal} color='primary'>
+          <Button onClick={handleCloseCreateModal} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} color='primary'>
+          <Button onClick={handleSubmit} color="primary">
             Create
           </Button>
         </DialogActions>
@@ -533,19 +663,23 @@ function NursePage() {
           <div style={{ marginBottom: '25px' }}>
             <ReactSelect
               options={patientOptions}
-              onChange={(selectedOption) => {
-                setNewAppointment({ ...newAppointment, patient: selectedOption.value, patientName: selectedOption.label.split(" (")[0] });
+              onChange={selectedOption => {
+                setNewAppointment({
+                  ...newAppointment,
+                  patient: selectedOption.value,
+                  patientName: selectedOption.label.split(' (')[0],
+                });
               }}
               placeholder="Select Patient"
               isSearchable
               required
               styles={{
-                control: (base) => ({
+                control: base => ({
                   ...base,
                   marginTop: '8px',
                   marginBottom: '8px',
                 }),
-                menu: (base) => ({
+                menu: base => ({
                   ...base,
                   maxHeight: 200,
                   overflowY: 'auto',
@@ -554,7 +688,9 @@ function NursePage() {
                 }),
                 option: (base, state) => ({
                   ...base,
-                  backgroundColor: state.isFocused ? 'rgba(224, 224, 224, 0.9)' : 'transparent',
+                  backgroundColor: state.isFocused
+                    ? 'rgba(224, 224, 224, 0.9)'
+                    : 'transparent',
                   color: state.isSelected ? '#000' : '#333',
                   padding: 10,
                 }),
@@ -562,9 +698,9 @@ function NursePage() {
             />
           </div>
           <TextField
-            margin='dense'
-            label='Doctor ID'
-            name='doctorID'
+            margin="dense"
+            label="Doctor ID"
+            name="doctorID"
             value={newAppointment.doctor}
             onChange={handleAppointmentInputChange}
             fullWidth
@@ -580,9 +716,9 @@ function NursePage() {
             required
           />
           <TextField
-            margin='dense'
-            label='Time Slot'
-            name='timeSlot'
+            margin="dense"
+            label="Time Slot"
+            name="timeSlot"
             value={newAppointment.timeSlot}
             onChange={handleAppointmentInputChange}
             fullWidth
@@ -599,55 +735,55 @@ function NursePage() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseAppointmentModal} color='primary'>
+          <Button onClick={handleCloseAppointmentModal} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleAppointmentSubmit} color='primary'>
+          <Button onClick={handleAppointmentSubmit} color="primary">
             Create
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Edit Appointment Modal */}
-      <Dialog open={editAppointmentModalOpen} onClose={handleCloseEditAppointmentModal}>
+      <Dialog
+        open={editAppointmentModalOpen}
+        onClose={handleCloseEditAppointmentModal}
+      >
         <DialogTitle>Edit Appointment</DialogTitle>
         <DialogContent>
           <TextField
-            margin='dense'
-            label='Doctor ID'
-            name='doctorID'
+            margin="dense"
+            label="Doctor ID"
+            name="doctorID"
             value={editedAppointment.doctor}
             onChange={handleEditAppointmentInputChange}
             fullWidth
             required
           />
           <TextField
-            margin='dense'
-            label='Appointment Date'
-            type='datetime-local'
-            name='appointmentDate'
+            margin="dense"
+            label="Appointment Date"
+            type="datetime-local"
+            name="appointmentDate"
             value={editedAppointment.appointmentDate}
             onChange={handleEditAppointmentInputChange}
             fullWidth
             required
           />
           <TextField
-            margin='dense'
-            label='Time Slot'
-            name='timeSlot'
+            margin="dense"
+            label="Time Slot"
+            name="timeSlot"
             value={editedAppointment.timeSlot}
             onChange={handleEditAppointmentInputChange}
             fullWidth
             required
           />
 
-
-
-
           <TextField
-            margin='dense'
-            label='Reason'
-            name='reason'
+            margin="dense"
+            label="Reason"
+            name="reason"
             value={editedAppointment.reason}
             onChange={handleEditAppointmentInputChange}
             fullWidth
@@ -656,15 +792,15 @@ function NursePage() {
           <FormControl fullWidth sx={{ marginTop: 2 }}>
             <InputLabel>Status</InputLabel>
             <Select
-              name='status'
+              name="status"
               value={editedAppointment.status}
               onChange={handleEditAppointmentInputChange}
               fullWidth
               required
             >
-              <MenuItem value='Pending'>Pending</MenuItem>
-              <MenuItem value='Completed'>Completed</MenuItem>
-              <MenuItem value='Cancelled'>Cancelled</MenuItem>
+              <MenuItem value="Pending">Pending</MenuItem>
+              <MenuItem value="Prelims">Prelims Done</MenuItem>
+              <MenuItem value="Cancelled">Cancelled</MenuItem>
             </Select>
           </FormControl>
         </DialogContent>

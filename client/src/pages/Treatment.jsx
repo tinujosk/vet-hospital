@@ -58,6 +58,7 @@ const statusMap = {
 const Treatment = () => {
   const [appointment, setAppointment] = useState();
   const [prescription, setPrescription] = useState({});
+  const [medications, setMedications] = useState([]);
   const [activeStep, setActiveStep] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -66,11 +67,11 @@ const Treatment = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
 
-  const handleDeleteMedicine = id => {
-    const newMedications = prescription?.medications?.filter(
-      medication => medication._id !== id
+  const handleDeleteMedications = id => {
+    const updatedMedications = medications?.filter(
+      medication => medication.medication != id
     );
-    setPrescription({ ...prescription, medications: newMedications });
+    setMedications(updatedMedications);
   };
 
   const validate = () => {
@@ -86,19 +87,21 @@ const Treatment = () => {
     return isValid;
   };
 
-  useEffect(() => {
-    const fetchAppointment = async () => {
-      try {
-        const appointment = await getAppointment(id);
-        setAppointment(appointment);
-        if (appointment?.prescription) {
-          setPrescription(appointment.prescription);
-        }
-      } catch (error) {
-      } finally {
-        setLoading(false);
+  const fetchAppointment = async () => {
+    try {
+      const appointment = await getAppointment(id);
+      setAppointment(appointment);
+      if (appointment?.prescription) {
+        setPrescription(appointment.prescription);
+        setMedications(appointment.prescription?.medications);
       }
-    };
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchAppointment();
   }, [id]);
 
@@ -120,6 +123,7 @@ const Treatment = () => {
       try {
         const newPrescription = {
           ...prescription,
+          medications,
           appointment: appointment._id,
         };
 
@@ -130,6 +134,7 @@ const Treatment = () => {
           dispatch(
             showSnackbar({ message: 'Prescription added', severity: 'success' })
           );
+          fetchAppointment();
         }
       } catch (error) {
         console.error('Error adding prescription:', error);
@@ -144,7 +149,7 @@ const Treatment = () => {
   return (
     <Box
       sx={{
-        padding: 4,
+        p: { xs: 2, md: 4 },
       }}
     >
       <Typography variant="h5" marginBottom={4}>
@@ -162,12 +167,16 @@ const Treatment = () => {
           )
         </span>
       </Typography>
-
-      <Grid container spacing={4} columns={12} justifyContent={'center'}>
-        <Grid size={4}>
+      <Box
+        display="flex"
+        flexDirection={{ xs: 'column', md: 'row' }}
+        justifyContent="center"
+        gap={4}
+      >
+        <Box width={{ xs: '100%', md: '35%' }}>
           <Paper
             style={{ padding: '20px', height: '100%' }}
-            sx={{ minWidth: 400 }}
+            sx={{ minWidth: 450 }}
           >
             <Typography variant="h5" gutterBottom marginBottom={3}>
               Prescription
@@ -186,20 +195,13 @@ const Treatment = () => {
                         isModalOpen={isModalOpen}
                         closeModal={() => setIsModalOpen(false)}
                         setMedications={medication =>
-                          setPrescription({
-                            ...prescription,
-                            medications: [
-                              ...(prescription?.medications || []),
-                              medication,
-                            ],
-                          })
+                          setMedications([...medications, medication])
                         }
                       />
-                      {prescription?.medications &&
-                      prescription?.medications.length ? (
+                      {medications && medications.length ? (
                         <MedicationTable
-                          medications={prescription?.medications}
-                          handleDeleteMedicine={handleDeleteMedicine}
+                          medications={medications}
+                          handleDeleteMedications={handleDeleteMedications}
                         />
                       ) : (
                         <Typography
@@ -275,8 +277,8 @@ const Treatment = () => {
               </>
             )}
           </Paper>
-        </Grid>
-        <Grid size={4}>
+        </Box>
+        <Box width={{ xs: '100%', md: '35%' }}>
           <Typography variant="h5" gutterBottom>
             Treatment Status
           </Typography>
@@ -288,7 +290,15 @@ const Treatment = () => {
                     index === treatmentSteps.length - 1 ? (
                       <Typography variant="caption">Last step</Typography>
                     ) : (
-                      <Typography variant="caption">'On 2022/22/2'</Typography>
+                      <Typography variant="caption">
+                        {index == 0
+                          ? `Opened on
+                          ${new Date(appointment.createdAt).toLocaleString()}`
+                          : activeStep === index &&
+                            `Last updated ${new Date(
+                              appointment.updatedAt
+                            ).toLocaleString()}`}
+                      </Typography>
                     )
                   }
                 >
@@ -300,8 +310,8 @@ const Treatment = () => {
               </Step>
             ))}
           </Stepper>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </Box>
   );
 };

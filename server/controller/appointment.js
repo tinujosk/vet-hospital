@@ -5,15 +5,17 @@ export const createAppointment = async (req, res) => {
   try {
     const newAppointment = new Appointment(req.body);
     const savedAppointment = await newAppointment.save();
-    const populatedAppointment = await Appointment.findById(savedAppointment._id).populate('patient');
+    const populatedAppointment = await Appointment.findById(
+      savedAppointment._id
+    ).populate('patient');
     return res.status(201).json(populatedAppointment);
   } catch (error) {
     console.error('Error creating appointment:', error);
-    return res.status(500).json({ message: 'Failed to create appointment', error: error.message });
+    return res
+      .status(500)
+      .json({ message: 'Failed to create appointment', error: error.message });
   }
 };
-
-
 
 export const getAppointments = async (req, res) => {
   try {
@@ -22,10 +24,7 @@ export const getAppointments = async (req, res) => {
     if (appointments.length === 0) {
       console.log('No appointments found.');
     } else {
-      
-      appointments.forEach((appointment, index) => {
-        
-      });
+      appointments.forEach((appointment, index) => {});
     }
 
     res.status(200).json(appointments);

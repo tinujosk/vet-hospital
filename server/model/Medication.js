@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Counter from './Counter.js';
+import medicationsData from '../configs/medicationsData.js';
 
 const Schema = mongoose.Schema;
 
@@ -32,4 +33,16 @@ MedicationSchema.pre('save', async function (next) {
 });
 
 const Medication = mongoose.model('Medication', MedicationSchema);
+
+async function seedDatabase() {
+  try {
+    await Medication.deleteMany({});
+    await Medication.insertMany(medicationsData);
+  } catch (error) {
+    console.error('Error seeding data:', error);
+  }
+}
+
+seedDatabase();
+
 export default Medication;

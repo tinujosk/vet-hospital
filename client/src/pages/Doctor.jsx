@@ -16,45 +16,24 @@ import { faFolderOpen } from '@fortawesome/free-solid-svg-icons';
 import PatientDetails from '../components/PatientDetails';
 import { getAppointments } from '../services/appointment';
 import Loading from '../components/Loading';
-
-// Hardcoding for now
-const patientData = {
-  name: 'Max',
-  species: 'Dog',
-  breed: 'Golden Retriever',
-  age: 5,
-  gender: 'Male',
-  weight: '30kg',
-  medicalHistory: [
-    'Vaccinated for Rabies',
-    'Previous surgery on left leg',
-    'Allergy to peanuts',
-  ],
-  lastUpdated: '2023-01-10',
-};
-
-// Hardcoding for now
-const ownerData = {
-  firstName: 'Tinu',
-  lastName: 'Jos',
-  address: 'B12, 110 Activa Avenue, Kitchener, Ontario',
-  phone: '5195880153',
-  email: 'josk.tinu@gmail.com',
-  weight: '30kg',
-  lastUpdated: '2023-01-10',
-};
+import { getPatientById } from '../services/patient';
 
 function DoctorPage() {
   const [appointments, setAppointments] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState(null);
+  const [selectedPatient, setSelectedPatient] = useState({});
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
-  const handleRowClick = row => {
-    setSelectedRow(row);
-    setDrawerOpen(true);
+  const handleRowClick = async row => {
+    setLoading(true);
+    const result = await getPatientById(row?.patient?._id);
+    if (result) {
+      setSelectedPatient(result);
+      setDrawerOpen(true);
+      setLoading(false);
+    }
   };
 
   const handleCloseDrawer = () => {
@@ -94,14 +73,14 @@ function DoctorPage() {
         padding: 4,
       }}
     >
-      {appointments.length ? (
+      {appointments?.length ? (
         <>
           <Typography variant="h4" component="h2" sx={{ marginBottom: '50px' }}>
             Your Recent Appointments
           </Typography>
           <TableContainer
             component={Paper}
-            sx={{ maxWidth: '80%', maxHeight: '500px' }}
+            sx={{ maxWidth: { md: '85%', sm: '100%' }, maxHeight: '500px' }}
           >
             <Table stickyHeader>
               <TableHead>
@@ -158,8 +137,8 @@ function DoctorPage() {
 
       <PatientDetails
         patientDetails={{
-          patientData: selectedRow?.patient || patientData,
-          ownerData,
+          patientData: selectedPatient,
+          ownerData: selectedPatient?.owner,
         }}
         drawerOpen={drawerOpen}
         handleCloseDrawer={handleCloseDrawer}

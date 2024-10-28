@@ -1,0 +1,98 @@
+import mongoose from 'mongoose';
+
+const medications = [
+  {
+    _id: new mongoose.Types.ObjectId(),
+    medicationId: 'MED001',
+    name: 'Paracetamol',
+    description: 'Pain reliever and fever reducer',
+    dosageForm: 'Tablet',
+    manufacturer: 'Pharma Inc.',
+    strength: '500mg',
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    medicationId: 'MED002',
+    name: 'Ibuprofen',
+    description: 'Nonsteroidal anti-inflammatory drug (NSAID)',
+    dosageForm: 'Tablet',
+    manufacturer: 'HealthCorp',
+    strength: '200mg',
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    medicationId: 'MED003',
+    name: 'Amoxicillin',
+    description:
+      'Antibiotic used to treat a wide variety of bacterial infections',
+    dosageForm: 'Capsule',
+    manufacturer: 'BioPharm',
+    strength: '250mg',
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    medicationId: 'MED004',
+    name: 'Lisinopril',
+    description: 'Used to treat high blood pressure (hypertension)',
+    dosageForm: 'Tablet',
+    manufacturer: 'MediLife',
+    strength: '10mg',
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    medicationId: 'MED005',
+    name: 'Metformin',
+    description:
+      'Helps control blood sugar levels for people with type 2 diabetes',
+    dosageForm: 'Tablet',
+    manufacturer: 'Wellness Pharma',
+    strength: '500mg',
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    medicationId: 'MED006',
+    name: 'Atorvastatin',
+    description: 'Used to treat high cholesterol',
+    dosageForm: 'Tablet',
+    manufacturer: 'CardioMed',
+    strength: '20mg',
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    medicationId: 'MED007',
+    name: 'Ciprofloxacin',
+    description: 'Antibiotic used to treat a variety of bacterial infections',
+    dosageForm: 'Tablet',
+    manufacturer: 'PharmaPlus',
+    strength: '500mg',
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    medicationId: 'MED008',
+    name: 'Amlodipine',
+    description: 'Used to treat high blood pressure and angina',
+    dosageForm: 'Tablet',
+    manufacturer: 'HeartCare Ltd.',
+    strength: '5mg',
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    medicationId: 'MED009',
+    name: 'Omeprazole',
+    description: 'Reduces stomach acid and treats GERD',
+    dosageForm: 'Capsule',
+    manufacturer: 'Digestive Health',
+    strength: '20mg',
+  },
+  {
+    _id: new mongoose.Types.ObjectId(),
+    medicationId: 'MED010',
+    name: 'Hydrochlorothiazide',
+    description: 'Diuretic used to treat high blood pressure',
+    dosageForm: 'Tablet',
+    manufacturer: 'HydroPharm',
+    strength: '25mg',
+  },
+];
+
+export default medications;

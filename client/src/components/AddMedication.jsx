@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   TextField,
   Button,
@@ -24,7 +24,6 @@ const AddMedicationsForm = ({ isModalOpen, closeModal, setMedications }) => {
     frequency: '',
     duration: '',
   });
-  // const [medication, setMedication] = useState([]);
 
   const validate = () => {
     let tempErrors = {
@@ -70,21 +69,16 @@ const AddMedicationsForm = ({ isModalOpen, closeModal, setMedications }) => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log('prescription', medication);
-  // }, [medication]);
-
   const handleAddMedicine = () => {
     if (validate()) {
       const newMedication = {
-        medicineId: selectedMedicine._id,
+        medication: selectedMedicine._id,
         name: selectedMedicine.name,
         dosage,
         frequency,
         duration,
       };
 
-      // setMedication(newMedication);
       setMedications(newMedication);
       setSelectedMedicine(null);
       setSearchTerm('');
