@@ -23,11 +23,12 @@ import {
   FormControlLabel,
   Paper,
   Typography,
+  Link,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import PatientDetails from '../components/PatientDetails';
-import { createPatient, getPatients } from '../services/patient';
+import { createPatient, getPatients,getPatientById } from '../services/patient';
 import {
   createAppointment,
   getAppointments,
@@ -66,6 +67,9 @@ function NursePage() {
   const [isSameOwner, setIsSameOwner] = useState(true);
   const [ownerOptions, setOwnerOptions] = useState([]);
   const [patientMap, setPatientMap] = useState({});
+  
+  const [selectedPatient, setSelectedPatient] = useState({});
+  const [errors, setErrors] = useState({});
 
   const initialPatientState = {
     patientname: '',
@@ -161,10 +165,16 @@ function NursePage() {
     fetchOwners();
   }, []);
 
-  const handleRowClick = row => {
-    setSelectedRow(row);
-    setEditMode(true);
-    setDrawerOpen(true);
+  
+  const handleRowClick = async row => {
+
+    const result = await getPatientById(row?.patient?._id);
+    if (result) {
+      setSelectedRow(row);
+      setSelectedPatient(result);
+      setDrawerOpen(true);
+
+    }
   };
 
   const handleCloseDrawer = () => {
@@ -179,6 +189,7 @@ function NursePage() {
   const handleCloseCreateModal = () => {
     setCreateModalOpen(false);
     setNewPatient(initialPatientState);
+    setErrors({});
   };
 
   const handleOpenAppointmentModal = () => {
@@ -187,6 +198,7 @@ function NursePage() {
 
   const handleCloseAppointmentModal = () => {
     setAppointmentModalOpen(false);
+    setErrors({});
     setNewAppointment(initialAppointmentState);
   };
 
@@ -218,85 +230,135 @@ function NursePage() {
   {
     /*To create a new patient*/
   }
-  const handleSubmit = async () => {
-    const requiredFields = [
-      newPatient.patientname,
-      newPatient.species,
-      newPatient.breed,
-      newPatient.age,
-      newPatient.gender,
-      newPatient.weight,
-      newPatient.ownerfname,
-      newPatient.ownerlname,
-      newPatient.address,
-      newPatient.phone,
-      newPatient.email,
-    ];
-
-    console.log('Required fields:', requiredFields);
-
-    const isAnyFieldEmpty = requiredFields.some(field => !field);
-
-    if (isAnyFieldEmpty) {
-      alert('Please fill in all required fields.');
-      return;
-    }
-
-    try {
-      const createdPatient = await createPatient(newPatient);
-      setCreateModalOpen(false);
-      setNewPatient(initialPatientState);
-    } catch (error) {
-      console.error('Failed to create patient:', error);
-    }
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (Validite()) {
+      try {
+        const createdPatient = await createPatient(newPatient);
+        setCreateModalOpen(false);
+        setNewPatient(initialPatientState);
+      } catch (error) {
+        console.error('Failed to create patient:', error);
+      }
+    };
   };
+
+  const Validite = () => {
+    let tempErrors = { patientname: '', species: '', breed: '', age: '', weight: '', gender:'', ownerfname: '', ownerlname: '', address: '', phone: '', email: '' };
+    let isValid = true;
+    if (!newPatient.patientname) {
+      tempErrors.patientname = 'Patient Name is required';
+      isValid = false;
+    }
+    if (!newPatient.species) {
+      tempErrors.species = 'Species is required';
+      isValid = false;
+    }
+    if (!newPatient.breed) {
+      tempErrors.breed = 'Breed is required';
+      isValid = false;
+    }
+    if (!newPatient.age) {
+      tempErrors.age = 'Age is required';
+      isValid = false;
+    }
+    if (!newPatient.weight) {
+      tempErrors.weight = 'Weight is required';
+      isValid = false;
+    }
+    if (!newPatient.gender) {
+      tempErrors.gender ='Gender is required';
+      isValid = false;
+    }
+
+    if (!newPatient.ownerfname) {
+      tempErrors.ownerfname = 'Owner First Name is required';
+      isValid = false;
+    }
+    if (!newPatient.ownerlname) {
+      tempErrors.ownerlname = 'Owner Last Name is required';
+      isValid = false;
+    }
+    if (!newPatient.address) {
+      tempErrors.address = 'Address is required';
+      isValid = false;
+    }
+    if (!newPatient.phone) {
+      tempErrors.phone = 'Phone is required';
+      isValid = false;
+    }
+    if (!newPatient.email) {
+      tempErrors.email = 'Email is required';
+      isValid = false;
+    }
+    setErrors(tempErrors);
+    return isValid;
+  };
+
 
   {
     /*To create a new appointment*/
   }
-  const handleAppointmentSubmit = async () => {
-    console.log('New Appointment:', newAppointment);
-    const requiredFields = [
-      newAppointment.doctorID,
-      newAppointment.appointmentDate,
-      newAppointment.timeSlot,
-      newAppointment.patient,
-      newAppointment.reason,
-      newAppointment.status,
-    ];
+  const handleAppointmentSubmit = async (event) => {
+    event.preventDefault();
 
-    const isAnyFieldEmpty = requiredFields.some(field => !field);
-
-    if (isAnyFieldEmpty) {
-      alert('Please fill in all required fields.');
-      return;
-    }
-
-    try {
-      const createdAppointment = await createAppointment(newAppointment);
-      setAppointments(prev => [...prev, createdAppointment]);
-      setAppointmentModalOpen(false);
-      setNewAppointment(initialAppointmentState);
-    } catch (error) {
-      console.error('Failed to create appointment:', error);
-    }
+    if (appointmentValidate()) {
+      try {
+        const createdAppointment = await createAppointment(newAppointment);
+        setAppointments(prev => [...prev, createdAppointment]);
+        setAppointmentModalOpen(false);
+        setNewAppointment(initialAppointmentState);
+      } catch (error) {
+        console.error('Failed to create appointment:', error);
+      }
+    };
   };
+
+  const appointmentValidate = () => {
+    let tempErrors = { patient: '', doctor: '', appointmentDate: '', timeSlot: '', reason: '' };
+    let isValid = true;
+    if (!newAppointment.patient) {
+      tempErrors.patient = 'Patient is required';
+      isValid = false;
+    }
+    if (!newAppointment.doctorID) {
+      tempErrors.doctor = 'Doctor ID is required';
+      isValid = false;
+    }
+    if (!newAppointment.appointmentDate) {
+      tempErrors.appointmentDate = 'Appointment Date is required';
+      isValid = false;
+    }
+    if (!newAppointment.timeSlot) {
+      tempErrors.timeSlot = 'Time Slot is required';
+      isValid = false;
+    }
+    if (!newAppointment.reason) {
+      tempErrors.reason = 'Reason is required';
+      isValid = false;
+    }
+    setErrors(tempErrors);
+    return isValid;
+  };
+
+
 
   {
     /*To update an appointment*/
   }
   const handleEditAppointmentSubmit = async (id, updatedData) => {
-    try {
-      handleCloseEditAppointmentModal();
-      const updatedAppointment = await updateAppointment(id, updatedData);
-      setAppointments(prev =>
-        prev.map(appointment =>
-          appointment._id === id ? updatedAppointment : appointment
-        )
-      );
-    } catch (error) {
-      console.error('Failed to update appointment:', error);
-    }
+      try {
+        handleCloseEditAppointmentModal();
+        const updatedAppointment = await updateAppointment(id, updatedData);
+        setAppointments(prev =>
+          prev.map(appointment =>
+            appointment._id === id ? updatedAppointment : appointment
+          )
+        );
+      } catch (error) {
+        console.error('Failed to update appointment:', error);
+      }
+
   };
 
   return (
@@ -475,7 +537,10 @@ function NursePage() {
 
       {/* Patient Details Drawer */}
       <PatientDetails
-        patientDetails={{ patientData, ownerData }}
+        patientDetails={{ 
+          patientData: selectedPatient,
+          ownerData: selectedPatient?.owner,
+        }}
         drawerOpen={drawerOpen}
         handleCloseDrawer={handleCloseDrawer}
       />
@@ -492,6 +557,8 @@ function NursePage() {
             name="patientname"
             value={newPatient.patientname}
             onChange={handleInputChange}
+            error={errors.patientname}
+            helperText={errors.patientname}
             fullWidth
             required
           />
@@ -501,6 +568,8 @@ function NursePage() {
             name="species"
             value={newPatient.species}
             onChange={handleInputChange}
+            error={errors.species}
+            helperText={errors.species}
             fullWidth
             required
           />
@@ -510,6 +579,8 @@ function NursePage() {
             name="breed"
             value={newPatient.breed}
             onChange={handleInputChange}
+            error={errors.breed}
+            helperText={errors.breed}
             fullWidth
             required
           />
@@ -519,6 +590,8 @@ function NursePage() {
             name="age"
             value={newPatient.age}
             onChange={handleInputChange}
+            error={errors.age}
+            helperText={errors.age}
             fullWidth
             required
             type="number"
@@ -530,6 +603,7 @@ function NursePage() {
               name="gender"
               value={newPatient.gender}
               onChange={handleInputChange}
+
               label="Gender"
             >
               <MenuItem value="Male">Male</MenuItem>
@@ -542,6 +616,8 @@ function NursePage() {
             name="weight"
             value={newPatient.weight}
             onChange={handleInputChange}
+            error={errors.weight}
+            helperText={errors.weight}
             fullWidth
             required
           />
@@ -593,6 +669,7 @@ function NursePage() {
                 required
               />
             </div>
+            
           ) : (
             <>
               <TextField
@@ -601,6 +678,8 @@ function NursePage() {
                 name="ownerfname"
                 value={newPatient.ownerfname}
                 onChange={handleInputChange}
+                error={errors.ownerfname}
+                helperText={errors.ownerfname}
                 fullWidth
                 required
               />
@@ -611,6 +690,8 @@ function NursePage() {
                 name="ownerlname"
                 value={newPatient.ownerlname}
                 onChange={handleInputChange}
+                error={errors.ownerlname}
+                helperText={errors.ownerlname}
                 fullWidth
                 required
               />
@@ -620,6 +701,8 @@ function NursePage() {
                 name="address"
                 value={newPatient.address}
                 onChange={handleInputChange}
+                error={errors.address}
+                helperText={errors.address}
                 fullWidth
                 required
               />
@@ -630,6 +713,8 @@ function NursePage() {
                 name="email"
                 value={newPatient.email}
                 onChange={handleInputChange}
+                error={errors.email}
+                helperText={errors.email}
                 fullWidth
                 required
               />
@@ -640,6 +725,8 @@ function NursePage() {
                 name="phone"
                 value={newPatient.phone}
                 onChange={handleInputChange}
+                error={errors.phone}
+                helperText={errors.phone}
                 fullWidth
                 required
               />
@@ -662,6 +749,8 @@ function NursePage() {
         <DialogContent>
           <div style={{ marginBottom: '25px' }}>
             <ReactSelect
+              error={errors.patient}
+              helperText={errors.patient}
               options={patientOptions}
               onChange={selectedOption => {
                 setNewAppointment({
@@ -694,15 +783,20 @@ function NursePage() {
                   color: state.isSelected ? '#000' : '#333',
                   padding: 10,
                 }),
+
               }}
+
             />
+
           </div>
           <TextField
             margin="dense"
             label="Doctor ID"
             name="doctorID"
-            value={newAppointment.doctor}
+            value={newAppointment.doctorID}
             onChange={handleAppointmentInputChange}
+            error={errors.doctor}
+            helperText={errors.doctor}
             fullWidth
             required
           />
@@ -712,6 +806,8 @@ function NursePage() {
             name="appointmentDate"
             value={newAppointment.appointmentDate}
             onChange={handleAppointmentInputChange}
+            error={errors.appointmentDate}
+            helperText={errors.appointmentDate}
             fullWidth
             required
           />
@@ -721,6 +817,8 @@ function NursePage() {
             name="timeSlot"
             value={newAppointment.timeSlot}
             onChange={handleAppointmentInputChange}
+            error={errors.timeSlot}
+            helperText={errors.timeSlot}
             fullWidth
             required
           />
@@ -730,6 +828,8 @@ function NursePage() {
             name="reason"
             value={newAppointment.reason}
             onChange={handleAppointmentInputChange}
+            error={errors.reason}
+            helperText={errors.reason}
             fullWidth
             required
           />
@@ -744,6 +844,7 @@ function NursePage() {
         </DialogActions>
       </Dialog>
 
+
       {/* Edit Appointment Modal */}
       <Dialog
         open={editAppointmentModalOpen}
@@ -755,7 +856,7 @@ function NursePage() {
             margin="dense"
             label="Doctor ID"
             name="doctorID"
-            value={editedAppointment.doctor}
+            value={editedAppointment.doctorID}
             onChange={handleEditAppointmentInputChange}
             fullWidth
             required
@@ -763,7 +864,7 @@ function NursePage() {
           <TextField
             margin="dense"
             label="Appointment Date"
-            type="datetime-local"
+            type="datetime"
             name="appointmentDate"
             value={editedAppointment.appointmentDate}
             onChange={handleEditAppointmentInputChange}
