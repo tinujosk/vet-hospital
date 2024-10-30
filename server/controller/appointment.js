@@ -5,9 +5,10 @@ export const createAppointment = async (req, res) => {
   try {
     const newAppointment = new Appointment(req.body);
     const savedAppointment = await newAppointment.save();
-    const populatedAppointment = await Appointment.findById(
-      savedAppointment._id
-    ).populate('patient');
+    const populatedAppointment = await Appointment.findById(savedAppointment._id)
+      .populate('patient')
+      .populate('doctor');
+
     return res.status(201).json(populatedAppointment);
   } catch (error) {
     console.error('Error creating appointment:', error);
@@ -19,7 +20,9 @@ export const createAppointment = async (req, res) => {
 
 export const getAppointments = async (req, res) => {
   try {
-    const appointments = await Appointment.find().populate('patient');
+    const appointments = await Appointment.find()
+    .populate('patient')
+    .populate('doctor');
 
     if (appointments.length === 0) {
       console.log('No appointments found.');
@@ -38,7 +41,8 @@ export const getAppointment = async (req, res) => {
   try {
     const appointment = await Appointment.findById(req.params.id)
       .populate('patient')
-      .populate('prescription');
+      .populate('prescription')
+      .populate('doctor');
     if (!appointment)
       return res.status(404).json({ message: 'Appointment not found' });
     res.status(200).json(appointment);
@@ -57,7 +61,8 @@ export const updateAppointment = async (req, res) => {
       _id,
       updateData,
       { new: true }
-    ).populate('patient');
+    ).populate('patient')
+    .populate('doctor');
     return res.status(200).json(updatedAppointment);
   } catch (error) {
     console.error('Error updating appointment:', error);

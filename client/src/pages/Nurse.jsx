@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import ReactSelect from 'react-select';
 import {
   Box,
   Button,
@@ -23,36 +22,20 @@ import {
   FormControlLabel,
   Paper,
   Typography,
-  Link,
+  Autocomplete
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import PatientDetails from '../components/PatientDetails';
-import { createPatient, getPatients,getPatientById } from '../services/patient';
+import { createPatient, getPatients, getPatientById } from '../services/patient';
 import {
   createAppointment,
   getAppointments,
   updateAppointment,
 } from '../services/appointment';
 import { getOwners } from '../services/owner';
+import { getDoctors } from '../services/doctor';
 
-// Hardcoding for now
-const patientData = {
-  name: 'Max',
-  species: 'Dog',
-  breed: 'Golden Retriever',
-  age: 5,
-  gender: 'Male',
-  weight: '30kg',
-  medicalHistory: [
-    'Vaccinated for Rabies',
-    'Previous surgery on left leg',
-    'Allergy to peanuts',
-  ],
-  lastUpdated: '2023-01-10',
-};
-
-// Hardcoding for now
 let ownerData = [];
 
 function NursePage() {
@@ -67,9 +50,10 @@ function NursePage() {
   const [isSameOwner, setIsSameOwner] = useState(true);
   const [ownerOptions, setOwnerOptions] = useState([]);
   const [patientMap, setPatientMap] = useState({});
-  
+  const [doctorOptions, setDoctorOptions] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState({});
   const [errors, setErrors] = useState({});
+
 
   const initialPatientState = {
     patientname: '',
@@ -165,7 +149,30 @@ function NursePage() {
     fetchOwners();
   }, []);
 
-  
+  {/*To fetch doctors data*/ }
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const data = await getDoctors();
+
+
+        // Mapping each doctor to desired label format
+        const options = data.map(doctor => ({
+          value: doctor._id,
+          label: `${doctor.firstName} ${doctor.lastName} (ID: ${doctor.staffId})`,
+        }));
+        console.log('Doctor Options:', options);
+
+        setDoctorOptions(options);
+      } catch (error) {
+        console.error('Failed to fetch doctors:', error);
+      }
+    };
+
+    fetchDoctors();
+  }, []);
+
+
   const handleRowClick = async row => {
 
     const result = await getPatientById(row?.patient?._id);
@@ -244,7 +251,7 @@ function NursePage() {
   };
 
   const Validite = () => {
-    let tempErrors = { patientname: '', species: '', breed: '', age: '', weight: '', gender:'', ownerfname: '', ownerlname: '', address: '', phone: '', email: '' };
+    let tempErrors = { patientname: '', species: '', breed: '', age: '', weight: '', gender: '', ownerfname: '', ownerlname: '', address: '', phone: '', email: '' };
     let isValid = true;
     if (!newPatient.patientname) {
       tempErrors.patientname = 'Patient Name is required';
@@ -267,7 +274,7 @@ function NursePage() {
       isValid = false;
     }
     if (!newPatient.gender) {
-      tempErrors.gender ='Gender is required';
+      tempErrors.gender = 'Gender is required';
       isValid = false;
     }
 
@@ -300,6 +307,7 @@ function NursePage() {
     /*To create a new appointment*/
   }
   const handleAppointmentSubmit = async (event) => {
+    console.log('New Appointment:', newAppointment);
     event.preventDefault();
 
     if (appointmentValidate()) {
@@ -315,14 +323,14 @@ function NursePage() {
   };
 
   const appointmentValidate = () => {
-    let tempErrors = { patient: '', doctor: '', appointmentDate: '', timeSlot: '', reason: '' };
+    let tempErrors = { patient: '', doctorID: '', appointmentDate: '', timeSlot: '', reason: '' };
     let isValid = true;
     if (!newAppointment.patient) {
       tempErrors.patient = 'Patient is required';
       isValid = false;
     }
     if (!newAppointment.doctorID) {
-      tempErrors.doctor = 'Doctor ID is required';
+      tempErrors.doctorID = 'Doctor ID is required';
       isValid = false;
     }
     if (!newAppointment.appointmentDate) {
@@ -338,7 +346,10 @@ function NursePage() {
       isValid = false;
     }
     setErrors(tempErrors);
+    console.log('Errors:', errors);
+    console.log('isValid:', isValid);
     return isValid;
+
   };
 
 
@@ -347,17 +358,17 @@ function NursePage() {
     /*To update an appointment*/
   }
   const handleEditAppointmentSubmit = async (id, updatedData) => {
-      try {
-        handleCloseEditAppointmentModal();
-        const updatedAppointment = await updateAppointment(id, updatedData);
-        setAppointments(prev =>
-          prev.map(appointment =>
-            appointment._id === id ? updatedAppointment : appointment
-          )
-        );
-      } catch (error) {
-        console.error('Failed to update appointment:', error);
-      }
+    try {
+      handleCloseEditAppointmentModal();
+      const updatedAppointment = await updateAppointment(id, updatedData);
+      setAppointments(prev =>
+        prev.map(appointment =>
+          appointment._id === id ? updatedAppointment : appointment
+        )
+      );
+    } catch (error) {
+      console.error('Failed to update appointment:', error);
+    }
 
   };
 
@@ -512,7 +523,7 @@ function NursePage() {
                 sx={{ cursor: 'pointer' }}
               >
                 <TableCell>{row.appointmentId}</TableCell>
-                <TableCell>Hard Coded Value</TableCell>
+                <TableCell>{row.doctor?.staffId}</TableCell>
                 <TableCell>
                   {new Date(row.appointmentDate).toLocaleString()}
                 </TableCell>
@@ -537,7 +548,7 @@ function NursePage() {
 
       {/* Patient Details Drawer */}
       <PatientDetails
-        patientDetails={{ 
+        patientDetails={{
           patientData: selectedPatient,
           ownerData: selectedPatient?.owner,
         }}
@@ -646,14 +657,14 @@ function NursePage() {
             </RadioGroup>
           </FormControl>
           {isSameOwner ? (
-            <div style={{ marginBottom: '25px' }}>
-              <ReactSelect
-                options={ownerOptions}
-                onChange={selectedOption => {
-                  console.log('Selected Option:', selectedOption);
-                  const tst = ownerData.find(
-                    owner => owner.ownerId === selectedOption.value
-                  );
+
+            <Autocomplete
+              options={ownerOptions}
+              getOptionLabel={(option) => option.label}
+              onChange={(event, selectedOption) => {
+                console.log('Selected Option:', selectedOption);
+                if (selectedOption) {
+                  const tst = ownerData.find(owner => owner.ownerId === selectedOption.value);
                   setNewPatient({
                     ...newPatient,
                     ownerId: tst.ownerId,
@@ -663,13 +674,21 @@ function NursePage() {
                     phone: tst.phone,
                     email: tst.email,
                   });
-                }}
-                placeholder="Select Owner"
-                isSearchable
-                required
-              />
-            </div>
-            
+                }
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Select Owner"
+                  placeholder="Select Owner"
+                  required
+                  margin="normal"
+                />
+              )}
+              isOptionEqualToValue={(option, value) => option.value === value.value}
+            />
+
+
           ) : (
             <>
               <TextField
@@ -747,59 +766,93 @@ function NursePage() {
       <Dialog open={appointmentModalOpen} onClose={handleCloseAppointmentModal}>
         <DialogTitle>Create New Appointment</DialogTitle>
         <DialogContent>
-          <div style={{ marginBottom: '25px' }}>
-            <ReactSelect
-              error={errors.patient}
-              helperText={errors.patient}
-              options={patientOptions}
-              onChange={selectedOption => {
+          <Autocomplete
+            options={patientOptions}
+            getOptionLabel={(option) => option.label}
+            onChange={(event, selectedOption) => {
+              if (selectedOption) {
                 setNewAppointment({
                   ...newAppointment,
                   patient: selectedOption.value,
                   patientName: selectedOption.label.split(' (')[0],
                 });
-              }}
-              placeholder="Select Patient"
-              isSearchable
-              required
-              styles={{
-                control: base => ({
-                  ...base,
-                  marginTop: '8px',
-                  marginBottom: '8px',
-                }),
-                menu: base => ({
-                  ...base,
-                  maxHeight: 200,
-                  overflowY: 'auto',
-                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                  zIndex: 1000,
-                }),
-                option: (base, state) => ({
-                  ...base,
-                  backgroundColor: state.isFocused
-                    ? 'rgba(224, 224, 224, 0.9)'
-                    : 'transparent',
-                  color: state.isSelected ? '#000' : '#333',
-                  padding: 10,
-                }),
-
-              }}
-
-            />
-
-          </div>
-          <TextField
-            margin="dense"
-            label="Doctor ID"
-            name="doctorID"
-            value={newAppointment.doctorID}
-            onChange={handleAppointmentInputChange}
-            error={errors.doctor}
-            helperText={errors.doctor}
-            fullWidth
-            required
+              }
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Select Patient"
+                error={!!errors.patient}
+                helperText={errors.patient}
+                required
+                placeholder="Select Patient"
+                margin="normal"
+              />
+            )}
+            isOptionEqualToValue={(option, value) => option.value === value.value}
+            sx={{
+              '& .MuiAutocomplete-listbox': {
+                maxHeight: 200,
+                overflowY: 'auto',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              },
+              '& .MuiAutocomplete-option': {
+                padding: '10px',
+                backgroundColor: 'transparent',
+                '&[aria-selected="true"]': {
+                  color: '#000',
+                },
+                '&:hover': {
+                  backgroundColor: 'rgba(224, 224, 224, 0.9)',
+                },
+              },
+            }}
           />
+          <Autocomplete
+            options={doctorOptions} // Replace with the list of doctors
+            getOptionLabel={(option) => option.label} // Display the label formatted as "Doctor Name (ID)"
+            onChange={(event, selectedOption) => {
+              if (selectedOption) {
+                setNewAppointment({
+                  ...newAppointment,
+                  doctorID: selectedOption.value, // Store doctorId or staffId
+                  doctorName: selectedOption.label.split(' (')[0], // Extract doctor name
+                  doctor: selectedOption.value, // Store the entire doctor object
+                });
+              }
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Select Doctor"
+                error={!!errors.doctor}
+                helperText={errors.doctor}
+                required
+                placeholder="Select Doctor"
+                margin="normal"
+              />
+            )}
+            isOptionEqualToValue={(option, value) => option.value === value.value}
+            sx={{
+              '& .MuiAutocomplete-listbox': {
+                maxHeight: 200,
+                overflowY: 'auto',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              },
+              '& .MuiAutocomplete-option': {
+                padding: '10px',
+                backgroundColor: 'transparent',
+                '&[aria-selected="true"]': {
+                  color: '#000',
+                },
+                '&:hover': {
+                  backgroundColor: 'rgba(224, 224, 224, 0.9)',
+                },
+              },
+            }}
+          />
+
+
           <TextField
             margin="dense"
             type="date"
@@ -846,25 +899,58 @@ function NursePage() {
 
 
       {/* Edit Appointment Modal */}
-      <Dialog
-        open={editAppointmentModalOpen}
-        onClose={handleCloseEditAppointmentModal}
-      >
+      <Dialog open={editAppointmentModalOpen} onClose={handleCloseEditAppointmentModal}>
         <DialogTitle>Edit Appointment</DialogTitle>
         <DialogContent>
-          <TextField
-            margin="dense"
-            label="Doctor ID"
-            name="doctorID"
-            value={editedAppointment.doctorID}
-            onChange={handleEditAppointmentInputChange}
-            fullWidth
-            required
+          <Autocomplete
+            options={doctorOptions} // Replace with the list of doctors
+            getOptionLabel={(option) => option.label} // Display the label formatted as "Doctor Name (ID)"
+            value={doctorOptions.find(option => option.value === editedAppointment.doctorID) || null}
+            onChange={(event, selectedOption) => {
+              if (selectedOption) {
+                setEditedAppointment({
+                  ...editedAppointment,
+                  doctorID: selectedOption.value, // Store doctorId or staffId
+                  doctorName: selectedOption.label.split(' (')[0], // Extract doctor name
+                  doctor: selectedOption.value, // Store the entire doctor object
+                });
+              }
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Select Doctor"
+                error={!!errors.doctor}
+                helperText={errors.doctor}
+                required
+                placeholder="Select Doctor"
+                margin="normal"
+              />
+            )}
+            isOptionEqualToValue={(option, value) => option.value === value.value}
+            sx={{
+              '& .MuiAutocomplete-listbox': {
+                maxHeight: 200,
+                overflowY: 'auto',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              },
+              '& .MuiAutocomplete-option': {
+                padding: '10px',
+                backgroundColor: 'transparent',
+                '&[aria-selected="true"]': {
+                  color: '#000',
+                },
+                '&:hover': {
+                  backgroundColor: 'rgba(224, 224, 224, 0.9)',
+                },
+              },
+            }}
           />
+
           <TextField
             margin="dense"
             label="Appointment Date"
-            type="datetime"
+            type="datetime-local"
             name="appointmentDate"
             value={editedAppointment.appointmentDate}
             onChange={handleEditAppointmentInputChange}
@@ -880,7 +966,6 @@ function NursePage() {
             fullWidth
             required
           />
-
           <TextField
             margin="dense"
             label="Reason"
@@ -919,6 +1004,7 @@ function NursePage() {
           </Button>
         </DialogActions>
       </Dialog>
+
     </Box>
   );
 }
