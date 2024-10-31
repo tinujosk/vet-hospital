@@ -19,16 +19,15 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { useDispatch } from 'react-redux';
-import { showSnackbar } from '../slices/snackbar';
+import { useDispatch } from "react-redux";
+import { showSnackbar } from "../slices/snackbar";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { createUser, getUserDetails } from "../services/user.js";
-import Loading from '../components/Loading';
+import Loading from "../components/Loading";
 
 const Admin = () => {
-  
   const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({
     email: "",
@@ -67,7 +66,7 @@ const Admin = () => {
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
-      setLoading(false)
+      setLoading(false);
     };
 
     fetchUsers();
@@ -83,7 +82,7 @@ const Admin = () => {
     setNewUser({ ...newUser, role: e.target.value });
   };
 
-  // Validation 
+  // Validation
   const validate = () => {
     let tempErrors = {};
     let isValid = true;
@@ -141,7 +140,10 @@ const Admin = () => {
     try {
       await createUser(userWithPassword);
       dispatch(
-        showSnackbar({ message: `User registered successfully. \n password sent to email. \n Password: ${password}`, severity: 'success' })
+        showSnackbar({
+          message: `User registered successfully. \n password sent to email. \n Password: ${password}`,
+          severity: "success",
+        })
       );
       setUsers([...users, userWithPassword]);
       setNewUser({
@@ -151,12 +153,12 @@ const Admin = () => {
         firstName: "",
         lastName: "",
         specialization: "",
-        phone:""
+        phone: "",
       });
       setDrawerOpen(false);
     } catch (error) {
       dispatch(
-        showSnackbar({ message: 'User registration failed', severity: 'error' })
+        showSnackbar({ message: "User registration failed", severity: "error" })
       );
     }
   };
@@ -191,8 +193,9 @@ const Admin = () => {
         </Button>
 
         <h2>Current Users</h2>
-        <TableContainer component={Paper}
-        sx={{ maxWidth: { md: '95%', sm: '100%' }, maxHeight: '500px' }}
+        <TableContainer
+          component={Paper}
+          sx={{ maxWidth: { md: "95%", sm: "100%" }, maxHeight: "500px" }}
         >
           <Table stickyHeader>
             <TableHead>
