@@ -154,9 +154,6 @@ function NursePage() {
     const fetchDoctors = async () => {
       try {
         const data = await getDoctors();
-
-
-        // Mapping each doctor to desired label format
         const options = data.map(doctor => ({
           value: doctor._id,
           label: `${doctor.firstName} ${doctor.lastName} (ID: ${doctor.staffId})`,
@@ -809,15 +806,15 @@ function NursePage() {
             }}
           />
           <Autocomplete
-            options={doctorOptions} // Replace with the list of doctors
-            getOptionLabel={(option) => option.label} // Display the label formatted as "Doctor Name (ID)"
+            options={doctorOptions} 
+            getOptionLabel={(option) => option.label} 
             onChange={(event, selectedOption) => {
               if (selectedOption) {
                 setNewAppointment({
                   ...newAppointment,
-                  doctorID: selectedOption.value, // Store doctorId or staffId
-                  doctorName: selectedOption.label.split(' (')[0], // Extract doctor name
-                  doctor: selectedOption.value, // Store the entire doctor object
+                  doctorID: selectedOption.value,
+                  doctorName: selectedOption.label.split(' (')[0], 
+                  doctor: selectedOption.value,
                 });
               }
             }}
@@ -903,16 +900,16 @@ function NursePage() {
         <DialogTitle>Edit Appointment</DialogTitle>
         <DialogContent>
           <Autocomplete
-            options={doctorOptions} // Replace with the list of doctors
-            getOptionLabel={(option) => option.label} // Display the label formatted as "Doctor Name (ID)"
+            options={doctorOptions} 
+            getOptionLabel={(option) => option.label} 
             value={doctorOptions.find(option => option.value === editedAppointment.doctorID) || null}
             onChange={(event, selectedOption) => {
               if (selectedOption) {
                 setEditedAppointment({
                   ...editedAppointment,
-                  doctorID: selectedOption.value, // Store doctorId or staffId
-                  doctorName: selectedOption.label.split(' (')[0], // Extract doctor name
-                  doctor: selectedOption.value, // Store the entire doctor object
+                  doctorID: selectedOption.value, 
+                  doctorName: selectedOption.label.split(' (')[0], 
+                  doctor: selectedOption.value, 
                 });
               }
             }}
