@@ -18,15 +18,17 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Snackbar,
-  Alert,
 } from "@mui/material";
+import { useDispatch } from 'react-redux';
+import { showSnackbar } from '../slices/snackbar';
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { createUser, getUserDetails } from "../services/user.js";
+import Loading from '../components/Loading';
 
 const Admin = () => {
+  
   const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({
     email: "",
@@ -39,9 +41,10 @@ const Admin = () => {
   });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [errors, setErrors] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  // const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const dispatch = useDispatch();
 
   //function to Auto generate the password...
   const generatePassword = () => {
@@ -57,31 +60,23 @@ const Admin = () => {
   // fetch the user data from the database...
   useEffect(() => {
     const fetchUsers = async () => {
+      setLoading(true);
       try {
         const userData = await getUserDetails();
         setUsers(userData);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
+      setLoading(false)
     };
 
     fetchUsers();
   }, []);
 
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSnackbarOpen(false);
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewUser({ ...newUser, [name]: value });
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
-    // if (name === "email") {
-    //   setEmailError(!validateEmail(value));
-    // }
   };
 
   const handleRoleChange = (e) => {
@@ -137,25 +132,17 @@ const Admin = () => {
     return isValid;
   };
 
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
   const handleAddUser = async () => {
     if (!validate()) {
-      return; // Stop submission if validation fails
+      return;
     }
     const password = generatePassword();
     const userWithPassword = { ...newUser, password };
     try {
       await createUser(userWithPassword);
-      // alert(`User registered successfully!\nPassword: ${password}`);
-      setSnackbarMessage(
-        `User registered successfully!\nPassword: ${password}`
+      dispatch(
+        showSnackbar({ message: `User registered successfully. \n password sent to email. \n Password: ${password}`, severity: 'success' })
       );
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
       setUsers([...users, userWithPassword]);
       setNewUser({
         email: "",
@@ -168,16 +155,19 @@ const Admin = () => {
       });
       setDrawerOpen(false);
     } catch (error) {
-      // alert("Failed to register user.");
-      setSnackbarMessage("Failed to register user");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      dispatch(
+        showSnackbar({ message: 'User registration failed', severity: 'error' })
+      );
     }
   };
 
   const handleDeleteUser = (index) => {
     setUsers(users.filter((_, i) => i !== index));
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <Box
@@ -189,21 +179,6 @@ const Admin = () => {
         padding: 4,
       }}
     >
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbarSeverity}
-          sx={{ width: "100%" }}
-        >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-
       <Container maxWidth='lg' sx={{ marginTop: 4 }}>
         <Button
           variant='contained'
@@ -216,8 +191,10 @@ const Admin = () => {
         </Button>
 
         <h2>Current Users</h2>
-        <TableContainer component={Paper}>
-          <Table>
+        <TableContainer component={Paper}
+        sx={{ maxWidth: { md: '95%', sm: '100%' }, maxHeight: '500px' }}
+        >
+          <Table stickyHeader>
             <TableHead>
               <TableRow>
                 <TableCell>First Name</TableCell>
@@ -225,7 +202,7 @@ const Admin = () => {
                 <TableCell>Role</TableCell>
                 <TableCell>Specialization</TableCell>
                 <TableCell>User Name</TableCell>
-                <TableCell>Password</TableCell>
+                {/* <TableCell>Password</TableCell> */}
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -237,7 +214,7 @@ const Admin = () => {
                   <TableCell>{user.user?.role}</TableCell>
                   <TableCell>{user.specialization}</TableCell>
                   <TableCell>{user.email}</TableCell>
-                  <TableCell>{"**********"}</TableCell>
+                  {/* <TableCell>{"**********"}</TableCell> */}
                   {/* <TableCell>{user.user?.password}</TableCell> */}
                   <TableCell>
                     <IconButton color='primary'>
