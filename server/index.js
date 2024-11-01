@@ -21,6 +21,10 @@ import {
   createPrescription,
   getPrescription,
 } from './controller/prescription.js';
+import {
+  createUser,
+  getUserDetails
+} from './controller/user.js'
 
 import { getDoctors } from './controller/doctor.js';
 
@@ -52,6 +56,10 @@ app.get('/medications/search', getMedications);
 // Prescription routes and handlers
 app.post('/prescriptions', createPrescription);
 app.get('/prescriptions/:id', getPrescription);
+
+// User routes and handlers
+app.post('/user', createUser);
+app.get('/user', getUserDetails)
 
 //Doctor routes and handlers
 app.get('/doctors', getDoctors);
