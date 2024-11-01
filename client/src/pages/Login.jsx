@@ -68,8 +68,8 @@ const Login = () => {
     if (!password) {
       tempErrors.password = 'Password is required';
       isValid = false;
-    } else if (password.length < 3) {
-      tempErrors.password = 'Password must be at least 3 characters';
+    } else if (password.length < 5) {
+      tempErrors.password = 'Password must be at least 5 characters';
       isValid = false;
     }
 
