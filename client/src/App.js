@@ -45,6 +45,30 @@ const theme = createTheme({
   typography: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
   },
+  components: {
+    MuiTableRow: {
+      styleOverrides: {
+        root: {
+          cursor: 'pointer',
+          '&:nth-of-type(even)': {
+            backgroundColor: '#f9f9f9',
+          },
+          '&:nth-of-type(odd)': {
+            backgroundColor: '#f2f2f2',
+          },
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        head: {
+          backgroundColor: '#1976d2',
+          color: '#fff',
+          fontWeight: 'bold',
+        },
+      },
+    },
+  },
 });
 
 export default function App() {

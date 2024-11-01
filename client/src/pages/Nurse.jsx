@@ -22,12 +22,17 @@ import {
   FormControlLabel,
   Paper,
   Typography,
-  Autocomplete
+  Autocomplete,
+  Container,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import PatientDetails from '../components/PatientDetails';
-import { createPatient, getPatients, getPatientById } from '../services/patient';
+import {
+  createPatient,
+  getPatients,
+  getPatientById,
+} from '../services/patient';
 import {
   createAppointment,
   getAppointments,
@@ -53,7 +58,6 @@ function NursePage() {
   const [doctorOptions, setDoctorOptions] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState({});
   const [errors, setErrors] = useState({});
-
 
   const initialPatientState = {
     patientname: '',
@@ -90,9 +94,6 @@ function NursePage() {
   const [patients, setPatients] = useState([]);
   const [patientOptions, setPatientOptions] = useState([]);
 
-  {
-    /*To fetch patients data*/
-  }
   useEffect(() => {
     const fetchPatients = async () => {
       try {
@@ -112,9 +113,6 @@ function NursePage() {
     fetchPatients();
   }, []);
 
-  {
-    /*To fetch appointments data*/
-  }
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -128,9 +126,6 @@ function NursePage() {
     fetchAppointments();
   }, []);
 
-  {
-    /*To fetch owners data*/
-  }
   useEffect(() => {
     const fetchOwners = async () => {
       try {
@@ -149,7 +144,6 @@ function NursePage() {
     fetchOwners();
   }, []);
 
-  {/*To fetch doctors data*/ }
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
@@ -169,15 +163,12 @@ function NursePage() {
     fetchDoctors();
   }, []);
 
-
   const handleRowClick = async row => {
-
     const result = await getPatientById(row?.patient?._id);
     if (result) {
       setSelectedRow(row);
       setSelectedPatient(result);
       setDrawerOpen(true);
-
     }
   };
 
@@ -231,10 +222,7 @@ function NursePage() {
     setEditedAppointment({ ...editedAppointment, [name]: value });
   };
 
-  {
-    /*To create a new patient*/
-  }
-  const handleSubmit = async (event) => {
+  const handleSubmit = async event => {
     event.preventDefault();
     if (Validite()) {
       try {
@@ -244,11 +232,23 @@ function NursePage() {
       } catch (error) {
         console.error('Failed to create patient:', error);
       }
-    };
+    }
   };
 
   const Validite = () => {
-    let tempErrors = { patientname: '', species: '', breed: '', age: '', weight: '', gender: '', ownerfname: '', ownerlname: '', address: '', phone: '', email: '' };
+    let tempErrors = {
+      patientname: '',
+      species: '',
+      breed: '',
+      age: '',
+      weight: '',
+      gender: '',
+      ownerfname: '',
+      ownerlname: '',
+      address: '',
+      phone: '',
+      email: '',
+    };
     let isValid = true;
     if (!newPatient.patientname) {
       tempErrors.patientname = 'Patient Name is required';
@@ -299,11 +299,7 @@ function NursePage() {
     return isValid;
   };
 
-
-  {
-    /*To create a new appointment*/
-  }
-  const handleAppointmentSubmit = async (event) => {
+  const handleAppointmentSubmit = async event => {
     console.log('New Appointment:', newAppointment);
     event.preventDefault();
 
@@ -316,11 +312,17 @@ function NursePage() {
       } catch (error) {
         console.error('Failed to create appointment:', error);
       }
-    };
+    }
   };
 
   const appointmentValidate = () => {
-    let tempErrors = { patient: '', doctorID: '', appointmentDate: '', timeSlot: '', reason: '' };
+    let tempErrors = {
+      patient: '',
+      doctorID: '',
+      appointmentDate: '',
+      timeSlot: '',
+      reason: '',
+    };
     let isValid = true;
     if (!newAppointment.patient) {
       tempErrors.patient = 'Patient is required';
@@ -346,14 +348,8 @@ function NursePage() {
     console.log('Errors:', errors);
     console.log('isValid:', isValid);
     return isValid;
-
   };
 
-
-
-  {
-    /*To update an appointment*/
-  }
   const handleEditAppointmentSubmit = async (id, updatedData) => {
     try {
       handleCloseEditAppointmentModal();
@@ -366,7 +362,6 @@ function NursePage() {
     } catch (error) {
       console.error('Failed to update appointment:', error);
     }
-
   };
 
   return (
@@ -376,172 +371,178 @@ function NursePage() {
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
-        padding: 2,
+        padding: 4,
       }}
     >
-      <Box sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleOpenCreateModal}
-        >
-          Register Patient
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={handleOpenAppointmentModal}
-        >
-          Create Appointment
-        </Button>
-      </Box>
-
-      <Typography variant="h4" component="h2" sx={{ marginTop: '1px' }}>
-        Appointments
-      </Typography>
-
-      {/* Table to display appointments */}
-      <TableContainer
-        component={Paper}
+      <Container
+        maxWidth='lg'
         sx={{
-          maxWidth: '95%',
-          marginTop: 3,
-          maxHeight: 310,
-          overflowY: 'auto',
+          marginTop: 4,
+          maxWidth: { lg: '95%', sm: '100%' },
         }}
       >
-        <Table aria-label="scrollable table">
-          <TableHead>
-            <TableRow>
-              <TableCell
-                sx={{
-                  fontWeight: 'bold',
-                  backgroundColor: '#1976d2',
-                  color: '#fff',
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 1,
-                }}
-              >
-                Appointment ID
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 'bold',
-                  backgroundColor: '#1976d2',
-                  color: '#fff',
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 1,
-                }}
-              >
-                Doctor ID
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 'bold',
-                  backgroundColor: '#1976d2',
-                  color: '#fff',
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 1,
-                }}
-              >
-                Appointment Date
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 'bold',
-                  backgroundColor: '#1976d2',
-                  color: '#fff',
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 1,
-                }}
-              >
-                Patient Name
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 'bold',
-                  backgroundColor: '#1976d2',
-                  color: '#fff',
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 1,
-                }}
-              >
-                Slot
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 'bold',
-                  backgroundColor: '#1976d2',
-                  color: '#fff',
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 1,
-                }}
-              >
-                Reason
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 'bold',
-                  backgroundColor: '#1976d2',
-                  color: '#fff',
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 1,
-                }}
-              >
-                Status
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 'bold',
-                  backgroundColor: '#1976d2',
-                  color: '#fff',
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 1,
-                }}
-              >
-                Action
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {appointments?.map(row => (
-              <TableRow
-                key={row._id}
-                hover
-                onClick={() => handleRowClick(row)}
-                sx={{ cursor: 'pointer' }}
-              >
-                <TableCell>{row.appointmentId}</TableCell>
-                <TableCell>{row.doctor?.staffId}</TableCell>
-                <TableCell>
-                  {new Date(row.appointmentDate).toLocaleString()}
+        <Box sx={{ display: 'flex', gap: 2, marginBottom: '50px' }}>
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={handleOpenCreateModal}
+          >
+            Register Patient
+          </Button>
+          <Button
+            variant='contained'
+            color='secondary'
+            onClick={handleOpenAppointmentModal}
+          >
+            Create Appointment
+          </Button>
+        </Box>
+
+        <Typography variant='h4' component='h2'>
+          Appointments
+        </Typography>
+
+        <TableContainer
+          component={Paper}
+          sx={{
+            marginTop: 3,
+            maxHeight: 310,
+            overflowY: 'auto',
+          }}
+        >
+          <Table aria-label='scrollable table'>
+            <TableHead>
+              <TableRow>
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    backgroundColor: '#1976d2',
+                    color: '#fff',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1,
+                  }}
+                >
+                  Appointment ID
                 </TableCell>
-                <TableCell> {row.patient?.name}</TableCell>
-                <TableCell>{row.timeSlot}</TableCell>
-                <TableCell>{row.reason}</TableCell>
-                <TableCell>{row.status}</TableCell>
-                <TableCell>
-                  <FontAwesomeIcon
-                    icon={faEdit}
-                    onClick={e => {
-                      e.stopPropagation();
-                      handleOpenEditAppointmentModal(row);
-                    }}
-                  />
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    backgroundColor: '#1976d2',
+                    color: '#fff',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1,
+                  }}
+                >
+                  Doctor ID
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    backgroundColor: '#1976d2',
+                    color: '#fff',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1,
+                  }}
+                >
+                  Appointment Date
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    backgroundColor: '#1976d2',
+                    color: '#fff',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1,
+                  }}
+                >
+                  Patient Name
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    backgroundColor: '#1976d2',
+                    color: '#fff',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1,
+                  }}
+                >
+                  Slot
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    backgroundColor: '#1976d2',
+                    color: '#fff',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1,
+                  }}
+                >
+                  Reason
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    backgroundColor: '#1976d2',
+                    color: '#fff',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1,
+                  }}
+                >
+                  Status
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: 'bold',
+                    backgroundColor: '#1976d2',
+                    color: '#fff',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1,
+                  }}
+                >
+                  Action
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {appointments?.map(row => (
+                <TableRow
+                  key={row._id}
+                  hover
+                  onClick={() => handleRowClick(row)}
+                  sx={{ cursor: 'pointer' }}
+                >
+                  <TableCell>{row.appointmentId}</TableCell>
+                  <TableCell>{row.doctor?.staffId}</TableCell>
+                  <TableCell>
+                    {new Date(row.appointmentDate).toLocaleString()}
+                  </TableCell>
+                  <TableCell> {row.patient?.name}</TableCell>
+                  <TableCell>{row.timeSlot}</TableCell>
+                  <TableCell>{row.reason}</TableCell>
+                  <TableCell>{row.status}</TableCell>
+                  <TableCell>
+                    <FontAwesomeIcon
+                      icon={faEdit}
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleOpenEditAppointmentModal(row);
+                      }}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Container>
 
       {/* Patient Details Drawer */}
       <PatientDetails
@@ -560,9 +561,9 @@ function NursePage() {
         <DialogContent>
           <Typography>Patient Details</Typography>
           <TextField
-            margin="dense"
-            label="Patient Name"
-            name="patientname"
+            margin='dense'
+            label='Patient Name'
+            name='patientname'
             value={newPatient.patientname}
             onChange={handleInputChange}
             error={errors.patientname}
@@ -571,9 +572,9 @@ function NursePage() {
             required
           />
           <TextField
-            margin="dense"
-            label="Species"
-            name="species"
+            margin='dense'
+            label='Species'
+            name='species'
             value={newPatient.species}
             onChange={handleInputChange}
             error={errors.species}
@@ -582,9 +583,9 @@ function NursePage() {
             required
           />
           <TextField
-            margin="dense"
-            label="Breed"
-            name="breed"
+            margin='dense'
+            label='Breed'
+            name='breed'
             value={newPatient.breed}
             onChange={handleInputChange}
             error={errors.breed}
@@ -593,35 +594,34 @@ function NursePage() {
             required
           />
           <TextField
-            margin="dense"
-            label="Age"
-            name="age"
+            margin='dense'
+            label='Age'
+            name='age'
             value={newPatient.age}
             onChange={handleInputChange}
             error={errors.age}
             helperText={errors.age}
             fullWidth
             required
-            type="number"
+            type='number'
           />
-          <FormControl fullWidth margin="dense" required>
-            <InputLabel id="gender-label">Gender</InputLabel>
+          <FormControl fullWidth margin='dense' required>
+            <InputLabel id='gender-label'>Gender</InputLabel>
             <Select
-              labelId="gender-label"
-              name="gender"
+              labelId='gender-label'
+              name='gender'
               value={newPatient.gender}
               onChange={handleInputChange}
-
-              label="Gender"
+              label='Gender'
             >
-              <MenuItem value="Male">Male</MenuItem>
-              <MenuItem value="Female">Female</MenuItem>
+              <MenuItem value='Male'>Male</MenuItem>
+              <MenuItem value='Female'>Female</MenuItem>
             </Select>
           </FormControl>
           <TextField
-            margin="dense"
-            label="Weight"
-            name="weight"
+            margin='dense'
+            label='Weight'
+            name='weight'
             value={newPatient.weight}
             onChange={handleInputChange}
             error={errors.weight}
@@ -630,7 +630,7 @@ function NursePage() {
             required
           />
 
-          <Typography variant="subtitle1" gutterBottom>
+          <Typography variant='subtitle1' gutterBottom>
             Owner Details
           </Typography>
 
@@ -642,26 +642,27 @@ function NursePage() {
               onChange={e => setIsSameOwner(e.target.value === 'same')}
             >
               <FormControlLabel
-                value="same"
+                value='same'
                 control={<Radio />}
-                label="Existing Owner"
+                label='Existing Owner'
               />
               <FormControlLabel
-                value="new"
+                value='new'
                 control={<Radio />}
-                label="New Owner"
+                label='New Owner'
               />
             </RadioGroup>
           </FormControl>
           {isSameOwner ? (
-
             <Autocomplete
               options={ownerOptions}
-              getOptionLabel={(option) => option.label}
+              getOptionLabel={option => option.label}
               onChange={(event, selectedOption) => {
                 console.log('Selected Option:', selectedOption);
                 if (selectedOption) {
-                  const tst = ownerData.find(owner => owner.ownerId === selectedOption.value);
+                  const tst = ownerData.find(
+                    owner => owner.ownerId === selectedOption.value
+                  );
                   setNewPatient({
                     ...newPatient,
                     ownerId: tst.ownerId,
@@ -673,25 +674,25 @@ function NursePage() {
                   });
                 }
               }}
-              renderInput={(params) => (
+              renderInput={params => (
                 <TextField
                   {...params}
-                  label="Select Owner"
-                  placeholder="Select Owner"
+                  label='Select Owner'
+                  placeholder='Select Owner'
                   required
-                  margin="normal"
+                  margin='normal'
                 />
               )}
-              isOptionEqualToValue={(option, value) => option.value === value.value}
+              isOptionEqualToValue={(option, value) =>
+                option.value === value.value
+              }
             />
-
-
           ) : (
             <>
               <TextField
-                margin="dense"
-                label="Owner First Name"
-                name="ownerfname"
+                margin='dense'
+                label='Owner First Name'
+                name='ownerfname'
                 value={newPatient.ownerfname}
                 onChange={handleInputChange}
                 error={errors.ownerfname}
@@ -701,9 +702,9 @@ function NursePage() {
               />
 
               <TextField
-                margin="dense"
-                label="Owner Last Name"
-                name="ownerlname"
+                margin='dense'
+                label='Owner Last Name'
+                name='ownerlname'
                 value={newPatient.ownerlname}
                 onChange={handleInputChange}
                 error={errors.ownerlname}
@@ -712,9 +713,9 @@ function NursePage() {
                 required
               />
               <TextField
-                margin="dense"
-                label="Address"
-                name="address"
+                margin='dense'
+                label='Address'
+                name='address'
                 value={newPatient.address}
                 onChange={handleInputChange}
                 error={errors.address}
@@ -724,9 +725,9 @@ function NursePage() {
               />
 
               <TextField
-                margin="dense"
-                label="Owner Email"
-                name="email"
+                margin='dense'
+                label='Owner Email'
+                name='email'
                 value={newPatient.email}
                 onChange={handleInputChange}
                 error={errors.email}
@@ -736,9 +737,9 @@ function NursePage() {
               />
 
               <TextField
-                margin="dense"
-                label="Owner Phone Number"
-                name="phone"
+                margin='dense'
+                label='Owner Phone Number'
+                name='phone'
                 value={newPatient.phone}
                 onChange={handleInputChange}
                 error={errors.phone}
@@ -750,10 +751,10 @@ function NursePage() {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseCreateModal} color="primary">
+          <Button onClick={handleCloseCreateModal} color='primary'>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} color="primary">
+          <Button onClick={handleSubmit} color='primary'>
             Create
           </Button>
         </DialogActions>
@@ -765,7 +766,7 @@ function NursePage() {
         <DialogContent>
           <Autocomplete
             options={patientOptions}
-            getOptionLabel={(option) => option.label}
+            getOptionLabel={option => option.label}
             onChange={(event, selectedOption) => {
               if (selectedOption) {
                 setNewAppointment({
@@ -775,18 +776,20 @@ function NursePage() {
                 });
               }
             }}
-            renderInput={(params) => (
+            renderInput={params => (
               <TextField
                 {...params}
-                label="Select Patient"
+                label='Select Patient'
                 error={!!errors.patient}
                 helperText={errors.patient}
                 required
-                placeholder="Select Patient"
-                margin="normal"
+                placeholder='Select Patient'
+                margin='normal'
               />
             )}
-            isOptionEqualToValue={(option, value) => option.value === value.value}
+            isOptionEqualToValue={(option, value) =>
+              option.value === value.value
+            }
             sx={{
               '& .MuiAutocomplete-listbox': {
                 maxHeight: 200,
@@ -806,30 +809,32 @@ function NursePage() {
             }}
           />
           <Autocomplete
-            options={doctorOptions} 
-            getOptionLabel={(option) => option.label} 
+            options={doctorOptions}
+            getOptionLabel={option => option.label}
             onChange={(event, selectedOption) => {
               if (selectedOption) {
                 setNewAppointment({
                   ...newAppointment,
                   doctorID: selectedOption.value,
-                  doctorName: selectedOption.label.split(' (')[0], 
+                  doctorName: selectedOption.label.split(' (')[0],
                   doctor: selectedOption.value,
                 });
               }
             }}
-            renderInput={(params) => (
+            renderInput={params => (
               <TextField
                 {...params}
-                label="Select Doctor"
+                label='Select Doctor'
                 error={!!errors.doctor}
                 helperText={errors.doctor}
                 required
-                placeholder="Select Doctor"
-                margin="normal"
+                placeholder='Select Doctor'
+                margin='normal'
               />
             )}
-            isOptionEqualToValue={(option, value) => option.value === value.value}
+            isOptionEqualToValue={(option, value) =>
+              option.value === value.value
+            }
             sx={{
               '& .MuiAutocomplete-listbox': {
                 maxHeight: 200,
@@ -849,11 +854,10 @@ function NursePage() {
             }}
           />
 
-
           <TextField
-            margin="dense"
-            type="date"
-            name="appointmentDate"
+            margin='dense'
+            type='date'
+            name='appointmentDate'
             value={newAppointment.appointmentDate}
             onChange={handleAppointmentInputChange}
             error={errors.appointmentDate}
@@ -862,9 +866,9 @@ function NursePage() {
             required
           />
           <TextField
-            margin="dense"
-            label="Time Slot"
-            name="timeSlot"
+            margin='dense'
+            label='Time Slot'
+            name='timeSlot'
             value={newAppointment.timeSlot}
             onChange={handleAppointmentInputChange}
             error={errors.timeSlot}
@@ -873,9 +877,9 @@ function NursePage() {
             required
           />
           <TextField
-            margin="dense"
-            label="Reason"
-            name="reason"
+            margin='dense'
+            label='Reason'
+            name='reason'
             value={newAppointment.reason}
             onChange={handleAppointmentInputChange}
             error={errors.reason}
@@ -885,46 +889,54 @@ function NursePage() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseAppointmentModal} color="primary">
+          <Button onClick={handleCloseAppointmentModal} color='primary'>
             Cancel
           </Button>
-          <Button onClick={handleAppointmentSubmit} color="primary">
+          <Button onClick={handleAppointmentSubmit} color='primary'>
             Create
           </Button>
         </DialogActions>
       </Dialog>
 
-
       {/* Edit Appointment Modal */}
-      <Dialog open={editAppointmentModalOpen} onClose={handleCloseEditAppointmentModal}>
+      <Dialog
+        open={editAppointmentModalOpen}
+        onClose={handleCloseEditAppointmentModal}
+      >
         <DialogTitle>Edit Appointment</DialogTitle>
         <DialogContent>
           <Autocomplete
-            options={doctorOptions} 
-            getOptionLabel={(option) => option.label} 
-            value={doctorOptions.find(option => option.value === editedAppointment.doctorID) || null}
+            options={doctorOptions}
+            getOptionLabel={option => option.label}
+            value={
+              doctorOptions.find(
+                option => option.value === editedAppointment.doctorID
+              ) || null
+            }
             onChange={(event, selectedOption) => {
               if (selectedOption) {
                 setEditedAppointment({
                   ...editedAppointment,
-                  doctorID: selectedOption.value, 
-                  doctorName: selectedOption.label.split(' (')[0], 
-                  doctor: selectedOption.value, 
+                  doctorID: selectedOption.value,
+                  doctorName: selectedOption.label.split(' (')[0],
+                  doctor: selectedOption.value,
                 });
               }
             }}
-            renderInput={(params) => (
+            renderInput={params => (
               <TextField
                 {...params}
-                label="Select Doctor"
+                label='Select Doctor'
                 error={!!errors.doctor}
                 helperText={errors.doctor}
                 required
-                placeholder="Select Doctor"
-                margin="normal"
+                placeholder='Select Doctor'
+                margin='normal'
               />
             )}
-            isOptionEqualToValue={(option, value) => option.value === value.value}
+            isOptionEqualToValue={(option, value) =>
+              option.value === value.value
+            }
             sx={{
               '& .MuiAutocomplete-listbox': {
                 maxHeight: 200,
@@ -945,28 +957,28 @@ function NursePage() {
           />
 
           <TextField
-            margin="dense"
-            label="Appointment Date"
-            type="datetime-local"
-            name="appointmentDate"
+            margin='dense'
+            label='Appointment Date'
+            type='datetime-local'
+            name='appointmentDate'
             value={editedAppointment.appointmentDate}
             onChange={handleEditAppointmentInputChange}
             fullWidth
             required
           />
           <TextField
-            margin="dense"
-            label="Time Slot"
-            name="timeSlot"
+            margin='dense'
+            label='Time Slot'
+            name='timeSlot'
             value={editedAppointment.timeSlot}
             onChange={handleEditAppointmentInputChange}
             fullWidth
             required
           />
           <TextField
-            margin="dense"
-            label="Reason"
-            name="reason"
+            margin='dense'
+            label='Reason'
+            name='reason'
             value={editedAppointment.reason}
             onChange={handleEditAppointmentInputChange}
             fullWidth
@@ -975,15 +987,15 @@ function NursePage() {
           <FormControl fullWidth sx={{ marginTop: 2 }}>
             <InputLabel>Status</InputLabel>
             <Select
-              name="status"
+              name='status'
               value={editedAppointment.status}
               onChange={handleEditAppointmentInputChange}
               fullWidth
               required
             >
-              <MenuItem value="Pending">Pending</MenuItem>
-              <MenuItem value="Prelims">Prelims Done</MenuItem>
-              <MenuItem value="Cancelled">Cancelled</MenuItem>
+              <MenuItem value='Pending'>Pending</MenuItem>
+              <MenuItem value='Prelims'>Prelims Done</MenuItem>
+              <MenuItem value='Cancelled'>Cancelled</MenuItem>
             </Select>
           </FormControl>
         </DialogContent>
@@ -1001,7 +1013,6 @@ function NursePage() {
           </Button>
         </DialogActions>
       </Dialog>
-
     </Box>
   );
 }

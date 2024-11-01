@@ -75,12 +75,15 @@ function DoctorPage() {
     >
       {appointments?.length ? (
         <>
-          <Typography variant="h4" component="h2" sx={{ marginBottom: '50px' }}>
+          <Typography variant='h4' component='h2' sx={{ marginBottom: '50px' }}>
             Your Recent Appointments
           </Typography>
           <TableContainer
             component={Paper}
-            sx={{ maxWidth: { md: '85%', sm: '100%' }, maxHeight: '500px' }}
+            sx={{
+              maxWidth: { lg: '80%', md: '90%', sm: '100%' },
+              maxHeight: 500,
+            }}
           >
             <Table stickyHeader>
               <TableHead>
@@ -130,7 +133,7 @@ function DoctorPage() {
           </TableContainer>
         </>
       ) : (
-        <Typography variant="h5">
+        <Typography variant='h5'>
           Looks like you don't have any appointments.
         </Typography>
       )}
