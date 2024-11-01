@@ -26,6 +26,8 @@ import {
   getUserDetails
 } from './controller/user.js'
 
+import { getDoctors } from './controller/doctor.js';
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -58,6 +60,9 @@ app.get('/prescriptions/:id', getPrescription);
 // User routes and handlers
 app.post('/user', createUser);
 app.get('/user', getUserDetails)
+
+//Doctor routes and handlers
+app.get('/doctors', getDoctors);
 
 app.listen(3001, () => {
   console.log('Server listening on port 3001');

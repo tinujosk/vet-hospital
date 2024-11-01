@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import ReactSelect from 'react-select';
 import {
   Box,
   Button,
@@ -23,35 +22,20 @@ import {
   FormControlLabel,
   Paper,
   Typography,
+  Autocomplete
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import PatientDetails from '../components/PatientDetails';
-import { createPatient, getPatients } from '../services/patient';
+import { createPatient, getPatients, getPatientById } from '../services/patient';
 import {
   createAppointment,
   getAppointments,
   updateAppointment,
 } from '../services/appointment';
 import { getOwners } from '../services/owner';
+import { getDoctors } from '../services/doctor';
 
-// Hardcoding for now
-const patientData = {
-  name: 'Max',
-  species: 'Dog',
-  breed: 'Golden Retriever',
-  age: 5,
-  gender: 'Male',
-  weight: '30kg',
-  medicalHistory: [
-    'Vaccinated for Rabies',
-    'Previous surgery on left leg',
-    'Allergy to peanuts',
-  ],
-  lastUpdated: '2023-01-10',
-};
-
-// Hardcoding for now
 let ownerData = [];
 
 function NursePage() {
@@ -66,6 +50,10 @@ function NursePage() {
   const [isSameOwner, setIsSameOwner] = useState(true);
   const [ownerOptions, setOwnerOptions] = useState([]);
   const [patientMap, setPatientMap] = useState({});
+  const [doctorOptions, setDoctorOptions] = useState([]);
+  const [selectedPatient, setSelectedPatient] = useState({});
+  const [errors, setErrors] = useState({});
+
 
   const initialPatientState = {
     patientname: '',
@@ -161,10 +149,36 @@ function NursePage() {
     fetchOwners();
   }, []);
 
-  const handleRowClick = row => {
-    setSelectedRow(row);
-    setEditMode(true);
-    setDrawerOpen(true);
+  {/*To fetch doctors data*/ }
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const data = await getDoctors();
+        const options = data.map(doctor => ({
+          value: doctor._id,
+          label: `${doctor.firstName} ${doctor.lastName} (ID: ${doctor.staffId})`,
+        }));
+        console.log('Doctor Options:', options);
+
+        setDoctorOptions(options);
+      } catch (error) {
+        console.error('Failed to fetch doctors:', error);
+      }
+    };
+
+    fetchDoctors();
+  }, []);
+
+
+  const handleRowClick = async row => {
+
+    const result = await getPatientById(row?.patient?._id);
+    if (result) {
+      setSelectedRow(row);
+      setSelectedPatient(result);
+      setDrawerOpen(true);
+
+    }
   };
 
   const handleCloseDrawer = () => {
@@ -179,6 +193,7 @@ function NursePage() {
   const handleCloseCreateModal = () => {
     setCreateModalOpen(false);
     setNewPatient(initialPatientState);
+    setErrors({});
   };
 
   const handleOpenAppointmentModal = () => {
@@ -187,6 +202,7 @@ function NursePage() {
 
   const handleCloseAppointmentModal = () => {
     setAppointmentModalOpen(false);
+    setErrors({});
     setNewAppointment(initialAppointmentState);
   };
 
@@ -218,69 +234,122 @@ function NursePage() {
   {
     /*To create a new patient*/
   }
-  const handleSubmit = async () => {
-    const requiredFields = [
-      newPatient.patientname,
-      newPatient.species,
-      newPatient.breed,
-      newPatient.age,
-      newPatient.gender,
-      newPatient.weight,
-      newPatient.ownerfname,
-      newPatient.ownerlname,
-      newPatient.address,
-      newPatient.phone,
-      newPatient.email,
-    ];
-
-    console.log('Required fields:', requiredFields);
-
-    const isAnyFieldEmpty = requiredFields.some(field => !field);
-
-    if (isAnyFieldEmpty) {
-      alert('Please fill in all required fields.');
-      return;
-    }
-
-    try {
-      const createdPatient = await createPatient(newPatient);
-      setCreateModalOpen(false);
-      setNewPatient(initialPatientState);
-    } catch (error) {
-      console.error('Failed to create patient:', error);
-    }
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (Validite()) {
+      try {
+        const createdPatient = await createPatient(newPatient);
+        setCreateModalOpen(false);
+        setNewPatient(initialPatientState);
+      } catch (error) {
+        console.error('Failed to create patient:', error);
+      }
+    };
   };
+
+  const Validite = () => {
+    let tempErrors = { patientname: '', species: '', breed: '', age: '', weight: '', gender: '', ownerfname: '', ownerlname: '', address: '', phone: '', email: '' };
+    let isValid = true;
+    if (!newPatient.patientname) {
+      tempErrors.patientname = 'Patient Name is required';
+      isValid = false;
+    }
+    if (!newPatient.species) {
+      tempErrors.species = 'Species is required';
+      isValid = false;
+    }
+    if (!newPatient.breed) {
+      tempErrors.breed = 'Breed is required';
+      isValid = false;
+    }
+    if (!newPatient.age) {
+      tempErrors.age = 'Age is required';
+      isValid = false;
+    }
+    if (!newPatient.weight) {
+      tempErrors.weight = 'Weight is required';
+      isValid = false;
+    }
+    if (!newPatient.gender) {
+      tempErrors.gender = 'Gender is required';
+      isValid = false;
+    }
+
+    if (!newPatient.ownerfname) {
+      tempErrors.ownerfname = 'Owner First Name is required';
+      isValid = false;
+    }
+    if (!newPatient.ownerlname) {
+      tempErrors.ownerlname = 'Owner Last Name is required';
+      isValid = false;
+    }
+    if (!newPatient.address) {
+      tempErrors.address = 'Address is required';
+      isValid = false;
+    }
+    if (!newPatient.phone) {
+      tempErrors.phone = 'Phone is required';
+      isValid = false;
+    }
+    if (!newPatient.email) {
+      tempErrors.email = 'Email is required';
+      isValid = false;
+    }
+    setErrors(tempErrors);
+    return isValid;
+  };
+
 
   {
     /*To create a new appointment*/
   }
-  const handleAppointmentSubmit = async () => {
+  const handleAppointmentSubmit = async (event) => {
     console.log('New Appointment:', newAppointment);
-    const requiredFields = [
-      newAppointment.doctorID,
-      newAppointment.appointmentDate,
-      newAppointment.timeSlot,
-      newAppointment.patient,
-      newAppointment.reason,
-      newAppointment.status,
-    ];
+    event.preventDefault();
 
-    const isAnyFieldEmpty = requiredFields.some(field => !field);
-
-    if (isAnyFieldEmpty) {
-      alert('Please fill in all required fields.');
-      return;
-    }
-
-    try {
-      const createdAppointment = await createAppointment(newAppointment);
-      setAppointments(prev => [...prev, createdAppointment]);
-      setAppointmentModalOpen(false);
-      setNewAppointment(initialAppointmentState);
-    } catch (error) {
-      console.error('Failed to create appointment:', error);
-    }
+    if (appointmentValidate()) {
+      try {
+        const createdAppointment = await createAppointment(newAppointment);
+        setAppointments(prev => [...prev, createdAppointment]);
+        setAppointmentModalOpen(false);
+        setNewAppointment(initialAppointmentState);
+      } catch (error) {
+        console.error('Failed to create appointment:', error);
+      }
+    };
   };
+
+  const appointmentValidate = () => {
+    let tempErrors = { patient: '', doctorID: '', appointmentDate: '', timeSlot: '', reason: '' };
+    let isValid = true;
+    if (!newAppointment.patient) {
+      tempErrors.patient = 'Patient is required';
+      isValid = false;
+    }
+    if (!newAppointment.doctorID) {
+      tempErrors.doctorID = 'Doctor ID is required';
+      isValid = false;
+    }
+    if (!newAppointment.appointmentDate) {
+      tempErrors.appointmentDate = 'Appointment Date is required';
+      isValid = false;
+    }
+    if (!newAppointment.timeSlot) {
+      tempErrors.timeSlot = 'Time Slot is required';
+      isValid = false;
+    }
+    if (!newAppointment.reason) {
+      tempErrors.reason = 'Reason is required';
+      isValid = false;
+    }
+    setErrors(tempErrors);
+    console.log('Errors:', errors);
+    console.log('isValid:', isValid);
+    return isValid;
+
+  };
+
+
 
   {
     /*To update an appointment*/
@@ -297,6 +366,7 @@ function NursePage() {
     } catch (error) {
       console.error('Failed to update appointment:', error);
     }
+
   };
 
   return (
@@ -450,7 +520,7 @@ function NursePage() {
                 sx={{ cursor: 'pointer' }}
               >
                 <TableCell>{row.appointmentId}</TableCell>
-                <TableCell>Hard Coded Value</TableCell>
+                <TableCell>{row.doctor?.staffId}</TableCell>
                 <TableCell>
                   {new Date(row.appointmentDate).toLocaleString()}
                 </TableCell>
@@ -475,7 +545,10 @@ function NursePage() {
 
       {/* Patient Details Drawer */}
       <PatientDetails
-        patientDetails={{ patientData, ownerData }}
+        patientDetails={{
+          patientData: selectedPatient,
+          ownerData: selectedPatient?.owner,
+        }}
         drawerOpen={drawerOpen}
         handleCloseDrawer={handleCloseDrawer}
       />
@@ -492,6 +565,8 @@ function NursePage() {
             name="patientname"
             value={newPatient.patientname}
             onChange={handleInputChange}
+            error={errors.patientname}
+            helperText={errors.patientname}
             fullWidth
             required
           />
@@ -501,6 +576,8 @@ function NursePage() {
             name="species"
             value={newPatient.species}
             onChange={handleInputChange}
+            error={errors.species}
+            helperText={errors.species}
             fullWidth
             required
           />
@@ -510,6 +587,8 @@ function NursePage() {
             name="breed"
             value={newPatient.breed}
             onChange={handleInputChange}
+            error={errors.breed}
+            helperText={errors.breed}
             fullWidth
             required
           />
@@ -519,6 +598,8 @@ function NursePage() {
             name="age"
             value={newPatient.age}
             onChange={handleInputChange}
+            error={errors.age}
+            helperText={errors.age}
             fullWidth
             required
             type="number"
@@ -530,6 +611,7 @@ function NursePage() {
               name="gender"
               value={newPatient.gender}
               onChange={handleInputChange}
+
               label="Gender"
             >
               <MenuItem value="Male">Male</MenuItem>
@@ -542,6 +624,8 @@ function NursePage() {
             name="weight"
             value={newPatient.weight}
             onChange={handleInputChange}
+            error={errors.weight}
+            helperText={errors.weight}
             fullWidth
             required
           />
@@ -570,14 +654,14 @@ function NursePage() {
             </RadioGroup>
           </FormControl>
           {isSameOwner ? (
-            <div style={{ marginBottom: '25px' }}>
-              <ReactSelect
-                options={ownerOptions}
-                onChange={selectedOption => {
-                  console.log('Selected Option:', selectedOption);
-                  const tst = ownerData.find(
-                    owner => owner.ownerId === selectedOption.value
-                  );
+
+            <Autocomplete
+              options={ownerOptions}
+              getOptionLabel={(option) => option.label}
+              onChange={(event, selectedOption) => {
+                console.log('Selected Option:', selectedOption);
+                if (selectedOption) {
+                  const tst = ownerData.find(owner => owner.ownerId === selectedOption.value);
                   setNewPatient({
                     ...newPatient,
                     ownerId: tst.ownerId,
@@ -587,12 +671,21 @@ function NursePage() {
                     phone: tst.phone,
                     email: tst.email,
                   });
-                }}
-                placeholder="Select Owner"
-                isSearchable
-                required
-              />
-            </div>
+                }
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Select Owner"
+                  placeholder="Select Owner"
+                  required
+                  margin="normal"
+                />
+              )}
+              isOptionEqualToValue={(option, value) => option.value === value.value}
+            />
+
+
           ) : (
             <>
               <TextField
@@ -601,6 +694,8 @@ function NursePage() {
                 name="ownerfname"
                 value={newPatient.ownerfname}
                 onChange={handleInputChange}
+                error={errors.ownerfname}
+                helperText={errors.ownerfname}
                 fullWidth
                 required
               />
@@ -611,6 +706,8 @@ function NursePage() {
                 name="ownerlname"
                 value={newPatient.ownerlname}
                 onChange={handleInputChange}
+                error={errors.ownerlname}
+                helperText={errors.ownerlname}
                 fullWidth
                 required
               />
@@ -620,6 +717,8 @@ function NursePage() {
                 name="address"
                 value={newPatient.address}
                 onChange={handleInputChange}
+                error={errors.address}
+                helperText={errors.address}
                 fullWidth
                 required
               />
@@ -630,6 +729,8 @@ function NursePage() {
                 name="email"
                 value={newPatient.email}
                 onChange={handleInputChange}
+                error={errors.email}
+                helperText={errors.email}
                 fullWidth
                 required
               />
@@ -640,6 +741,8 @@ function NursePage() {
                 name="phone"
                 value={newPatient.phone}
                 onChange={handleInputChange}
+                error={errors.phone}
+                helperText={errors.phone}
                 fullWidth
                 required
               />
@@ -660,58 +763,101 @@ function NursePage() {
       <Dialog open={appointmentModalOpen} onClose={handleCloseAppointmentModal}>
         <DialogTitle>Create New Appointment</DialogTitle>
         <DialogContent>
-          <div style={{ marginBottom: '25px' }}>
-            <ReactSelect
-              options={patientOptions}
-              onChange={selectedOption => {
+          <Autocomplete
+            options={patientOptions}
+            getOptionLabel={(option) => option.label}
+            onChange={(event, selectedOption) => {
+              if (selectedOption) {
                 setNewAppointment({
                   ...newAppointment,
                   patient: selectedOption.value,
                   patientName: selectedOption.label.split(' (')[0],
                 });
-              }}
-              placeholder="Select Patient"
-              isSearchable
-              required
-              styles={{
-                control: base => ({
-                  ...base,
-                  marginTop: '8px',
-                  marginBottom: '8px',
-                }),
-                menu: base => ({
-                  ...base,
-                  maxHeight: 200,
-                  overflowY: 'auto',
-                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                  zIndex: 1000,
-                }),
-                option: (base, state) => ({
-                  ...base,
-                  backgroundColor: state.isFocused
-                    ? 'rgba(224, 224, 224, 0.9)'
-                    : 'transparent',
-                  color: state.isSelected ? '#000' : '#333',
-                  padding: 10,
-                }),
-              }}
-            />
-          </div>
-          <TextField
-            margin="dense"
-            label="Doctor ID"
-            name="doctorID"
-            value={newAppointment.doctor}
-            onChange={handleAppointmentInputChange}
-            fullWidth
-            required
+              }
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Select Patient"
+                error={!!errors.patient}
+                helperText={errors.patient}
+                required
+                placeholder="Select Patient"
+                margin="normal"
+              />
+            )}
+            isOptionEqualToValue={(option, value) => option.value === value.value}
+            sx={{
+              '& .MuiAutocomplete-listbox': {
+                maxHeight: 200,
+                overflowY: 'auto',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              },
+              '& .MuiAutocomplete-option': {
+                padding: '10px',
+                backgroundColor: 'transparent',
+                '&[aria-selected="true"]': {
+                  color: '#000',
+                },
+                '&:hover': {
+                  backgroundColor: 'rgba(224, 224, 224, 0.9)',
+                },
+              },
+            }}
           />
+          <Autocomplete
+            options={doctorOptions} 
+            getOptionLabel={(option) => option.label} 
+            onChange={(event, selectedOption) => {
+              if (selectedOption) {
+                setNewAppointment({
+                  ...newAppointment,
+                  doctorID: selectedOption.value,
+                  doctorName: selectedOption.label.split(' (')[0], 
+                  doctor: selectedOption.value,
+                });
+              }
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Select Doctor"
+                error={!!errors.doctor}
+                helperText={errors.doctor}
+                required
+                placeholder="Select Doctor"
+                margin="normal"
+              />
+            )}
+            isOptionEqualToValue={(option, value) => option.value === value.value}
+            sx={{
+              '& .MuiAutocomplete-listbox': {
+                maxHeight: 200,
+                overflowY: 'auto',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              },
+              '& .MuiAutocomplete-option': {
+                padding: '10px',
+                backgroundColor: 'transparent',
+                '&[aria-selected="true"]': {
+                  color: '#000',
+                },
+                '&:hover': {
+                  backgroundColor: 'rgba(224, 224, 224, 0.9)',
+                },
+              },
+            }}
+          />
+
+
           <TextField
             margin="dense"
             type="date"
             name="appointmentDate"
             value={newAppointment.appointmentDate}
             onChange={handleAppointmentInputChange}
+            error={errors.appointmentDate}
+            helperText={errors.appointmentDate}
             fullWidth
             required
           />
@@ -721,6 +867,8 @@ function NursePage() {
             name="timeSlot"
             value={newAppointment.timeSlot}
             onChange={handleAppointmentInputChange}
+            error={errors.timeSlot}
+            helperText={errors.timeSlot}
             fullWidth
             required
           />
@@ -730,6 +878,8 @@ function NursePage() {
             name="reason"
             value={newAppointment.reason}
             onChange={handleAppointmentInputChange}
+            error={errors.reason}
+            helperText={errors.reason}
             fullWidth
             required
           />
@@ -744,22 +894,56 @@ function NursePage() {
         </DialogActions>
       </Dialog>
 
+
       {/* Edit Appointment Modal */}
-      <Dialog
-        open={editAppointmentModalOpen}
-        onClose={handleCloseEditAppointmentModal}
-      >
+      <Dialog open={editAppointmentModalOpen} onClose={handleCloseEditAppointmentModal}>
         <DialogTitle>Edit Appointment</DialogTitle>
         <DialogContent>
-          <TextField
-            margin="dense"
-            label="Doctor ID"
-            name="doctorID"
-            value={editedAppointment.doctor}
-            onChange={handleEditAppointmentInputChange}
-            fullWidth
-            required
+          <Autocomplete
+            options={doctorOptions} 
+            getOptionLabel={(option) => option.label} 
+            value={doctorOptions.find(option => option.value === editedAppointment.doctorID) || null}
+            onChange={(event, selectedOption) => {
+              if (selectedOption) {
+                setEditedAppointment({
+                  ...editedAppointment,
+                  doctorID: selectedOption.value, 
+                  doctorName: selectedOption.label.split(' (')[0], 
+                  doctor: selectedOption.value, 
+                });
+              }
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Select Doctor"
+                error={!!errors.doctor}
+                helperText={errors.doctor}
+                required
+                placeholder="Select Doctor"
+                margin="normal"
+              />
+            )}
+            isOptionEqualToValue={(option, value) => option.value === value.value}
+            sx={{
+              '& .MuiAutocomplete-listbox': {
+                maxHeight: 200,
+                overflowY: 'auto',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              },
+              '& .MuiAutocomplete-option': {
+                padding: '10px',
+                backgroundColor: 'transparent',
+                '&[aria-selected="true"]': {
+                  color: '#000',
+                },
+                '&:hover': {
+                  backgroundColor: 'rgba(224, 224, 224, 0.9)',
+                },
+              },
+            }}
           />
+
           <TextField
             margin="dense"
             label="Appointment Date"
@@ -779,7 +963,6 @@ function NursePage() {
             fullWidth
             required
           />
-
           <TextField
             margin="dense"
             label="Reason"
@@ -818,6 +1001,7 @@ function NursePage() {
           </Button>
         </DialogActions>
       </Dialog>
+
     </Box>
   );
 }
