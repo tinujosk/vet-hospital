@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Typography,
   Container,
@@ -18,25 +18,25 @@ import {
   InputLabel,
   MenuItem,
   Select,
-} from "@mui/material";
-import { useDispatch } from "react-redux";
-import { showSnackbar } from "../slices/snackbar";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
-import { createUser, getUserDetails } from "../services/user.js";
-import Loading from "../components/Loading";
+} from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { showSnackbar } from '../slices/snackbar';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import { createUser, getUserDetails } from '../services/user.js';
+import Loading from '../components/Loading';
 
 const Admin = () => {
   const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({
-    email: "",
-    role: "",
-    password: "",
-    firstName: "",
-    lastName: "",
-    specialization: "",
-    phone: "",
+    email: '',
+    role: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    specialization: '',
+    phone: '',
   });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [errors, setErrors] = useState(false);
@@ -48,8 +48,8 @@ const Admin = () => {
   //function to Auto generate the password...
   const generatePassword = () => {
     const charset =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
-    let password = "";
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+    let password = '';
     for (let i = 0; i < 10; i++) {
       password += charset.charAt(Math.floor(Math.random() * charset.length));
     }
@@ -64,7 +64,7 @@ const Admin = () => {
         const userData = await getUserDetails();
         setUsers(userData);
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error('Error fetching user data:', error);
       }
       setLoading(false);
     };
@@ -75,7 +75,7 @@ const Admin = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewUser({ ...newUser, [name]: value });
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
   };
 
   const handleRoleChange = (e) => {
@@ -88,42 +88,42 @@ const Admin = () => {
     let isValid = true;
 
     if (!newUser.firstName) {
-      tempErrors.firstName = "First Name is required";
+      tempErrors.firstName = 'First Name is required';
       isValid = false;
     } else if (!/^[A-Za-z\s]+$/.test(newUser.firstName)) {
-      tempErrors.firstName = "Please enter a valid first name";
+      tempErrors.firstName = 'Please enter a valid first name';
       isValid = false;
     }
 
     if (!newUser.lastName) {
-      tempErrors.lastName = "Last Name is required";
+      tempErrors.lastName = 'Last Name is required';
       isValid = false;
     } else if (!/^[A-Za-z\s]+$/.test(newUser.lastName)) {
-      tempErrors.lastName = "Please enter a valid last name";
+      tempErrors.lastName = 'Please enter a valid last name';
       isValid = false;
     }
 
     if (!newUser.specialization) {
-      tempErrors.specialization = "Specialization is required";
+      tempErrors.specialization = 'Specialization is required';
       isValid = false;
     } else if (!/^[A-Za-z\s]+$/.test(newUser.specialization)) {
-      tempErrors.specialization = "Please enter a valid specialization";
+      tempErrors.specialization = 'Please enter a valid specialization';
       isValid = false;
     }
 
     if (!newUser.email) {
-      tempErrors.email = "Email is required";
+      tempErrors.email = 'Email is required';
       isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(newUser.email)) {
-      tempErrors.email = "Email is not valid";
+      tempErrors.email = 'Email is not valid';
       isValid = false;
     }
 
     if (!newUser.phone) {
-      tempErrors.phone = "Phone number is required";
+      tempErrors.phone = 'Phone number is required';
       isValid = false;
     } else if (!/^\d{10}$/.test(newUser.phone)) {
-      tempErrors.phone = "Phone number must be 10 digits";
+      tempErrors.phone = 'Phone number must be 10 digits';
       isValid = false;
     }
 
@@ -142,23 +142,23 @@ const Admin = () => {
       dispatch(
         showSnackbar({
           message: `User registered successfully. \n password sent to email. \n Password: ${password}`,
-          severity: "success",
+          severity: 'success',
         })
       );
       setUsers([...users, userWithPassword]);
       setNewUser({
-        email: "",
-        password: "",
-        role: "",
-        firstName: "",
-        lastName: "",
-        specialization: "",
-        phone: "",
+        email: '',
+        password: '',
+        role: '',
+        firstName: '',
+        lastName: '',
+        specialization: '',
+        phone: '',
       });
       setDrawerOpen(false);
     } catch (error) {
       dispatch(
-        showSnackbar({ message: "User registration failed", severity: "error" })
+        showSnackbar({ message: 'User registration failed', severity: 'error' })
       );
     }
   };
@@ -174,10 +174,10 @@ const Admin = () => {
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
         padding: 4,
       }}
     >
@@ -195,7 +195,7 @@ const Admin = () => {
         <h2>Current Users</h2>
         <TableContainer
           component={Paper}
-          sx={{ maxWidth: { md: "95%", sm: "100%" }, maxHeight: "500px" }}
+          sx={{ maxWidth: { md: '95%', sm: '100%' }, maxHeight: '500px' }}
         >
           <Table stickyHeader>
             <TableHead>

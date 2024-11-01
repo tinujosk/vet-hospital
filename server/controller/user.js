@@ -1,6 +1,6 @@
-import User from "../model/User.js";
-import Staff from "../model/Staff.js";
-import { sendPasswordEmail } from "./emailService.js";
+import User from '../model/User.js';
+import Staff from '../model/Staff.js';
+import { sendPasswordEmail } from './emailService.js';
 
 export const createUser = async (req, res) => {
   try {
@@ -29,12 +29,12 @@ export const createUser = async (req, res) => {
     if (!emailResponse.success) {
       return res
         .status(500)
-        .json({ message: "User created but failed to send email" });
+        .json({ message: 'User created but failed to send email' });
     }
-    console.log("User created:", newUser);
-    res.status(201).json({ message: "User created successfully" });
+    console.log('User created:', newUser);
+    res.status(201).json({ message: 'User created successfully' });
   } catch (error) {
-    console.error("Error creating user:", error);
+    console.error('Error creating user:', error);
     res
       .status(500)
       .json({ error: 'Failed to create user "controller error messge"' });
@@ -45,19 +45,19 @@ export const getUserDetails = async (req, res) => {
   try {
     // const UserData = await User.find();
     const staffData = await Staff.find().populate({
-      path: "user",
-      select: "email role password",
+      path: 'user',
+      select: 'email role password',
     });
 
     if (staffData.length === 0) {
-      console.log("No User found.");
+      console.log('No User found.');
     } else {
-      console.log("Fetched User Data:");
+      console.log('Fetched User Data:');
     }
 
     res.status(200).json(staffData);
   } catch (error) {
-    console.error("Error creating user:", error);
-    res.status(500).json({ error: "Failed to Get user Details" });
+    console.error('Error creating user:', error);
+    res.status(500).json({ error: 'Failed to Get user Details' });
   }
 };
