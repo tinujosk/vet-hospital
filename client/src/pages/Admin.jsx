@@ -40,7 +40,6 @@ const Admin = () => {
   });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [errors, setErrors] = useState(false);
-  // const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const dispatch = useDispatch();
@@ -72,13 +71,13 @@ const Admin = () => {
     fetchUsers();
   }, []);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = e => {
     const { name, value } = e.target;
     setNewUser({ ...newUser, [name]: value });
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
+    setErrors(prevErrors => ({ ...prevErrors, [name]: '' }));
   };
 
-  const handleRoleChange = (e) => {
+  const handleRoleChange = e => {
     setNewUser({ ...newUser, role: e.target.value });
   };
 
@@ -163,7 +162,7 @@ const Admin = () => {
     }
   };
 
-  const handleDeleteUser = (index) => {
+  const handleDeleteUser = index => {
     setUsers(users.filter((_, i) => i !== index));
   };
 
@@ -181,7 +180,13 @@ const Admin = () => {
         padding: 4,
       }}
     >
-      <Container maxWidth='lg' sx={{ marginTop: 4 }}>
+      <Container
+        maxWidth='lg'
+        sx={{
+          marginTop: 4,
+          maxWidth: { lg: '70%', md: '90%', sm: '100%' },
+        }}
+      >
         <Button
           variant='contained'
           color='primary'
@@ -193,10 +198,7 @@ const Admin = () => {
         </Button>
 
         <h2>Current Users</h2>
-        <TableContainer
-          component={Paper}
-          sx={{ maxWidth: { md: '95%', sm: '100%' }, maxHeight: '500px' }}
-        >
+        <TableContainer component={Paper} sx={{ maxHeight: 310 }}>
           <Table stickyHeader>
             <TableHead>
               <TableRow>

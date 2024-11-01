@@ -9,16 +9,21 @@ import {
   TableRow,
   Paper,
   Typography,
-
 } from '@mui/material';
-import { getPatients,updatePatient } from '../services/patient';
-
+import { getPatients, updatePatient } from '../services/patient';
 import PatientDetails from '../components/PatientDetails';
 
 function PatientPage() {
   const [patients, setPatients] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
+  const tableHeaders = [
+    'Patient Name',
+    'Species',
+    'Age',
+    'Owner Name',
+    'Owner Phone',
+  ];
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -32,7 +37,7 @@ function PatientPage() {
     fetchPatients();
   }, []);
 
-  const handleRowClick = (patient) => {
+  const handleRowClick = patient => {
     setSelectedPatient(patient);
     setDrawerOpen(true);
   };
@@ -41,17 +46,16 @@ function PatientPage() {
     setDrawerOpen(false);
     setSelectedPatient(null);
   };
-  const handleUpdatePatient = async (updatedPatient) => {
+
+  const handleUpdatePatient = async updatedPatient => {
     try {
-        await updatePatient(updatedPatient._id, updatedPatient);
-        const updatedPatients = await getPatients();
-        setPatients(updatedPatients);
+      await updatePatient(updatedPatient._id, updatedPatient);
+      const updatedPatients = await getPatients();
+      setPatients(updatedPatients);
     } catch (error) {
-        console.error("Failed to update patient:", error);
+      console.error('Failed to update patient:', error);
     }
-};
-
-
+  };
 
   return (
     <Box
@@ -63,20 +67,20 @@ function PatientPage() {
         padding: 4,
       }}
     >
-      <Typography variant="h4" component="h2" sx={{ marginBottom: '50px' }}>
+      <Typography variant='h4' component='h2' sx={{ marginBottom: '50px' }}>
         Patients List
       </Typography>
 
-      <TableContainer component={Paper} sx={{ maxWidth: '80%', marginTop: 3, maxHeight: 500, overflowY: 'auto' }}>
-        <Table  aria-label="scrollable table">
+      <TableContainer
+        component={Paper}
+        sx={{ maxWidth: { lg: '60%', md: '90%', sm: '100%' }, maxHeight: 500 }}
+      >
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff', position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#1976d2' }}>Patient Name</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff', position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#1976d2' }}>Species</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff', position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#1976d2' }}>Age</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff', position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#1976d2' }}>Owner Name</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', color: '#fff', position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#1976d2' }}>Owner Phone</TableCell>
-
+              {tableHeaders.map(header => (
+                <TableCell>{header}</TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -85,19 +89,14 @@ function PatientPage() {
                 key={patient._id}
                 hover
                 onClick={() => handleRowClick(patient)}
-                sx={{
-                  cursor: 'pointer',
-                  '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' },
-                }}
               >
-                <TableCell onClick={() => handleRowClick(patient)}>{patient.name}</TableCell>
-                <TableCell onClick={() => handleRowClick(patient)}>{patient.species}</TableCell>
-                <TableCell onClick={() => handleRowClick(patient)}>{patient.age}</TableCell>
-                <TableCell onClick={() => handleRowClick(patient)}>
+                <TableCell>{patient.name}</TableCell>
+                <TableCell>{patient.species}</TableCell>
+                <TableCell>{patient.age}</TableCell>
+                <TableCell>
                   {`${patient.owner.firstName} ${patient.owner.lastName}`}
                 </TableCell>
-                <TableCell onClick={() => handleRowClick(patient)}>{patient.owner.phone}</TableCell>
-
+                <TableCell>{patient.owner.phone}</TableCell>
               </TableRow>
             ))}
           </TableBody>
