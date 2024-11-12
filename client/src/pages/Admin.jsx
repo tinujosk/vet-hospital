@@ -18,6 +18,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  TablePagination,
 } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { showSnackbar } from '../slices/snackbar';
@@ -41,6 +42,8 @@ const Admin = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [errors, setErrors] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const dispatch = useDispatch();
 
@@ -54,6 +57,20 @@ const Admin = () => {
     }
     return password;
   };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const paginatedRows = users.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   // fetch the user data from the database...
   useEffect(() => {
@@ -198,7 +215,7 @@ const Admin = () => {
         </Button>
 
         <h2>Current Users</h2>
-        <TableContainer component={Paper} sx={{ maxHeight: 310 }}>
+        <TableContainer component={Paper} sx={{ maxHeight: 500 }}>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
@@ -212,7 +229,7 @@ const Admin = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.map((user, index) => (
+              {paginatedRows.map((user, index) => (
                 <TableRow key={index}>
                   <TableCell>{user.firstName}</TableCell>
                   <TableCell>{user.lastName}</TableCell>
@@ -237,6 +254,15 @@ const Admin = () => {
             </TableBody>
           </Table>
         </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10]}
+          component='div'
+          count={users.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </Container>
 
       {/* Side Panel Drawer for Adding Users */}
