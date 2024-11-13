@@ -9,6 +9,7 @@ import {
   TableRow,
   Paper,
   Typography,
+  TablePagination,
 } from '@mui/material';
 import { getPatients, updatePatient } from '../services/patient';
 import PatientDetails from '../components/PatientDetails';
@@ -17,6 +18,8 @@ function PatientPage() {
   const [patients, setPatients] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const tableHeaders = [
     'Patient Name',
     'Species',
@@ -24,6 +27,20 @@ function PatientPage() {
     'Owner Name',
     'Owner Phone',
   ];
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const paginatedRows = patients.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -84,7 +101,7 @@ function PatientPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {patients.map(patient => (
+            {paginatedRows.map(patient => (
               <TableRow
                 key={patient._id}
                 hover
@@ -102,6 +119,15 @@ function PatientPage() {
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10]}
+        component='div'
+        count={patients.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
 
       {selectedPatient && (
         <PatientDetails

@@ -24,6 +24,7 @@ import {
   Typography,
   Autocomplete,
   Container,
+  TablePagination,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
@@ -93,6 +94,22 @@ function NursePage() {
   );
   const [patients, setPatients] = useState([]);
   const [patientOptions, setPatientOptions] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const paginatedRows = appointments.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -406,7 +423,7 @@ function NursePage() {
           component={Paper}
           sx={{
             marginTop: 3,
-            maxHeight: 310,
+            maxHeight: 500,
             overflowY: 'auto',
           }}
         >
@@ -512,7 +529,7 @@ function NursePage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {appointments?.map(row => (
+              {paginatedRows?.map(row => (
                 <TableRow
                   key={row._id}
                   hover
@@ -542,6 +559,15 @@ function NursePage() {
             </TableBody>
           </Table>
         </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10]}
+          component='div'
+          count={appointments.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </Container>
 
       {/* Patient Details Drawer */}

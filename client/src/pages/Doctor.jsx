@@ -10,6 +10,7 @@ import {
   TableRow,
   Paper,
   Typography,
+  TablePagination,
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolderOpen } from '@fortawesome/free-solid-svg-icons';
@@ -23,6 +24,22 @@ function DoctorPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState({});
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const paginatedRows = appointments.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   const navigate = useNavigate();
 
@@ -101,7 +118,7 @@ function DoctorPage() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {appointments?.map(row => (
+                {paginatedRows?.map(row => (
                   <TableRow
                     key={row.id}
                     hover
@@ -131,6 +148,15 @@ function DoctorPage() {
               </TableBody>
             </Table>
           </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10]}
+            component='div'
+            count={appointments.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </>
       ) : (
         <Typography variant='h5'>
