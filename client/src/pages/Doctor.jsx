@@ -12,20 +12,53 @@ import {
   Typography,
   TablePagination,
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolderOpen } from '@fortawesome/free-solid-svg-icons';
 import PatientDetails from '../components/PatientDetails';
 import { getAppointments } from '../services/appointment';
 import Loading from '../components/Loading';
 import { getPatientById } from '../services/patient';
+import Search from '../components/Search';
 
 function DoctorPage() {
   const [appointments, setAppointments] = useState([]);
+  const [appointmentsFiltered, setAppointmentsFiltered] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState({});
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Styled component to highlight matched text
+  const HighlightedTableCell = styled(TableCell)(
+    ({ theme, isHighlighted }) => ({
+      backgroundColor: isHighlighted ? '#e6e4b7' : 'inherit',
+      fontWeight: isHighlighted ? 'bold' : 'normal',
+    })
+  );
+
+  const highlightText = text => {
+    return (
+      text.toString().toLowerCase().includes(searchQuery.toLowerCase()) &&
+      searchQuery.toLowerCase() !== ''
+    );
+  };
+
+  useEffect(() => {
+    const filteredData = appointments.filter(
+      row =>
+        row.patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        row.appointmentId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        row.status.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    if (filteredData.length) {
+      setAppointmentsFiltered(filteredData);
+    } else {
+      setAppointmentsFiltered(appointments);
+    }
+  }, [searchQuery]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -36,7 +69,7 @@ function DoctorPage() {
     setPage(0);
   };
 
-  const paginatedRows = appointments.slice(
+  const paginatedRows = appointmentsFiltered.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
@@ -62,6 +95,7 @@ function DoctorPage() {
       try {
         const appointmentData = await getAppointments();
         setAppointments(appointmentData);
+        setAppointmentsFiltered(appointmentData);
       } catch (error) {
         console.error('Failed to fetch appointments:', error);
       } finally {
@@ -95,6 +129,10 @@ function DoctorPage() {
           <Typography variant='h4' component='h2' sx={{ marginBottom: '50px' }}>
             Your Recent Appointments
           </Typography>
+          <Search
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+          />
           <TableContainer
             component={Paper}
             sx={{
@@ -125,17 +163,29 @@ function DoctorPage() {
                     onClick={() => handleRowClick(row)}
                     sx={{ cursor: 'pointer' }}
                   >
-                    <TableCell>{row.appointmentId}</TableCell>
+                    <HighlightedTableCell
+                      isHighlighted={highlightText(row.appointmentId)}
+                    >
+                      {row.appointmentId}
+                    </HighlightedTableCell>
                     <TableCell>
                       {new Date(row.appointmentDate).toLocaleString()}
                     </TableCell>
-                    <TableCell>{row.patient?.name}</TableCell>
+                    <HighlightedTableCell
+                      isHighlighted={highlightText(row.patient?.name)}
+                    >
+                      {row.patient?.name}
+                    </HighlightedTableCell>
                     <TableCell>{row.timeSlot}</TableCell>
                     <TableCell>{row.reason}</TableCell>
                     <TableCell>
                       {new Date(row.createdAt).toLocaleString()}
                     </TableCell>
-                    <TableCell>{row.status}</TableCell>
+                    <HighlightedTableCell
+                      isHighlighted={highlightText(row.status)}
+                    >
+                      {row.status}
+                    </HighlightedTableCell>
                     <TableCell onClick={() => handleTreatment(row._id)}>
                       <FontAwesomeIcon
                         icon={faFolderOpen}
