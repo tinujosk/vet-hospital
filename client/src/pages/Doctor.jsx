@@ -201,7 +201,7 @@ function DoctorPage() {
           <TablePagination
             rowsPerPageOptions={[5, 10]}
             component='div'
-            count={appointments.length}
+            count={appointmentsFiltered.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
