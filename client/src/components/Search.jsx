@@ -5,7 +5,7 @@ import SearchIcon from '@mui/icons-material/Search';
 const SearchWrapper = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
-  border: '1px solid black',
+  border: '.5px solid black',
   backgroundColor: alpha(theme.palette.common.white, 1),
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.5),
@@ -17,6 +17,7 @@ const SearchWrapper = styled('div')(({ theme }) => ({
     width: 'auto',
   },
   marginBottom: 20,
+  alignSelf: 'self-end',
 }));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
@@ -37,9 +38,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
     [theme.breakpoints.up('sm')]: {
-      width: '17ch',
+      width: '25ch',
       '&:focus': {
-        width: '25ch',
+        width: '35ch',
       },
     },
   },

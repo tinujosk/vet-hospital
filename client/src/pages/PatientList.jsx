@@ -1,46 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-  TablePagination,
-} from '@mui/material';
+import { Box, TableCell, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { getPatients, updatePatient } from '../services/patient';
 import PatientDetails from '../components/PatientDetails';
+import GenericTable from '../components/GenericTable';
+
+const columns = [
+  { headerName: 'Patient Name', field: 'name' },
+  { headerName: 'Species', field: 'species' },
+  { headerName: 'Age', field: 'age' },
+  { headerName: 'Owner First Name', field: 'owner.firstName' },
+  { headerName: 'Owner Last Name', field: 'owner.lastName' },
+  { headerName: 'Owner Phone', field: 'owner.phone' },
+];
 
 function PatientPage() {
   const [patients, setPatients] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const tableHeaders = [
-    'Patient Name',
-    'Species',
-    'Age',
-    'Owner Name',
-    'Owner Phone',
-  ];
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = event => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const paginatedRows = patients.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -88,45 +65,10 @@ function PatientPage() {
         Patients List
       </Typography>
 
-      <TableContainer
-        component={Paper}
-        sx={{ maxWidth: { lg: '60%', md: '90%', sm: '100%' }, maxHeight: 500 }}
-      >
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              {tableHeaders.map(header => (
-                <TableCell>{header}</TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginatedRows.map(patient => (
-              <TableRow
-                key={patient._id}
-                hover
-                onClick={() => handleRowClick(patient)}
-              >
-                <TableCell>{patient.name}</TableCell>
-                <TableCell>{patient.species}</TableCell>
-                <TableCell>{patient.age}</TableCell>
-                <TableCell>
-                  {`${patient.owner.firstName} ${patient.owner.lastName}`}
-                </TableCell>
-                <TableCell>{patient.owner.phone}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10]}
-        component='div'
-        count={patients.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+      <GenericTable
+        columns={columns}
+        data={patients}
+        onRowClick={row => handleRowClick(row)}
       />
 
       {selectedPatient && (
