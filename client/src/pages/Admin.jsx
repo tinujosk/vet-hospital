@@ -10,10 +10,17 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Card,
+  CardContent,
+  Stack,
 } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { showSnackbar } from '../slices/snackbar';
 import AddIcon from '@mui/icons-material/Add';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+import PersonIcon from '@mui/icons-material/Person';
+import ScienceIcon from '@mui/icons-material/Science';
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import { createUser, getUserDetails } from '../services/user.js';
 import Loading from '../components/Loading';
 import GenericTable from '../components/GenericTable.jsx';
@@ -39,6 +46,7 @@ const Admin = () => {
     specialization: '',
     phone: '',
   });
+  const [summary, setSummary] = useState({ doctors: 0, nurses: 0, labs: 0, pharmacists: 0 });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [errors, setErrors] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -71,6 +79,16 @@ const Admin = () => {
 
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    const counts = {
+      doctors: users.filter((user) => user?.user?.role === 'doctor').length,
+      nurses: users.filter((user) => user?.user?.role === 'nurse').length,
+      labs: users.filter((user) => user?.user?.role === 'lab').length,
+      pharmacists: users.filter((user) => user?.user?.role === 'pharmacist').length,
+    };
+    setSummary(counts);
+  }, [users]);
 
   const handleInputChange = e => {
     const { name, value } = e.target;
@@ -193,6 +211,41 @@ const Admin = () => {
           marginTop: 4,
         }}
       >
+        {/* Summary Cards Section */}
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={4}
+        sx={{ mb: 4, justifyContent: 'left' }}
+      >
+        <Card>
+          <CardContent>
+            <LocalHospitalIcon fontSize="large" color="primary" />
+            <Typography variant="h6">Doctors</Typography>
+            <Typography variant="h4">{summary.doctors}</Typography>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent>
+            <PersonIcon fontSize="large" color="primary" />
+            <Typography variant="h6">Nurses</Typography>
+            <Typography variant="h4">{summary.nurses}</Typography>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent>
+            <ScienceIcon fontSize="large" color="primary" />
+            <Typography variant="h6">Lab Technicians</Typography>
+            <Typography variant="h4">{summary.labs}</Typography>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent>
+            <MedicalServicesIcon fontSize="large" color="primary" />
+            <Typography variant="h6">Pharmacists</Typography>
+            <Typography variant="h4">{summary.pharmacists}</Typography>
+          </CardContent>
+        </Card>
+      </Stack>
         <Box
           sx={{
             display: 'flex',

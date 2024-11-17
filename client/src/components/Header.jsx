@@ -20,8 +20,11 @@ import { Menu as MenuIcon, Close as CloseIcon } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { clearUserData } from '../slices/auth';
+import { clearUserDetails } from '../slices/user'; // For clearing user state
 import { Link as RouterLink } from 'react-router-dom';
 import { getNavItemsForUser } from '../util';
+import { fetchUserDetails } from '../slices/user';
+import { getUserDetailsFromToken } from '../util';
 
 const Header = ({ username = 'Username' }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -30,6 +33,7 @@ const Header = ({ username = 'Username' }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const role = useSelector(state => state.auth.role);
+  const { user } = useSelector((state) => state.user);
 
   const navLinks = getNavItemsForUser(role);
 
@@ -44,14 +48,38 @@ const Header = ({ username = 'Username' }) => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     dispatch(clearUserData());
+    dispatch(clearUserDetails()); // Clear user state
     handleMenuClose();
     navigate('/');
+  };
+
+  const handleMyAccount = async () => {
+    try {
+      const { userId } = getUserDetailsFromToken();
+      if (!userId) {
+        console.error('Token expired or userId not found. Logging out...');
+        handleLogout(); // Redirect to login
+        return;
+      }
+  
+      if (!user) {
+        console.log('Fetching user details...');
+        await dispatch(fetchUserDetails(userId));
+        console.log("data is fetched that user is logged first")
+      }
+  
+      handleMenuClose();
+      navigate('/user');
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+    } finally {
+    }
   };
 
   const handleToggleDrawer = open => () => {
     setMobileNavOpen(open);
   };
-
+  
   const isMenuOpen = Boolean(anchorEl);
 
   return (
@@ -120,7 +148,7 @@ const Header = ({ username = 'Username' }) => {
               horizontal: 'right',
             }}
           >
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem onClick={handleMyAccount}>My account</MenuItem>
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </Menu>
         </Toolbar>
@@ -166,6 +194,5 @@ const Header = ({ username = 'Username' }) => {
       </Drawer>
     </Box>
   );
-};
-
+}
 export default Header;

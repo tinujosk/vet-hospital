@@ -24,7 +24,8 @@ import {
 } from './controller/prescription.js';
 import {
   createUser,
-  getUserDetails
+  getUserDetails,
+  getLoggedInUser
 } from './controller/user.js'
 
 import { getDoctors } from './controller/doctor.js';
@@ -68,6 +69,7 @@ app.get('/prescriptions/:id', getPrescription);
 // User routes and handlers
 app.post('/user', createUser);
 app.get('/user', getUserDetails)
+app.get('/user/details', getLoggedInUser);
 
 //Doctor routes and handlers
 app.get('/doctors', getDoctors);
