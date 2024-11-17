@@ -70,9 +70,9 @@ function PatientDetails({
         </Box>
         <Box
           component="img"
-          sx={{ width: '100%' }}
+          sx={{ width: '100%', height: 'auto' }}
           alt="Patient Image"
-          src={NoImage}
+          src={patientData?.image || NoImage}
         />
         <Paper elevation={3} sx={{ padding: 2, marginBottom: 6 }}>
           <Grid container spacing={2}>

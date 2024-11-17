@@ -32,11 +32,13 @@ import {
   createPatient,
   getPatients,
   getPatientById,
+  uploadPatientImage,
 } from '../services/patient';
 import {
   createAppointment,
   getAppointments,
   updateAppointment,
+  
 } from '../services/appointment';
 import { getOwners } from '../services/owner';
 import { getDoctors } from '../services/doctor';
@@ -58,6 +60,9 @@ function NursePage() {
   const [doctorOptions, setDoctorOptions] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState({});
   const [errors, setErrors] = useState({});
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+
 
   const initialPatientState = {
     patientname: '',
@@ -163,6 +168,15 @@ function NursePage() {
     fetchDoctors();
   }, []);
 
+  const handleImageUpload = (event) => {
+    console.log('Image Upload:', event.target.files[0]);
+    const file = event.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file)); 
+    }
+  };
+
   const handleRowClick = async row => {
     const result = await getPatientById(row?.patient?._id);
     if (result) {
@@ -222,18 +236,34 @@ function NursePage() {
     setEditedAppointment({ ...editedAppointment, [name]: value });
   };
 
-  const handleSubmit = async event => {
+
+
+  const handleSubmit = async (event) => {
+    console.log('New Patient:', newPatient);  
     event.preventDefault();
     if (Validite()) {
       try {
-        const createdPatient = await createPatient(newPatient);
+        let imageUrl = '';
+        if (imageFile) {
+          imageUrl = await uploadPatientImage(imageFile);
+        }
+  
+        const patientData = {
+          ...newPatient,
+          image: imageUrl, 
+        };
+        await createPatient(patientData);
         setCreateModalOpen(false);
         setNewPatient(initialPatientState);
+        setImagePreview(null);
+        setImageFile(null);
       } catch (error) {
         console.error('Failed to create patient:', error);
       }
     }
   };
+  
+
 
   const Validite = () => {
     let tempErrors = {
@@ -605,6 +635,26 @@ function NursePage() {
             required
             type='number'
           />
+          <input
+            accept="image/*"
+            type="file"
+            onChange={handleImageUpload}
+            style={{ display: 'none' }}
+            id="patient-image-upload"
+          />
+          <label htmlFor="patient-image-upload">
+            <Button variant="outlined" component="span" color="primary">
+              Upload Image
+            </Button>
+          </label>
+
+          {imagePreview && (
+            <div style={{ margin: '10px 0' }}>
+              <Typography variant="body2">Image Preview:</Typography>
+              <img src={imagePreview} alt="Patient" width="100%" height="auto" />
+            </div>
+          )}
+
           <FormControl fullWidth margin='dense' required>
             <InputLabel id='gender-label'>Gender</InputLabel>
             <Select
@@ -634,7 +684,6 @@ function NursePage() {
             Owner Details
           </Typography>
 
-          {/* Radio buttons to select owner option */}
           <FormControl>
             <RadioGroup
               row

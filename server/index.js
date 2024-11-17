@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-
+import multer from 'multer';
 import {} from './configs/db.js';
 import login from './controller/login.js';
 import {
@@ -8,6 +8,7 @@ import {
   getPatients,
   getPatient,
   updatePatient,
+  uploadImage,
 } from './controller/patient.js';
 import {
   createAppointment,
@@ -29,6 +30,12 @@ import {
 import { getDoctors } from './controller/doctor.js';
 
 const app = express();
+const upload = multer({ dest: 'uploads/' });
+
+
+
+
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded());
@@ -40,6 +47,7 @@ app.get('/patients', getPatients);
 app.post('/patients', createPatient);
 app.get('/patients/:id', getPatient);
 app.put('/patients/:id', updatePatient);
+app.post('/patients/upload-image', upload.single('image'), uploadImage);
 
 // Appointment routes and handlers
 app.get('/appointments', getAppointments);

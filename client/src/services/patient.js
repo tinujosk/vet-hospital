@@ -50,3 +50,21 @@ export const updatePatient = async (patientId, updatedPatientData) => {
         throw error; 
     }
 };
+export const uploadPatientImage = async (imageFile) => {
+  console.log('Uploading patient image:', imageFile);
+    try {
+      
+      const formData = new FormData();
+      formData.append('image', imageFile);
+  
+      const response = await axios.post(`${API_URL}/patients/upload-image`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data.url; // Return the image URL
+    } catch (error) {
+      console.error('Error uploading patient image:', error);
+      throw error;
+    }
+  };

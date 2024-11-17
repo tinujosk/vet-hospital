@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import Counter from './Counter.js';
 
+
+
 const Schema = mongoose.Schema;
 
 const PatientSchema = new Schema(
@@ -10,6 +12,7 @@ const PatientSchema = new Schema(
     species: { type: String, required: true },
     breed: { type: String, required: true },
     age: { type: Number, required: true },
+    image: { type: String },
     gender: { type: String, enum: ['Male', 'Female'], required: true },
     weight: { type: Number, required: true },
     owner: { type: Schema.Types.ObjectId, ref: 'Owner' },

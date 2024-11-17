@@ -26,7 +26,7 @@ function PatientPage() {
   ];
 
   useEffect(() => {
-    const fetchPatients = async () => {
+    const fetchPatients = async () => {  
       try {
         const data = await getPatients();
         setPatients(data);
