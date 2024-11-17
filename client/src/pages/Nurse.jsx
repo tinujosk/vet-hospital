@@ -11,22 +11,13 @@ import {
   FormControl,
   InputLabel,
   Select,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   RadioGroup,
   Radio,
   FormControlLabel,
-  Paper,
   Typography,
   Autocomplete,
   Container,
 } from '@mui/material';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import PatientDetails from '../components/PatientDetails';
 import {
   createPatient,
@@ -42,8 +33,20 @@ import {
 } from '../services/appointment';
 import { getOwners } from '../services/owner';
 import { getDoctors } from '../services/doctor';
+import GenericTable from '../components/GenericTable';
 
 let ownerData = [];
+
+const columns = [
+  { headerName: 'Appointment ID', field: 'appointmentId' },
+  { headerName: 'Doctor ID', field: 'doctor.staffId' },
+  { headerName: 'Appointment Date', field: 'appointmentDate' },
+  { headerName: 'Patient Name', field: 'patient.name' },
+  { headerName: 'Slot', field: 'timeSlot' },
+  { headerName: 'Reason', field: 'reason' },
+  { headerName: 'Created At', field: 'createdAt' },
+  { headerName: 'Status', field: 'status' },
+];
 
 function NursePage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -56,7 +59,6 @@ function NursePage() {
     useState(false);
   const [isSameOwner, setIsSameOwner] = useState(true);
   const [ownerOptions, setOwnerOptions] = useState([]);
-  const [patientMap, setPatientMap] = useState({});
   const [doctorOptions, setDoctorOptions] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState({});
   const [errors, setErrors] = useState({});
@@ -401,17 +403,15 @@ function NursePage() {
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
-        padding: 4,
       }}
     >
       <Container
         maxWidth='lg'
         sx={{
           marginTop: 4,
-          maxWidth: { lg: '95%', sm: '100%' },
         }}
       >
-        <Box sx={{ display: 'flex', gap: 2, marginBottom: '50px' }}>
+        <Box sx={{ display: 'flex', gap: 2, marginBottom: { xs: 2, sm: 4 } }}>
           <Button
             variant='contained'
             color='primary'
@@ -428,150 +428,25 @@ function NursePage() {
           </Button>
         </Box>
 
-        <Typography variant='h4' component='h2'>
+        <Typography
+          variant='h2'
+          component='h2'
+          marginBottom={2}
+          fontSize={{ xs: 20, sm: 30 }}
+        >
           Appointments
         </Typography>
 
-        <TableContainer
-          component={Paper}
-          sx={{
-            marginTop: 3,
-            maxHeight: 310,
-            overflowY: 'auto',
+        <GenericTable
+          columns={columns}
+          data={appointments}
+          actions={['edit']}
+          onRowClick={row => handleRowClick(row)}
+          onEdit={(row, e) => {
+            e.stopPropagation();
+            handleOpenEditAppointmentModal(row);
           }}
-        >
-          <Table aria-label='scrollable table'>
-            <TableHead>
-              <TableRow>
-                <TableCell
-                  sx={{
-                    fontWeight: 'bold',
-                    backgroundColor: '#1976d2',
-                    color: '#fff',
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 1,
-                  }}
-                >
-                  Appointment ID
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: 'bold',
-                    backgroundColor: '#1976d2',
-                    color: '#fff',
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 1,
-                  }}
-                >
-                  Doctor ID
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: 'bold',
-                    backgroundColor: '#1976d2',
-                    color: '#fff',
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 1,
-                  }}
-                >
-                  Appointment Date
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: 'bold',
-                    backgroundColor: '#1976d2',
-                    color: '#fff',
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 1,
-                  }}
-                >
-                  Patient Name
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: 'bold',
-                    backgroundColor: '#1976d2',
-                    color: '#fff',
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 1,
-                  }}
-                >
-                  Slot
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: 'bold',
-                    backgroundColor: '#1976d2',
-                    color: '#fff',
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 1,
-                  }}
-                >
-                  Reason
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: 'bold',
-                    backgroundColor: '#1976d2',
-                    color: '#fff',
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 1,
-                  }}
-                >
-                  Status
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: 'bold',
-                    backgroundColor: '#1976d2',
-                    color: '#fff',
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 1,
-                  }}
-                >
-                  Action
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {appointments?.map(row => (
-                <TableRow
-                  key={row._id}
-                  hover
-                  onClick={() => handleRowClick(row)}
-                  sx={{ cursor: 'pointer' }}
-                >
-                  <TableCell>{row.appointmentId}</TableCell>
-                  <TableCell>{row.doctor?.staffId}</TableCell>
-                  <TableCell>
-                    {new Date(row.appointmentDate).toLocaleString()}
-                  </TableCell>
-                  <TableCell> {row.patient?.name}</TableCell>
-                  <TableCell>{row.timeSlot}</TableCell>
-                  <TableCell>{row.reason}</TableCell>
-                  <TableCell>{row.status}</TableCell>
-                  <TableCell>
-                    <FontAwesomeIcon
-                      icon={faEdit}
-                      onClick={e => {
-                        e.stopPropagation();
-                        handleOpenEditAppointmentModal(row);
-                      }}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        />
       </Container>
 
       {/* Patient Details Drawer */}

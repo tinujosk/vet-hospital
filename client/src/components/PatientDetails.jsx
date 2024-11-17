@@ -53,15 +53,20 @@ function PatientDetails({
   };
 
   return (
-    <Drawer anchor="right" open={drawerOpen} onClose={handleCloseDrawer}>
-      <Box sx={{ width: 600, padding: 3 }}>
+    <Drawer anchor='right' open={drawerOpen} onClose={handleCloseDrawer}>
+      <Box
+        sx={{
+          width: { xs: 300, sm: 400, md: 600 },
+          padding: 3,
+        }}
+      >
         <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
+          display='flex'
+          justifyContent='space-between'
+          alignItems='center'
           marginBottom={2}
         >
-          <Typography variant="h5" component="h2" gutterBottom>
+          <Typography variant='h5' component='h2' gutterBottom>
             Patient Details
           </Typography>
           <IconButton onClick={handleCloseDrawer}>
@@ -77,19 +82,19 @@ function PatientDetails({
         <Paper elevation={3} sx={{ padding: 2, marginBottom: 6 }}>
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              <Typography variant="body1">
+              <Typography variant='body1'>
                 <strong>Name:</strong>
               </Typography>
               <TextField
                 value={updatedPatient?.name}
                 onChange={e => handlePatientInputChange('name', e.target.value)}
-                margin="none"
-                variant="standard"
+                margin='none'
+                variant='standard'
                 disabled={!editMode}
               />
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">
+              <Typography variant='body1'>
                 <strong>Species:</strong>
               </Typography>
               <TextField
@@ -97,13 +102,13 @@ function PatientDetails({
                 onChange={e =>
                   handlePatientInputChange('species', e.target.value)
                 }
-                margin="none"
-                variant="standard"
+                margin='none'
+                variant='standard'
                 disabled={!editMode}
               />
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">
+              <Typography variant='body1'>
                 <strong>Breed:</strong>
               </Typography>
               <TextField
@@ -111,47 +116,47 @@ function PatientDetails({
                 onChange={e =>
                   handlePatientInputChange('breed', e.target.value)
                 }
-                margin="none"
-                variant="standard"
+                margin='none'
+                variant='standard'
                 disabled={!editMode}
               />
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">
+              <Typography variant='body1'>
                 <strong>Age:</strong>
               </Typography>
               <TextField
-                type="number"
+                type='number'
                 value={updatedPatient?.age}
                 onChange={e => handlePatientInputChange('age', e.target.value)}
-                margin="none"
-                variant="standard"
+                margin='none'
+                variant='standard'
                 disabled={!editMode}
               />
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">
+              <Typography variant='body1'>
                 <strong>Gender:</strong>
               </Typography>
               <FormControl
-                variant="standard"
-                margin="none"
+                variant='standard'
+                margin='none'
                 disabled={!editMode}
               >
                 <Select
-                  labelId="gender-label"
+                  labelId='gender-label'
                   value={updatedPatient?.gender}
                   onChange={e =>
                     handlePatientInputChange('gender', e.target.value)
                   }
                 >
-                  <MenuItem value="Male">Male</MenuItem>
-                  <MenuItem value="Female">Female</MenuItem>
+                  <MenuItem value='Male'>Male</MenuItem>
+                  <MenuItem value='Female'>Female</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">
+              <Typography variant='body1'>
                 <strong>Weight:</strong>
               </Typography>
               <TextField
@@ -159,8 +164,8 @@ function PatientDetails({
                 onChange={e =>
                   handlePatientInputChange('weight', e.target.value)
                 }
-                margin="none"
-                variant="standard"
+                margin='none'
+                variant='standard'
                 disabled={!editMode}
               />
             </Grid>
@@ -168,7 +173,7 @@ function PatientDetails({
               <Divider sx={{ marginY: 2 }} />
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="h6" component="h3" gutterBottom>
+              <Typography variant='h6' component='h3' gutterBottom>
                 Medical History:
               </Typography>
               Not available
@@ -184,7 +189,7 @@ function PatientDetails({
               <Divider sx={{ marginY: 2 }} />
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">
+              <Typography variant='body1'>
                 <strong>Owner First Name:</strong>
               </Typography>
               <TextField
@@ -192,13 +197,13 @@ function PatientDetails({
                 onChange={e =>
                   handleOwnerInputChange('firstName', e.target.value)
                 }
-                margin="none"
-                variant="standard"
+                margin='none'
+                variant='standard'
                 disabled={!editMode}
               />
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">
+              <Typography variant='body1'>
                 <strong>Owner Last Name:</strong>
               </Typography>
               <TextField
@@ -206,37 +211,37 @@ function PatientDetails({
                 onChange={e =>
                   handleOwnerInputChange('lastName', e.target.value)
                 }
-                margin="none"
-                variant="standard"
+                margin='none'
+                variant='standard'
                 disabled={!editMode}
               />
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">
+              <Typography variant='body1'>
                 <strong>Owner Phone:</strong>
               </Typography>
               <TextField
                 value={updatedOwner?.phone}
                 onChange={e => handleOwnerInputChange('phone', e.target.value)}
-                margin="none"
-                variant="standard"
+                margin='none'
+                variant='standard'
                 disabled={!editMode}
               />
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="body1">
+              <Typography variant='body1'>
                 <strong>Owner Email:</strong>
               </Typography>
               <TextField
                 value={updatedOwner?.email}
                 onChange={e => handleOwnerInputChange('email', e.target.value)}
-                margin="none"
-                variant="standard"
+                margin='none'
+                variant='standard'
                 disabled={!editMode}
               />
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="body1">
+              <Typography variant='body1'>
                 <strong>Owner Address:</strong>
               </Typography>
               <TextField
@@ -244,16 +249,16 @@ function PatientDetails({
                 onChange={e =>
                   handleOwnerInputChange('address', e.target.value)
                 }
-                margin="none"
+                margin='none'
                 fullWidth
-                variant="standard"
+                variant='standard'
                 disabled={!editMode}
               />
             </Grid>
             <Grid item xs={12}>
               <Button
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 fullWidth
                 onClick={handleSubmit}
                 disabled={!editMode}

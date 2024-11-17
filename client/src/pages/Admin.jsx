@@ -2,16 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
   Typography,
   Container,
-  IconButton,
   Button,
   TextField,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
   Drawer,
   Box,
   FormControl,
@@ -21,11 +13,20 @@ import {
 } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { showSnackbar } from '../slices/snackbar';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { createUser, getUserDetails } from '../services/user.js';
 import Loading from '../components/Loading';
+import GenericTable from '../components/GenericTable.jsx';
+
+const columns = [
+  { headerName: 'User ID', field: 'staffId' },
+  { headerName: 'First Name', field: 'firstName' },
+  { headerName: 'Last Name', field: 'lastName' },
+  { headerName: 'Role', field: 'user.role' },
+  { headerName: 'Specialization', field: 'specialization' },
+  { headerName: 'User Email', field: 'email' },
+  { headerName: 'Owner Phone', field: 'phone' },
+];
 
 const Admin = () => {
   const [users, setUsers] = useState([]);
@@ -162,8 +163,15 @@ const Admin = () => {
     }
   };
 
-  const handleDeleteUser = index => {
-    setUsers(users.filter((_, i) => i !== index));
+  // This is a front end delete, will be replaced later.
+  const handleDeleteUser = id => {
+    console.log({ id });
+    const usersUpdated = users.filter((user, i) => {
+      console.log({ user });
+      return user._id !== id;
+    });
+    console.log({ usersUpdated });
+    setUsers(usersUpdated);
   };
 
   if (loading) {
@@ -177,66 +185,47 @@ const Admin = () => {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 4,
       }}
     >
       <Container
         maxWidth='lg'
         sx={{
           marginTop: 4,
-          maxWidth: { lg: '70%', md: '90%', sm: '100%' },
         }}
       >
-        <Button
-          variant='contained'
-          color='primary'
-          startIcon={<AddIcon />}
-          onClick={() => setDrawerOpen(true)}
-          sx={{ marginBottom: 2 }}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
         >
-          Add User
-        </Button>
+          <Button
+            variant='contained'
+            color='primary'
+            startIcon={<AddIcon />}
+            onClick={() => setDrawerOpen(true)}
+            sx={{ marginBottom: 2 }}
+          >
+            Add User
+          </Button>
+        </Box>
+        <Typography
+          variant='h2'
+          component='h2'
+          marginBottom={2}
+          fontSize={{ xs: 20, sm: 30 }}
+        >
+          Current Users
+        </Typography>
 
-        <h2>Current Users</h2>
-        <TableContainer component={Paper} sx={{ maxHeight: 310 }}>
-          <Table stickyHeader>
-            <TableHead>
-              <TableRow>
-                <TableCell>First Name</TableCell>
-                <TableCell>Last Name</TableCell>
-                <TableCell>Role</TableCell>
-                <TableCell>Specialization</TableCell>
-                <TableCell>User Name</TableCell>
-                {/* <TableCell>Password</TableCell> */}
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {users.map((user, index) => (
-                <TableRow key={index}>
-                  <TableCell>{user.firstName}</TableCell>
-                  <TableCell>{user.lastName}</TableCell>
-                  <TableCell>{user.user?.role}</TableCell>
-                  <TableCell>{user.specialization}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  {/* <TableCell>{"**********"}</TableCell> */}
-                  {/* <TableCell>{user.user?.password}</TableCell> */}
-                  <TableCell>
-                    <IconButton color='primary'>
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      color='secondary'
-                      onClick={() => handleDeleteUser(index)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <GenericTable
+          columns={columns}
+          data={users}
+          actions={['delete']}
+          onRowClick={row => {}}
+          onDelete={row => handleDeleteUser(row._id)}
+        />
       </Container>
 
       {/* Side Panel Drawer for Adding Users */}

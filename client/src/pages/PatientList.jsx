@@ -1,29 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-} from '@mui/material';
+import { Box, Typography, Container } from '@mui/material';
 import { getPatients, updatePatient } from '../services/patient';
 import PatientDetails from '../components/PatientDetails';
+import GenericTable from '../components/GenericTable';
+
+const columns = [
+  { headerName: 'Patient Name', field: 'name' },
+  { headerName: 'Species', field: 'species' },
+  { headerName: 'Age', field: 'age' },
+  { headerName: 'Owner First Name', field: 'owner.firstName' },
+  { headerName: 'Owner Last Name', field: 'owner.lastName' },
+  { headerName: 'Owner Phone', field: 'owner.phone' },
+];
 
 function PatientPage() {
   const [patients, setPatients] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
-  const tableHeaders = [
-    'Patient Name',
-    'Species',
-    'Age',
-    'Owner Name',
-    'Owner Phone',
-  ];
 
   useEffect(() => {
     const fetchPatients = async () => {  
@@ -64,45 +57,28 @@ function PatientPage() {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 4,
       }}
     >
-      <Typography variant='h4' component='h2' sx={{ marginBottom: '50px' }}>
-        Patients List
-      </Typography>
-
-      <TableContainer
-        component={Paper}
-        sx={{ maxWidth: { lg: '60%', md: '90%', sm: '100%' }, maxHeight: 500 }}
+      <Typography
+        variant='h2'
+        component='h2'
+        marginBottom={2}
+        fontSize={{ xs: 20, sm: 30 }}
       >
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              {tableHeaders.map(header => (
-                <TableCell>{header}</TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {patients.map(patient => (
-              <TableRow
-                key={patient._id}
-                hover
-                onClick={() => handleRowClick(patient)}
-              >
-                <TableCell>{patient.name}</TableCell>
-                <TableCell>{patient.species}</TableCell>
-                <TableCell>{patient.age}</TableCell>
-                <TableCell>
-                  {`${patient.owner.firstName} ${patient.owner.lastName}`}
-                </TableCell>
-                <TableCell>{patient.owner.phone}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
+        Registered Patients
+      </Typography>
+      <Container
+        maxWidth='lg'
+        sx={{
+          marginTop: 4,
+        }}
+      >
+        <GenericTable
+          columns={columns}
+          data={patients}
+          onRowClick={row => handleRowClick(row)}
+        />
+      </Container>
       {selectedPatient && (
         <PatientDetails
           patientDetails={{

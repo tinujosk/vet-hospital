@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-} from '@mui/material';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFolderOpen } from '@fortawesome/free-solid-svg-icons';
+import { Box, Typography, Container } from '@mui/material';
 import PatientDetails from '../components/PatientDetails';
 import { getAppointments } from '../services/appointment';
 import Loading from '../components/Loading';
 import { getPatientById } from '../services/patient';
+import GenericTable from '../components/GenericTable';
+import PieChart from '../components/PieChart';
+
+const columns = [
+  { headerName: 'Appointment ID', field: 'appointmentId' },
+  { headerName: 'Appointment Date', field: 'appointmentDate' },
+  { headerName: 'Patient Name', field: 'patient.name' },
+  { headerName: 'Slot', field: 'timeSlot' },
+  { headerName: 'Reason', field: 'reason' },
+  { headerName: 'Created At', field: 'createdAt' },
+  { headerName: 'Status', field: 'status' },
+];
 
 function DoctorPage() {
   const [appointments, setAppointments] = useState([]);
@@ -70,74 +70,48 @@ function DoctorPage() {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 4,
       }}
     >
-      {appointments?.length ? (
-        <>
-          <Typography variant='h4' component='h2' sx={{ marginBottom: '50px' }}>
-            Your Recent Appointments
-          </Typography>
-          <TableContainer
-            component={Paper}
-            sx={{
-              maxWidth: { lg: '80%', md: '90%', sm: '100%' },
-              maxHeight: 500,
-            }}
-          >
-            <Table stickyHeader>
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold' }}>
-                    Appointment ID
-                  </TableCell>
-                  <TableCell>Appointment Date</TableCell>
-                  <TableCell>Patient Name</TableCell>
-                  <TableCell>Slot</TableCell>
-                  <TableCell>Reason</TableCell>
-                  <TableCell>Created At</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {appointments?.map(row => (
-                  <TableRow
-                    key={row.id}
-                    hover
-                    onClick={() => handleRowClick(row)}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    <TableCell>{row.appointmentId}</TableCell>
-                    <TableCell>
-                      {new Date(row.appointmentDate).toLocaleString()}
-                    </TableCell>
-                    <TableCell>{row.patient?.name}</TableCell>
-                    <TableCell>{row.timeSlot}</TableCell>
-                    <TableCell>{row.reason}</TableCell>
-                    <TableCell>
-                      {new Date(row.createdAt).toLocaleString()}
-                    </TableCell>
-                    <TableCell>{row.status}</TableCell>
-                    <TableCell onClick={() => handleTreatment(row._id)}>
-                      <FontAwesomeIcon
-                        icon={faFolderOpen}
-                        style={{ marginRight: '5px' }}
-                      />
-                      Open Case
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </>
-      ) : (
-        <Typography variant='h5'>
-          Looks like you don't have any appointments.
-        </Typography>
-      )}
+      <Typography
+        variant='h2'
+        component='h2'
+        marginBottom={2}
+        fontSize={{ xs: 20, sm: 30 }}
+        display={{ xs: 'none', lg: 'block' }}
+      >
+        Your Recent Appointments
+      </Typography>
+      <Container
+        maxWidth='lg'
+        sx={{
+          marginTop: 4,
+        }}
+      >
+        <Box
+          display='flex'
+          flexDirection={{
+            xs: 'column',
+            sm: 'column',
+            md: 'column',
+            lg: 'row',
+          }}
+          justifyContent='center'
+          gap={4}
+        >
+          <div style={{ textAlign: 'center' }}>
+            <h2>Overview of Appointments</h2>
+            <PieChart rawData={appointments} />
+          </div>
 
+          <GenericTable
+            columns={columns}
+            data={appointments}
+            actions={['open']}
+            onRowClick={row => handleRowClick(row)}
+            onOpen={row => handleTreatment(row._id)}
+          />
+        </Box>
+      </Container>
       <PatientDetails
         patientDetails={{
           patientData: selectedPatient,
