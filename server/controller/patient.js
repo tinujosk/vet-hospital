@@ -1,5 +1,6 @@
 import Patient from '../model/Patient.js';
 import Owner from '../model/Owner.js';
+import cloudinary from '../configs/cloudinary.js';
 
 export const createPatient = async (req, res) => {
   
@@ -13,6 +14,7 @@ export const createPatient = async (req, res) => {
       age,
       gender,
       weight,
+      image,
       medicalHistory,
       ownerfname,
       ownerlname,
@@ -47,6 +49,7 @@ export const createPatient = async (req, res) => {
       gender,
       weight,
       medicalHistory,
+      image,
       owner: ownerData._id,
     });
 
@@ -94,10 +97,10 @@ export const updatePatient = async (req, res) => {
           gender, 
           weight, 
           medicalHistory,
-          owner // Destructure the entire owner object
+          owner 
       } = req.body;
 
-      // Validate that ID is provided in params
+ 
       if (!req.params.id) {
           return res.status(400).json({ message: 'Patient ID is required' });
       }
@@ -144,19 +147,16 @@ export const updatePatient = async (req, res) => {
   }
 };
 
-
-// export const deletePatient = async (req, res) => {
-//   try {
-//       const { id } = req.params; 
-//       const patient = await Patient.findByIdAndDelete(id);  
-
-//       if (!patient) {
-//           return res.status(404).json({ message: 'Patient not found' });
-//       }
-
-//       res.status(200).json({ message: 'Patient deleted successfully' });  
-//   } catch (error) {
-//       console.error('Error deleting patient:', error);
-//       res.status(500).json({ message: error.message });  
-//   }
-// };
+export const uploadImage = async (req, res) => {
+  console.log('Uploading image:', req.file);
+  try {
+    const file = req.file.path;
+    const result = await cloudinary.uploader.upload(file, {
+      folder: 'patients',
+    });
+    return res.status(200).json({ url: result.secure_url });
+  } catch (error) {
+    console.error('Image upload error:', error);
+    res.status(500).json({ error: 'Failed to upload image' });
+  }
+};
