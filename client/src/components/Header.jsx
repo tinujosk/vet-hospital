@@ -9,7 +9,14 @@ import {
   Avatar,
   Menu,
   MenuItem,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
 } from '@mui/material';
+import { Menu as MenuIcon, Close as CloseIcon } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { clearUserData } from '../slices/auth';
@@ -18,6 +25,8 @@ import { getNavItemsForUser } from '../util';
 
 const Header = ({ username = 'Username' }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [isMobileNavOpen, setMobileNavOpen] = useState(false);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const role = useSelector(state => state.auth.role);
@@ -39,6 +48,10 @@ const Header = ({ username = 'Username' }) => {
     navigate('/');
   };
 
+  const handleToggleDrawer = open => () => {
+    setMobileNavOpen(open);
+  };
+
   const isMenuOpen = Boolean(anchorEl);
 
   return (
@@ -54,7 +67,7 @@ const Header = ({ username = 'Username' }) => {
               VetClinic Pro
             </Link>
           </Typography>
-          <Box sx={{ flexGrow: 1, display: 'flex' }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {navLinks.map((page, index) => (
               <Link
                 key={index}
@@ -68,7 +81,13 @@ const Header = ({ username = 'Username' }) => {
               </Link>
             ))}
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              marginRight: { xs: 2, md: 0 },
+            }}
+          >
             <Chip
               avatar={<Avatar>{username.charAt(0)}</Avatar>}
               label={username}
@@ -78,6 +97,16 @@ const Header = ({ username = 'Username' }) => {
               sx={{ ml: 2, cursor: 'pointer' }}
             />
           </Box>
+
+          <IconButton
+            edge='start'
+            color='secondary'
+            aria-label='menu'
+            sx={{ display: { xs: 'block', md: 'none' } }}
+            onClick={handleToggleDrawer(true)}
+          >
+            <MenuIcon />
+          </IconButton>
           <Menu
             anchorEl={anchorEl}
             open={isMenuOpen}
@@ -96,6 +125,45 @@ const Header = ({ username = 'Username' }) => {
           </Menu>
         </Toolbar>
       </AppBar>
+
+      {/* Mobile Navigation Drawer */}
+      <Drawer
+        anchor='right'
+        open={isMobileNavOpen}
+        onClose={handleToggleDrawer(false)}
+      >
+        <Box
+          sx={{
+            width: 250,
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+          }}
+          role='presentation'
+          onClick={handleToggleDrawer(false)}
+          onKeyDown={handleToggleDrawer(false)}
+        >
+          <IconButton
+            edge='start'
+            color='inherit'
+            aria-label='close'
+            sx={{ alignSelf: 'flex-end', mt: 1, mr: 1 }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <List>
+            {navLinks.map((link, index) => (
+              <ListItem key={index} disablePadding>
+                <ListItemButton component='a' href={link}>
+                  <ListItemText
+                    primary={link.charAt(1).toUpperCase() + link.slice(2)}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
     </Box>
   );
 };

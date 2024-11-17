@@ -43,6 +43,7 @@ export default function GenericTable({
     ({ theme, isHighlighted }) => ({
       backgroundColor: isHighlighted ? '#e6e4b7' : 'inherit',
       fontWeight: isHighlighted ? 'bold' : 'normal',
+      // fontSize: '10px',
     })
   );
 
@@ -178,7 +179,7 @@ export default function GenericTable({
             </Table>
           </TableContainer>
           <TablePagination
-            sx={{ alignSelf: 'center' }}
+            sx={{ alignSelf: 'center', minHeight: '100px' }}
             rowsPerPageOptions={[5, 10]}
             component='div'
             count={filteredData.length}
@@ -200,5 +201,5 @@ export default function GenericTable({
 // Assign default props
 GenericTable.defaultProps = {
   width: { lg: '100%', md: '100%', sm: '100%' },
-  maxHeight: 500,
+  maxHeight: 650,
 };

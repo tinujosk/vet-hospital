@@ -373,17 +373,15 @@ function NursePage() {
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
-        padding: 4,
       }}
     >
       <Container
         maxWidth='lg'
         sx={{
           marginTop: 4,
-          maxWidth: { lg: '95%', sm: '100%' },
         }}
       >
-        <Box sx={{ display: 'flex', gap: 2, marginBottom: '50px' }}>
+        <Box sx={{ display: 'flex', gap: 2, marginBottom: { xs: 2, sm: 4 } }}>
           <Button
             variant='contained'
             color='primary'
@@ -400,7 +398,12 @@ function NursePage() {
           </Button>
         </Box>
 
-        <Typography variant='h4' component='h2'>
+        <Typography
+          variant='h2'
+          component='h2'
+          marginBottom={2}
+          fontSize={{ xs: 20, sm: 30 }}
+        >
           Appointments
         </Typography>
 
