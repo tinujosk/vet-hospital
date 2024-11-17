@@ -37,10 +37,11 @@ const theme = createTheme({
     //   default: '#f4f4f4',
     //   paper: '#ffffff',
     // },
-    // text: {
-    //   primary: '#000000',
-    //   secondary: '#4f4f4f',
-    // },
+    text: {
+      black: '#000000',
+      secondary: '#4f4f4f',
+      white: '#ffffff',
+    },
   },
   typography: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',

@@ -10,6 +10,7 @@ import {
   StepLabel,
   StepContent,
   Box,
+  Container,
 } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -152,101 +153,105 @@ const Treatment = () => {
         p: { xs: 2, md: 4 },
       }}
     >
-      <Typography variant="h5" marginBottom={4}>
+      <Typography variant='h5' marginBottom={4} fontSize={{ xs: 20, sm: 30 }}>
         Case #{appointment?.appointmentId}
-        <span
-          style={{
-            display: 'inline',
-            marginLeft: '10px',
+        <Typography
+          sx={{
+            display: { xs: 'block', md: 'inline' },
+            marginLeft: { md: '10px' },
             fontWeight: 'normal',
-            fontSize: '20px',
+            fontSize: { xs: 16, sm: 20 },
           }}
         >
           (
           {`Appointment for: ${appointment?.patient?.name}, ${appointment?.patient?.species}, ${appointment?.patient?.age} yrs`}
           )
-        </span>
+        </Typography>
       </Typography>
+
       <Box
-        display="flex"
+        display='flex'
         flexDirection={{ xs: 'column', md: 'row' }}
-        justifyContent="center"
+        justifyContent={{ xs: 'center', md: 'space-between', xl: 'center' }}
         gap={4}
       >
         <Box width={{ xs: '100%', md: '35%' }}>
           <Paper
             style={{ padding: '20px', height: '100%' }}
-            sx={{ minWidth: 450 }}
+            sx={{ minWidth: 300 }}
           >
-            <Typography variant="h5" gutterBottom marginBottom={3}>
+            <Typography variant='h5' gutterBottom marginBottom={3}>
               Prescription
             </Typography>
             {appointment?.status === 'Pending' ? (
-              <Typography textAlign="center" variant="h6">
+              <Typography textAlign='center' variant='h6'>
                 The preliminary examination has to be completed by the Nurse
                 before a prescription can be given.
               </Typography>
             ) : (
-              <>
-                <form onSubmit={handleSubmit}>
-                  <Grid container spacing={2} direction={'column'}>
-                    <Grid xs={12} textAlign="ce">
-                      <AddMedications
-                        isModalOpen={isModalOpen}
-                        closeModal={() => setIsModalOpen(false)}
-                        setMedications={medication =>
-                          setMedications([...medications, medication])
-                        }
+              <form onSubmit={handleSubmit}>
+                <Grid container spacing={2} direction={'column'}>
+                  <Grid
+                    xs={12}
+                    textAlign='center'
+                    sx={{ overflowX: 'auto', width: '100%' }}
+                  >
+                    <AddMedications
+                      isModalOpen={isModalOpen}
+                      closeModal={() => setIsModalOpen(false)}
+                      setMedications={medication =>
+                        setMedications([...medications, medication])
+                      }
+                    />
+                    {medications && medications.length ? (
+                      <MedicationTable
+                        medications={medications}
+                        handleDeleteMedications={handleDeleteMedications}
                       />
-                      {medications && medications.length ? (
-                        <MedicationTable
-                          medications={medications}
-                          handleDeleteMedications={handleDeleteMedications}
-                        />
-                      ) : (
-                        <Typography
-                          variant="h6"
-                          color="gray"
-                          textAlign="center"
-                          padding={5}
-                        >
-                          {' '}
-                          No Medications Added
-                        </Typography>
-                      )}
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={() => setIsModalOpen(true)}
-                        sx={{ marginTop: 2 }}
+                    ) : (
+                      <Typography
+                        variant='h6'
+                        color='gray'
+                        textAlign='center'
+                        padding={5}
                       >
-                        Add Medications
-                      </Button>
-                    </Grid>
+                        {' '}
+                        No Medications Added
+                      </Typography>
+                    )}
+                    <Button
+                      variant='contained'
+                      color='secondary'
+                      onClick={() => setIsModalOpen(true)}
+                      sx={{ marginTop: 2 }}
+                    >
+                      Add Medications
+                    </Button>
+                  </Grid>
 
-                    <Grid xs={12}>
-                      <TextField
-                        label="Medical Condition"
-                        name="medicalCondition"
-                        value={prescription?.medicalCondition}
-                        onChange={handleChange}
-                        fullWidth
-                        error={!!errors.medicalCondition}
-                        helperText={errors.medicalCondition}
-                      />
-                    </Grid>
-                    <Grid xs={12}>
-                      <TextField
-                        label="Notes"
-                        name="notes"
-                        value={prescription?.notes}
-                        onChange={handleChange}
-                        fullWidth
-                        multiline
-                        rows={4}
-                      />
-                    </Grid>
-                    {/* <FormGroup>
+                  <Grid xs={12}>
+                    <TextField
+                      label='Medical Condition'
+                      name='medicalCondition'
+                      value={prescription?.medicalCondition}
+                      onChange={handleChange}
+                      fullWidth
+                      error={!!errors.medicalCondition}
+                      helperText={errors.medicalCondition}
+                    />
+                  </Grid>
+                  <Grid xs={12}>
+                    <TextField
+                      label='Notes'
+                      name='notes'
+                      value={prescription?.notes}
+                      onChange={handleChange}
+                      fullWidth
+                      multiline
+                      rows={4}
+                    />
+                  </Grid>
+                  {/* <FormGroup>
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -257,40 +262,38 @@ const Treatment = () => {
                         label="Lab Tests Required"
                       />
                     </FormGroup> */}
-                    <Grid xs={12}>
-                      {appointment?.prescription && (
-                        <Typography
-                          gutterBottom
-                          sx={{ fontSize: '16px', color: 'red' }}
-                        >
-                          You have already submitted the prescription. Any
-                          changes will be overwritten and will request new lab
-                          tests.
-                        </Typography>
-                      )}
-                      <Button type="submit" variant="contained" color="primary">
-                        Submit Prescription
-                      </Button>
-                    </Grid>
+                  <Grid xs={12}>
+                    {appointment?.prescription && (
+                      <Typography
+                        gutterBottom
+                        sx={{ fontSize: '16px', color: 'red' }}
+                      >
+                        You have already submitted the prescription. Any changes
+                        will be overwritten and will request new lab tests.
+                      </Typography>
+                    )}
+                    <Button type='submit' variant='contained' color='primary'>
+                      Submit Prescription
+                    </Button>
                   </Grid>
-                </form>
-              </>
+                </Grid>
+              </form>
             )}
           </Paper>
         </Box>
         <Box width={{ xs: '100%', md: '35%' }}>
-          <Typography variant="h5" gutterBottom>
+          <Typography variant='h5' gutterBottom>
             Treatment Status
           </Typography>
-          <Stepper activeStep={activeStep} orientation="vertical">
+          <Stepper activeStep={activeStep} orientation='vertical'>
             {treatmentSteps.map((step, index) => (
               <Step key={step.label}>
                 <StepLabel
                   optional={
                     index === treatmentSteps.length - 1 ? (
-                      <Typography variant="caption">Last step</Typography>
+                      <Typography variant='caption'>Last step</Typography>
                     ) : (
-                      <Typography variant="caption">
+                      <Typography variant='caption'>
                         {index == 0
                           ? `Opened on
                           ${new Date(appointment.createdAt).toLocaleString()}`

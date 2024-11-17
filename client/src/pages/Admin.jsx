@@ -185,14 +185,12 @@ const Admin = () => {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 4,
       }}
     >
       <Container
         maxWidth='lg'
         sx={{
           marginTop: 4,
-          maxWidth: { lg: '70%', md: '90%', sm: '100%' },
         }}
       >
         <Box
@@ -212,7 +210,14 @@ const Admin = () => {
             Add User
           </Button>
         </Box>
-        <h2>Current Users</h2>
+        <Typography
+          variant='h2'
+          component='h2'
+          marginBottom={2}
+          fontSize={{ xs: 20, sm: 30 }}
+        >
+          Current Users
+        </Typography>
 
         <GenericTable
           columns={columns}

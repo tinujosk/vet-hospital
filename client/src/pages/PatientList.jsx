@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, TableCell, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { Box, Typography, Container } from '@mui/material';
 import { getPatients, updatePatient } from '../services/patient';
 import PatientDetails from '../components/PatientDetails';
 import GenericTable from '../components/GenericTable';
@@ -58,19 +57,28 @@ function PatientPage() {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 4,
       }}
     >
-      <Typography variant='h4' component='h2' sx={{ marginBottom: '50px' }}>
-        Patients List
+      <Typography
+        variant='h2'
+        component='h2'
+        marginBottom={2}
+        fontSize={{ xs: 20, sm: 30 }}
+      >
+        Registered Patients
       </Typography>
-
-      <GenericTable
-        columns={columns}
-        data={patients}
-        onRowClick={row => handleRowClick(row)}
-      />
-
+      <Container
+        maxWidth='lg'
+        sx={{
+          marginTop: 4,
+        }}
+      >
+        <GenericTable
+          columns={columns}
+          data={patients}
+          onRowClick={row => handleRowClick(row)}
+        />
+      </Container>
       {selectedPatient && (
         <PatientDetails
           patientDetails={{

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Container } from '@mui/material';
 import PatientDetails from '../components/PatientDetails';
 import { getAppointments } from '../services/appointment';
 import Loading from '../components/Loading';
 import { getPatientById } from '../services/patient';
 import GenericTable from '../components/GenericTable';
+import PieChart from '../components/PieChart';
 
 const columns = [
   { headerName: 'Appointment ID', field: 'appointmentId' },
@@ -69,21 +70,48 @@ function DoctorPage() {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 4,
       }}
     >
-      <Typography variant='h4' component='h2' sx={{ marginBottom: '50px' }}>
+      <Typography
+        variant='h2'
+        component='h2'
+        marginBottom={2}
+        fontSize={{ xs: 20, sm: 30 }}
+        display={{ xs: 'none', lg: 'block' }}
+      >
         Your Recent Appointments
       </Typography>
+      <Container
+        maxWidth='lg'
+        sx={{
+          marginTop: 4,
+        }}
+      >
+        <Box
+          display='flex'
+          flexDirection={{
+            xs: 'column',
+            sm: 'column',
+            md: 'column',
+            lg: 'row',
+          }}
+          justifyContent='center'
+          gap={4}
+        >
+          <div style={{ textAlign: 'center' }}>
+            <h2>Overview of Appointments</h2>
+            <PieChart rawData={appointments} />
+          </div>
 
-      <GenericTable
-        columns={columns}
-        data={appointments}
-        actions={['open']}
-        onRowClick={row => handleRowClick(row)}
-        onOpen={row => handleTreatment(row._id)}
-      />
-
+          <GenericTable
+            columns={columns}
+            data={appointments}
+            actions={['open']}
+            onRowClick={row => handleRowClick(row)}
+            onOpen={row => handleTreatment(row._id)}
+          />
+        </Box>
+      </Container>
       <PatientDetails
         patientDetails={{
           patientData: selectedPatient,
