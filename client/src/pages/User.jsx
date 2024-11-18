@@ -16,7 +16,7 @@ const User = () => {
   const { staffDetails, loading, error } = useSelector(state => state.user);
 
   useEffect(() => {
-    if (Object.keys(staffDetails.length === 0)) {
+    if (Object.keys(staffDetails?.length === 0)) {
       const { userId } = getUserDetailsFromToken() || {};
       if (userId) {
         dispatch(fetchUserDetails(userId));

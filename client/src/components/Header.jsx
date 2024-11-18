@@ -66,8 +66,10 @@ const Header = ({ username = 'Username' }) => {
 
   const handleMyAccount = async () => {
     try {
-      handleMenuClose();
-      navigate('/user');
+      if (userFirstName) {
+        handleMenuClose();
+        navigate('/user');
+      }
     } catch (error) {
       console.error('Error fetching user details:', error);
     } finally {
