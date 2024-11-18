@@ -4,16 +4,17 @@ import * as d3 from 'd3';
 const BarChart = ({ rawData }) => {
   const svgRef = useRef(null);
   const containerRef = useRef(null);
-  const [dimensions, setDimensions] = useState({ width: 600, height: 400 });
+  const [dimensions, setDimensions] = useState({ width: 500, height: 500 });
 
   const aggregatedData = Object.entries(
     rawData.reduce((acc, curr) => {
-      const doctorName = curr.doctor ? `${curr.doctor.firstName} ${curr.doctor.lastName}` : 'Unknown Doctor';
+      const doctorName = curr.doctor
+        ? `${curr.doctor.firstName} ${curr.doctor.lastName}`
+        : 'Unknown Doctor';
       acc[doctorName] = (acc[doctorName] || 0) + 1;
       return acc;
     }, {})
   ).map(([doctorName, value]) => ({ doctorName, value }));
-  
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -54,7 +55,10 @@ const BarChart = ({ rawData }) => {
       .range([height - margin.bottom, margin.top]);
 
     // Explicitly setting the Y-axis ticks to integers
-    const tickValues = Array.from({ length: Math.ceil(d3.max(aggregatedData, d => d.value)) + 1 }, (_, i) => i);
+    const tickValues = Array.from(
+      { length: Math.ceil(d3.max(aggregatedData, d => d.value)) + 1 },
+      (_, i) => i
+    );
 
     svg
       .append('g')

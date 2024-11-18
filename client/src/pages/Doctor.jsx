@@ -98,11 +98,12 @@ function DoctorPage() {
           justifyContent='center'
           gap={4}
         >
-          <div style={{ textAlign: 'center' }}>
-            <h2>Overview of Appointments</h2>
-            <PieChart rawData={appointments} />
-          </div>
-
+          <Box display='flex' justifyContent='center' alignItems='center'>
+            <Box textAlign='center'>
+              <Typography variant='h5'>Overview of Appointments</Typography>
+              <PieChart rawData={appointments} />
+            </Box>
+          </Box>
           <GenericTable
             columns={columns}
             data={appointments}

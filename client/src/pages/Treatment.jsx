@@ -172,7 +172,7 @@ const Treatment = () => {
       <Box
         display='flex'
         flexDirection={{ xs: 'column', md: 'row' }}
-        justifyContent={{ xs: 'center', md: 'space-between', xl: 'center' }}
+        justifyContent={{ xs: 'center', md: 'space-around', xl: 'center' }}
         gap={4}
       >
         <Box width={{ xs: '100%', md: '35%' }}>

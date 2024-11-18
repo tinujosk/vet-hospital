@@ -3,6 +3,7 @@ import { Box, Typography, Container } from '@mui/material';
 import { getPatients, updatePatient } from '../services/patient';
 import PatientDetails from '../components/PatientDetails';
 import GenericTable from '../components/GenericTable';
+import Loading from '../components/Loading';
 
 const columns = [
   { headerName: 'Patient Name', field: 'name' },
@@ -17,14 +18,17 @@ function PatientPage() {
   const [patients, setPatients] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPatients = async () => {  
+    const fetchPatients = async () => {
       try {
         const data = await getPatients();
         setPatients(data);
       } catch (error) {
         console.error('Failed to fetch patients:', error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchPatients();
@@ -49,6 +53,10 @@ function PatientPage() {
       console.error('Failed to update patient:', error);
     }
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <Box

@@ -30,13 +30,13 @@ import {
   createAppointment,
   getAppointments,
   updateAppointment,
-
 } from '../services/appointment';
 import { getOwners } from '../services/owner';
 import { getDoctors } from '../services/doctor';
 import GenericTable from '../components/GenericTable';
 import BarChart from '../components/BarChart';
 import PieChart from '../components/PieChart';
+import Loading from '../components/Loading';
 
 let ownerData = [];
 
@@ -67,7 +67,6 @@ function NursePage() {
   const [errors, setErrors] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
-
 
   const initialPatientState = {
     patientname: '',
@@ -103,6 +102,7 @@ function NursePage() {
   );
   const [patients, setPatients] = useState([]);
   const [patientOptions, setPatientOptions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -124,14 +124,14 @@ function NursePage() {
   }, []);
 
   useEffect(() => {
-
     const fetchAppointments = async () => {
-
       try {
         const data = await getAppointments();
         setAppointments(data);
       } catch (error) {
         console.error('Failed to fetch appointments:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -175,7 +175,7 @@ function NursePage() {
     fetchDoctors();
   }, []);
 
-  const handleImageUpload = (event) => {
+  const handleImageUpload = event => {
     console.log('Image Upload:', event.target.files[0]);
     const file = event.target.files[0];
     if (file) {
@@ -243,9 +243,7 @@ function NursePage() {
     setEditedAppointment({ ...editedAppointment, [name]: value });
   };
 
-
-
-  const handleSubmit = async (event) => {
+  const handleSubmit = async event => {
     console.log('New Patient:', newPatient);
     event.preventDefault();
     if (Validite()) {
@@ -269,7 +267,6 @@ function NursePage() {
       }
     }
   };
-
 
   const Validite = () => {
     let tempErrors = {
@@ -334,12 +331,14 @@ function NursePage() {
       isValid = false;
     }
 
-    if (newPatient.gender === '' || newPatient.gender === null || newPatient.gender === undefined) {
+    if (
+      newPatient.gender === '' ||
+      newPatient.gender === null ||
+      newPatient.gender === undefined
+    ) {
       tempErrors.gender = 'Gender is required';
       isValid = false;
     }
-
-
 
     if (!newPatient.ownerfname) {
       tempErrors.ownerfname = 'Owner First Name is required';
@@ -385,7 +384,6 @@ function NursePage() {
     return isValid;
   };
 
-
   const handleAppointmentSubmit = async event => {
     console.log('New Appointment:', newAppointment);
     event.preventDefault();
@@ -403,18 +401,20 @@ function NursePage() {
   };
 
   const generateTimeSlots = () => {
-    const startTime = 9.5; 
-    const endTime = 16; 
-    const breakStart = 12.5; 
+    const startTime = 9.5;
+    const endTime = 16;
+    const breakStart = 12.5;
     const breakEnd = 13.5;
-    const interval = 0.5; 
+    const interval = 0.5;
     const timeSlots = [];
 
     for (let time = startTime; time < endTime; time += interval) {
       if (time >= breakStart && time < breakEnd) continue;
       const hours = Math.floor(time);
       const minutes = time % 1 === 0 ? '00' : '30';
-      const formattedTime = `${hours > 12 ? hours - 12 : hours}:${minutes} ${hours >= 12 ? 'PM' : 'AM'}`;
+      const formattedTime = `${hours > 12 ? hours - 12 : hours}:${minutes} ${
+        hours >= 12 ? 'PM' : 'AM'
+      }`;
       timeSlots.push(formattedTime);
     }
 
@@ -422,7 +422,6 @@ function NursePage() {
   };
 
   const timeSlotOptions = generateTimeSlots();
-
 
   const appointmentValidate = () => {
     let tempErrors = {
@@ -454,7 +453,6 @@ function NursePage() {
       isValid = false;
     }
 
-
     const reasonPattern = /^[a-zA-Z0-9\s]+$/;
     if (!newAppointment.reason) {
       tempErrors.reason = 'Reason is required';
@@ -471,7 +469,6 @@ function NursePage() {
     return isValid;
   };
 
-
   const handleEditAppointmentSubmit = async (id, updatedData) => {
     try {
       handleCloseEditAppointmentModal();
@@ -485,6 +482,10 @@ function NursePage() {
       console.error('Failed to update appointment:', error);
     }
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <Box
@@ -601,22 +602,27 @@ function NursePage() {
             type='number'
           />
           <input
-            accept="image/*"
-            type="file"
+            accept='image/*'
+            type='file'
             onChange={handleImageUpload}
             style={{ display: 'none' }}
-            id="patient-image-upload"
+            id='patient-image-upload'
           />
-          <label htmlFor="patient-image-upload">
-            <Button variant="outlined" component="span" color="primary">
+          <label htmlFor='patient-image-upload'>
+            <Button variant='outlined' component='span' color='primary'>
               Upload Image
             </Button>
           </label>
 
           {imagePreview && (
             <div style={{ margin: '10px 0' }}>
-              <Typography variant="body2">Image Preview:</Typography>
-              <img src={imagePreview} alt="Patient" width="100%" height="auto" />
+              <Typography variant='body2'>Image Preview:</Typography>
+              <img
+                src={imagePreview}
+                alt='Patient'
+                width='100%'
+                height='auto'
+              />
             </div>
           )}
 
@@ -882,13 +888,13 @@ function NursePage() {
             required
           />
           <FormControl fullWidth margin='dense' required>
-            <InputLabel id="time-slot-label">Select Time Slot</InputLabel>
+            <InputLabel id='time-slot-label'>Select Time Slot</InputLabel>
             <Select
-              labelId="time-slot-label"
-              name="timeSlot"
+              labelId='time-slot-label'
+              name='timeSlot'
               value={newAppointment.timeSlot || ''}
               onChange={handleAppointmentInputChange}
-              label="Select Time Slot"
+              label='Select Time Slot'
             >
               {timeSlotOptions.map((slot, index) => (
                 <MenuItem key={index} value={slot}>
@@ -896,7 +902,9 @@ function NursePage() {
                 </MenuItem>
               ))}
             </Select>
-            {errors.timeSlot && <FormHelperText error>{errors.timeSlot}</FormHelperText>}
+            {errors.timeSlot && (
+              <FormHelperText error>{errors.timeSlot}</FormHelperText>
+            )}
           </FormControl>
 
           <TextField
@@ -933,7 +941,9 @@ function NursePage() {
             getOptionLabel={option => option.label}
             value={
               editedAppointment.doctorID
-                ? doctorOptions.find(option => option.value === editedAppointment.doctorID) || null
+                ? doctorOptions.find(
+                    option => option.value === editedAppointment.doctorID
+                  ) || null
                 : null
             }
             onChange={(event, selectedOption) => {
@@ -941,7 +951,7 @@ function NursePage() {
                 setEditedAppointment({
                   ...editedAppointment,
                   doctorID: selectedOption.value,
-                  doctorName: selectedOption.label.split(' (')[0], 
+                  doctorName: selectedOption.label.split(' (')[0],
                   doctor: selectedOption.value,
                 });
               }
@@ -949,15 +959,17 @@ function NursePage() {
             renderInput={params => (
               <TextField
                 {...params}
-                label="Select Doctor"
+                label='Select Doctor'
                 error={!!errors.doctor}
                 helperText={errors.doctor}
                 required
-                placeholder="Select Doctor"
-                margin="normal"
+                placeholder='Select Doctor'
+                margin='normal'
               />
             )}
-            isOptionEqualToValue={(option, value) => option.value === value?.value}
+            isOptionEqualToValue={(option, value) =>
+              option.value === value?.value
+            }
             sx={{
               '& .MuiAutocomplete-listbox': {
                 maxHeight: 200,
@@ -978,10 +990,10 @@ function NursePage() {
           />
 
           <TextField
-            margin="dense"
-            label="Appointment Date"
-            type="datetime"
-            name="appointmentDate"
+            margin='dense'
+            label='Appointment Date'
+            type='datetime'
+            name='appointmentDate'
             value={editedAppointment.appointmentDate}
             onChange={handleEditAppointmentInputChange}
             fullWidth
@@ -990,15 +1002,15 @@ function NursePage() {
             helperText={errors.appointmentDate}
           />
 
-          <FormControl fullWidth margin="dense" required>
-            <InputLabel id="time-slot-label">Time Slot</InputLabel>
+          <FormControl fullWidth margin='dense' required>
+            <InputLabel id='time-slot-label'>Time Slot</InputLabel>
             <Select
-              labelId="time-slot-label"
-              name="timeSlot"
+              labelId='time-slot-label'
+              name='timeSlot'
               value={editedAppointment.timeSlot || ''}
               onChange={handleEditAppointmentInputChange}
               error={!!errors.timeSlot}
-              label="Select Time Slot"
+              label='Select Time Slot'
             >
               {timeSlotOptions.map((slot, index) => (
                 <MenuItem key={index} value={slot}>
@@ -1006,13 +1018,15 @@ function NursePage() {
                 </MenuItem>
               ))}
             </Select>
-            {errors.timeSlot && <FormHelperText error>{errors.timeSlot}</FormHelperText>}
+            {errors.timeSlot && (
+              <FormHelperText error>{errors.timeSlot}</FormHelperText>
+            )}
           </FormControl>
 
           <TextField
-            margin="dense"
-            label="Reason"
-            name="reason"
+            margin='dense'
+            label='Reason'
+            name='reason'
             value={editedAppointment.reason}
             onChange={handleEditAppointmentInputChange}
             fullWidth
@@ -1023,15 +1037,15 @@ function NursePage() {
           <FormControl fullWidth sx={{ marginTop: 2 }}>
             <InputLabel>Status</InputLabel>
             <Select
-              name="status"
+              name='status'
               value={editedAppointment.status}
               onChange={handleEditAppointmentInputChange}
               fullWidth
               required
             >
-              <MenuItem value="Pending">Pending</MenuItem>
-              <MenuItem value="Prelims">Prelims Done</MenuItem>
-              <MenuItem value="Cancelled">Cancelled</MenuItem>
+              <MenuItem value='Pending'>Pending</MenuItem>
+              <MenuItem value='Prelims'>Prelims Done</MenuItem>
+              <MenuItem value='Cancelled'>Cancelled</MenuItem>
             </Select>
           </FormControl>
         </DialogContent>
@@ -1039,22 +1053,34 @@ function NursePage() {
           <Button onClick={handleCloseEditAppointmentModal}>Cancel</Button>
           <Button
             onClick={() =>
-              handleEditAppointmentSubmit(editedAppointment._id, editedAppointment)
+              handleEditAppointmentSubmit(
+                editedAppointment._id,
+                editedAppointment
+              )
             }
           >
             Submit
           </Button>
         </DialogActions>
       </Dialog>
-      <h2 style={{ textAlign: 'center', margin: 'auto' }}>Overview of Appointments</h2>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 10%' }}>
-        <div style={{ textAlign: 'center', flex: 1 }}>
-          <BarChart rawData={appointments} />
-        </div>
-        <div style={{ textAlign: 'center', flex: 1 }}>
-          <PieChart rawData={appointments} />
-        </div>
-      </div>
+      <Container>
+        <Typography variant='h5' textAlign='center' marginBottom={2}>
+          Overview of Appointments
+        </Typography>
+        <Box
+          display='flex'
+          flexDirection={{ xs: 'column', md: 'row' }}
+          justifyContent='center'
+          alignItems='center'
+        >
+          <Box>
+            <BarChart rawData={appointments} />
+          </Box>
+          <Box>
+            <PieChart rawData={appointments} />
+          </Box>
+        </Box>
+      </Container>
     </Box>
   );
 }

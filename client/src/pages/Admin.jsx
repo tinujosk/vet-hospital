@@ -46,7 +46,12 @@ const Admin = () => {
     specialization: '',
     phone: '',
   });
-  const [summary, setSummary] = useState({ doctors: 0, nurses: 0, labs: 0, pharmacists: 0 });
+  const [summary, setSummary] = useState({
+    doctor: 0,
+    nurse: 0,
+    lab: 0,
+    pharmacist: 0,
+  });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [errors, setErrors] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -81,12 +86,24 @@ const Admin = () => {
   }, []);
 
   useEffect(() => {
-    const counts = {
-      doctors: users.filter((user) => user?.user?.role === 'doctor').length,
-      nurses: users.filter((user) => user?.user?.role === 'nurse').length,
-      labs: users.filter((user) => user?.user?.role === 'lab').length,
-      pharmacists: users.filter((user) => user?.user?.role === 'pharmacist').length,
-    };
+    let counts = {};
+    users.forEach(user => {
+      const role = user?.user?.role;
+      if (counts[role]) {
+        counts[role] += 1;
+      } else {
+        counts[role] = 1;
+      }
+    });
+
+    // const counts = {
+    //   doctors: users.filter(user => user?.user?.role === 'doctor').length,
+    //   nurses: users.filter(user => user?.user?.role === 'nurse').length,
+    //   labs: users.filter(user => user?.user?.role === 'lab').length,
+    //   pharmacists: users.filter(user => user?.user?.role === 'pharmacist')
+    //     .length,
+    // };
+    console.log({ counts });
     setSummary(counts);
   }, [users]);
 
@@ -212,40 +229,40 @@ const Admin = () => {
         }}
       >
         {/* Summary Cards Section */}
-      <Stack
-        direction={{ xs: 'column', sm: 'row' }}
-        spacing={4}
-        sx={{ mb: 4, justifyContent: 'left' }}
-      >
-        <Card>
-          <CardContent>
-            <LocalHospitalIcon fontSize="large" color="primary" />
-            <Typography variant="h6">Doctors</Typography>
-            <Typography variant="h4">{summary.doctors}</Typography>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <PersonIcon fontSize="large" color="primary" />
-            <Typography variant="h6">Nurses</Typography>
-            <Typography variant="h4">{summary.nurses}</Typography>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <ScienceIcon fontSize="large" color="primary" />
-            <Typography variant="h6">Lab Technicians</Typography>
-            <Typography variant="h4">{summary.labs}</Typography>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <MedicalServicesIcon fontSize="large" color="primary" />
-            <Typography variant="h6">Pharmacists</Typography>
-            <Typography variant="h4">{summary.pharmacists}</Typography>
-          </CardContent>
-        </Card>
-      </Stack>
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          spacing={4}
+          sx={{ mb: 4, justifyContent: 'left' }}
+        >
+          <Card>
+            <CardContent>
+              <LocalHospitalIcon fontSize='large' color='primary' />
+              <Typography variant='h6'>Doctors</Typography>
+              <Typography variant='h4'>{summary.doctor}</Typography>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent>
+              <PersonIcon fontSize='large' color='primary' />
+              <Typography variant='h6'>Nurses</Typography>
+              <Typography variant='h4'>{summary.nurse}</Typography>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent>
+              <ScienceIcon fontSize='large' color='primary' />
+              <Typography variant='h6'>Lab Technicians</Typography>
+              <Typography variant='h4'>{summary.lab}</Typography>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent>
+              <MedicalServicesIcon fontSize='large' color='primary' />
+              <Typography variant='h6'>Pharmacists</Typography>
+              <Typography variant='h4'>{summary.pharmacist}</Typography>
+            </CardContent>
+          </Card>
+        </Stack>
         <Box
           sx={{
             display: 'flex',
