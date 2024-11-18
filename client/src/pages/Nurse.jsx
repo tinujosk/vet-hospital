@@ -17,6 +17,7 @@ import {
   Typography,
   Autocomplete,
   Container,
+  FormHelperText,
 } from '@mui/material';
 import PatientDetails from '../components/PatientDetails';
 import {
@@ -29,11 +30,13 @@ import {
   createAppointment,
   getAppointments,
   updateAppointment,
-  
+
 } from '../services/appointment';
 import { getOwners } from '../services/owner';
 import { getDoctors } from '../services/doctor';
 import GenericTable from '../components/GenericTable';
+import BarChart from '../components/BarChart';
+import PieChart from '../components/PieChart';
 
 let ownerData = [];
 
@@ -121,7 +124,9 @@ function NursePage() {
   }, []);
 
   useEffect(() => {
+
     const fetchAppointments = async () => {
+
       try {
         const data = await getAppointments();
         setAppointments(data);
@@ -175,7 +180,7 @@ function NursePage() {
     const file = event.target.files[0];
     if (file) {
       setImageFile(file);
-      setImagePreview(URL.createObjectURL(file)); 
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
@@ -241,7 +246,7 @@ function NursePage() {
 
 
   const handleSubmit = async (event) => {
-    console.log('New Patient:', newPatient);  
+    console.log('New Patient:', newPatient);
     event.preventDefault();
     if (Validite()) {
       try {
@@ -249,10 +254,10 @@ function NursePage() {
         if (imageFile) {
           imageUrl = await uploadPatientImage(imageFile);
         }
-  
+
         const patientData = {
           ...newPatient,
-          image: imageUrl, 
+          image: imageUrl,
         };
         await createPatient(patientData);
         setCreateModalOpen(false);
@@ -264,7 +269,6 @@ function NursePage() {
       }
     }
   };
-  
 
 
   const Validite = () => {
@@ -282,54 +286,105 @@ function NursePage() {
       email: '',
     };
     let isValid = true;
+
+    const alphabeticRegex = /^[A-Za-z\s]+$/;
+    const alphanumericRegex = /^[A-Za-z0-9\s]+$/;
+    const numericRegex = /^\d+$/;
+    const weightRegex = /^\d+(\.\d{1,2})?$/;
+    const phoneRegex = /^\d{10}$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
     if (!newPatient.patientname) {
       tempErrors.patientname = 'Patient Name is required';
       isValid = false;
+    } else if (!alphabeticRegex.test(newPatient.patientname)) {
+      tempErrors.patientname = 'Patient Name should only contain alphabets';
+      isValid = false;
     }
+
     if (!newPatient.species) {
       tempErrors.species = 'Species is required';
       isValid = false;
+    } else if (!alphabeticRegex.test(newPatient.species)) {
+      tempErrors.species = 'Species should only contain alphabets';
+      isValid = false;
     }
+
     if (!newPatient.breed) {
       tempErrors.breed = 'Breed is required';
       isValid = false;
+    } else if (!alphanumericRegex.test(newPatient.breed)) {
+      tempErrors.breed = 'Breed can only contain alphabets and numbers';
+      isValid = false;
     }
+
     if (!newPatient.age) {
       tempErrors.age = 'Age is required';
       isValid = false;
+    } else if (!numericRegex.test(newPatient.age)) {
+      tempErrors.age = 'Age should only contain numbers';
+      isValid = false;
     }
+
     if (!newPatient.weight) {
       tempErrors.weight = 'Weight is required';
       isValid = false;
+    } else if (!weightRegex.test(newPatient.weight)) {
+      tempErrors.weight = 'Weight should be a valid number (e.g., 10 or 10.5)';
+      isValid = false;
     }
-    if (!newPatient.gender) {
+
+    if (newPatient.gender === '' || newPatient.gender === null || newPatient.gender === undefined) {
       tempErrors.gender = 'Gender is required';
       isValid = false;
     }
 
+
+
     if (!newPatient.ownerfname) {
       tempErrors.ownerfname = 'Owner First Name is required';
       isValid = false;
+    } else if (!alphabeticRegex.test(newPatient.ownerfname)) {
+      tempErrors.ownerfname = 'Owner First Name should only contain alphabets';
+      isValid = false;
     }
+
     if (!newPatient.ownerlname) {
       tempErrors.ownerlname = 'Owner Last Name is required';
       isValid = false;
+    } else if (!alphabeticRegex.test(newPatient.ownerlname)) {
+      tempErrors.ownerlname = 'Owner Last Name should only contain alphabets';
+      isValid = false;
     }
+
     if (!newPatient.address) {
       tempErrors.address = 'Address is required';
       isValid = false;
+    } else if (!alphanumericRegex.test(newPatient.address)) {
+      tempErrors.address = 'Address should contain alphabets and numbers';
+      isValid = false;
     }
+
     if (!newPatient.phone) {
       tempErrors.phone = 'Phone is required';
       isValid = false;
+    } else if (!phoneRegex.test(newPatient.phone)) {
+      tempErrors.phone = 'Phone number should be 10 digits';
+      isValid = false;
     }
+
     if (!newPatient.email) {
       tempErrors.email = 'Email is required';
       isValid = false;
+    } else if (!emailRegex.test(newPatient.email)) {
+      tempErrors.email = 'Invalid email format';
+      isValid = false;
     }
+
     setErrors(tempErrors);
     return isValid;
   };
+
 
   const handleAppointmentSubmit = async event => {
     console.log('New Appointment:', newAppointment);
@@ -347,6 +402,28 @@ function NursePage() {
     }
   };
 
+  const generateTimeSlots = () => {
+    const startTime = 9.5; 
+    const endTime = 16; 
+    const breakStart = 12.5; 
+    const breakEnd = 13.5;
+    const interval = 0.5; 
+    const timeSlots = [];
+
+    for (let time = startTime; time < endTime; time += interval) {
+      if (time >= breakStart && time < breakEnd) continue;
+      const hours = Math.floor(time);
+      const minutes = time % 1 === 0 ? '00' : '30';
+      const formattedTime = `${hours > 12 ? hours - 12 : hours}:${minutes} ${hours >= 12 ? 'PM' : 'AM'}`;
+      timeSlots.push(formattedTime);
+    }
+
+    return timeSlots;
+  };
+
+  const timeSlotOptions = generateTimeSlots();
+
+
   const appointmentValidate = () => {
     let tempErrors = {
       patient: '',
@@ -356,31 +433,44 @@ function NursePage() {
       reason: '',
     };
     let isValid = true;
+
     if (!newAppointment.patient) {
       tempErrors.patient = 'Patient is required';
       isValid = false;
     }
+
     if (!newAppointment.doctorID) {
       tempErrors.doctorID = 'Doctor ID is required';
       isValid = false;
     }
+
     if (!newAppointment.appointmentDate) {
       tempErrors.appointmentDate = 'Appointment Date is required';
       isValid = false;
     }
+
     if (!newAppointment.timeSlot) {
       tempErrors.timeSlot = 'Time Slot is required';
       isValid = false;
     }
+
+
+    const reasonPattern = /^[a-zA-Z0-9\s]+$/;
     if (!newAppointment.reason) {
       tempErrors.reason = 'Reason is required';
       isValid = false;
+    } else if (!reasonPattern.test(newAppointment.reason)) {
+      tempErrors.reason = 'Reason can only contain letters and numbers';
+      isValid = false;
     }
+
     setErrors(tempErrors);
-    console.log('Errors:', errors);
+    console.log('Errors:', tempErrors);
     console.log('isValid:', isValid);
+
     return isValid;
   };
+
 
   const handleEditAppointmentSubmit = async (id, updatedData) => {
     try {
@@ -535,14 +625,16 @@ function NursePage() {
             <Select
               labelId='gender-label'
               name='gender'
-              value={newPatient.gender}
+              value={newPatient.gender || ''}
               onChange={handleInputChange}
               label='Gender'
             >
+              <MenuItem value=''>Select Gender</MenuItem>
               <MenuItem value='Male'>Male</MenuItem>
               <MenuItem value='Female'>Female</MenuItem>
             </Select>
           </FormControl>
+
           <TextField
             margin='dense'
             label='Weight'
@@ -789,17 +881,24 @@ function NursePage() {
             fullWidth
             required
           />
-          <TextField
-            margin='dense'
-            label='Time Slot'
-            name='timeSlot'
-            value={newAppointment.timeSlot}
-            onChange={handleAppointmentInputChange}
-            error={errors.timeSlot}
-            helperText={errors.timeSlot}
-            fullWidth
-            required
-          />
+          <FormControl fullWidth margin='dense' required>
+            <InputLabel id="time-slot-label">Select Time Slot</InputLabel>
+            <Select
+              labelId="time-slot-label"
+              name="timeSlot"
+              value={newAppointment.timeSlot || ''}
+              onChange={handleAppointmentInputChange}
+              label="Select Time Slot"
+            >
+              {timeSlotOptions.map((slot, index) => (
+                <MenuItem key={index} value={slot}>
+                  {slot}
+                </MenuItem>
+              ))}
+            </Select>
+            {errors.timeSlot && <FormHelperText error>{errors.timeSlot}</FormHelperText>}
+          </FormControl>
+
           <TextField
             margin='dense'
             label='Reason'
@@ -833,16 +932,16 @@ function NursePage() {
             options={doctorOptions}
             getOptionLabel={option => option.label}
             value={
-              doctorOptions.find(
-                option => option.value === editedAppointment.doctorID
-              ) || null
+              editedAppointment.doctorID
+                ? doctorOptions.find(option => option.value === editedAppointment.doctorID) || null
+                : null
             }
             onChange={(event, selectedOption) => {
               if (selectedOption) {
                 setEditedAppointment({
                   ...editedAppointment,
                   doctorID: selectedOption.value,
-                  doctorName: selectedOption.label.split(' (')[0],
+                  doctorName: selectedOption.label.split(' (')[0], 
                   doctor: selectedOption.value,
                 });
               }
@@ -850,17 +949,15 @@ function NursePage() {
             renderInput={params => (
               <TextField
                 {...params}
-                label='Select Doctor'
+                label="Select Doctor"
                 error={!!errors.doctor}
                 helperText={errors.doctor}
                 required
-                placeholder='Select Doctor'
-                margin='normal'
+                placeholder="Select Doctor"
+                margin="normal"
               />
             )}
-            isOptionEqualToValue={(option, value) =>
-              option.value === value.value
-            }
+            isOptionEqualToValue={(option, value) => option.value === value?.value}
             sx={{
               '& .MuiAutocomplete-listbox': {
                 maxHeight: 200,
@@ -881,45 +978,60 @@ function NursePage() {
           />
 
           <TextField
-            margin='dense'
-            label='Appointment Date'
-            type='datetime-local'
-            name='appointmentDate'
+            margin="dense"
+            label="Appointment Date"
+            type="datetime"
+            name="appointmentDate"
             value={editedAppointment.appointmentDate}
             onChange={handleEditAppointmentInputChange}
             fullWidth
             required
+            error={!!errors.appointmentDate}
+            helperText={errors.appointmentDate}
           />
+
+          <FormControl fullWidth margin="dense" required>
+            <InputLabel id="time-slot-label">Time Slot</InputLabel>
+            <Select
+              labelId="time-slot-label"
+              name="timeSlot"
+              value={editedAppointment.timeSlot || ''}
+              onChange={handleEditAppointmentInputChange}
+              error={!!errors.timeSlot}
+              label="Select Time Slot"
+            >
+              {timeSlotOptions.map((slot, index) => (
+                <MenuItem key={index} value={slot}>
+                  {slot}
+                </MenuItem>
+              ))}
+            </Select>
+            {errors.timeSlot && <FormHelperText error>{errors.timeSlot}</FormHelperText>}
+          </FormControl>
+
           <TextField
-            margin='dense'
-            label='Time Slot'
-            name='timeSlot'
-            value={editedAppointment.timeSlot}
-            onChange={handleEditAppointmentInputChange}
-            fullWidth
-            required
-          />
-          <TextField
-            margin='dense'
-            label='Reason'
-            name='reason'
+            margin="dense"
+            label="Reason"
+            name="reason"
             value={editedAppointment.reason}
             onChange={handleEditAppointmentInputChange}
             fullWidth
             required
+            error={!!errors.reason}
+            helperText={errors.reason}
           />
           <FormControl fullWidth sx={{ marginTop: 2 }}>
             <InputLabel>Status</InputLabel>
             <Select
-              name='status'
+              name="status"
               value={editedAppointment.status}
               onChange={handleEditAppointmentInputChange}
               fullWidth
               required
             >
-              <MenuItem value='Pending'>Pending</MenuItem>
-              <MenuItem value='Prelims'>Prelims Done</MenuItem>
-              <MenuItem value='Cancelled'>Cancelled</MenuItem>
+              <MenuItem value="Pending">Pending</MenuItem>
+              <MenuItem value="Prelims">Prelims Done</MenuItem>
+              <MenuItem value="Cancelled">Cancelled</MenuItem>
             </Select>
           </FormControl>
         </DialogContent>
@@ -927,16 +1039,22 @@ function NursePage() {
           <Button onClick={handleCloseEditAppointmentModal}>Cancel</Button>
           <Button
             onClick={() =>
-              handleEditAppointmentSubmit(
-                editedAppointment._id,
-                editedAppointment
-              )
+              handleEditAppointmentSubmit(editedAppointment._id, editedAppointment)
             }
           >
             Submit
           </Button>
         </DialogActions>
       </Dialog>
+      <h2 style={{ textAlign: 'center', margin: 'auto' }}>Overview of Appointments</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 10%' }}>
+        <div style={{ textAlign: 'center', flex: 1 }}>
+          <BarChart rawData={appointments} />
+        </div>
+        <div style={{ textAlign: 'center', flex: 1 }}>
+          <PieChart rawData={appointments} />
+        </div>
+      </div>
     </Box>
   );
 }
