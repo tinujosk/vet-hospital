@@ -95,15 +95,6 @@ const Admin = () => {
         counts[role] = 1;
       }
     });
-
-    // const counts = {
-    //   doctors: users.filter(user => user?.user?.role === 'doctor').length,
-    //   nurses: users.filter(user => user?.user?.role === 'nurse').length,
-    //   labs: users.filter(user => user?.user?.role === 'lab').length,
-    //   pharmacists: users.filter(user => user?.user?.role === 'pharmacist')
-    //     .length,
-    // };
-    console.log({ counts });
     setSummary(counts);
   }, [users]);
 

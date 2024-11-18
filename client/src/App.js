@@ -15,7 +15,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { getUserDetailsFromToken } from './util';
 import { setUserData, clearUserData } from './slices/auth';
 import User from './pages/User';
-import { fetchUserDetails } from './slices/user';
 
 const theme = createTheme({
   palette: {
@@ -81,7 +80,6 @@ export default function App() {
     try {
       const { userId, email, role } = getUserDetailsFromToken() || {};
       if (userId) dispatch(setUserData({ userId, email, role }));
-      dispatch(fetchUserDetails(userId)); 
     } catch (error) {
       console.error('Invalid token', error);
       dispatch(clearUserData());

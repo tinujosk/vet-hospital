@@ -6,8 +6,7 @@ export const fetchUserDetails = createAsyncThunk(
   'user/fetchUserDetails',
   async (userId, { rejectWithValue }) => {
     try {
-      const response = await fetchLoggedInUserDetails(userId);
-      return response;
+      return await fetchLoggedInUserDetails(userId);
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -15,8 +14,7 @@ export const fetchUserDetails = createAsyncThunk(
 );
 
 const initialState = {
-  user: JSON.parse(localStorage.getItem('user')) || null,
-  staffDetails: JSON.parse(localStorage.getItem('staffDetails')) || null,
+  staffDetails: {},
   loading: false,
   error: null,
 };
@@ -25,30 +23,22 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    clearUserDetails: (state) => {
-      state.user = null;
+    clearUserDetails: state => {
       state.staffDetails = null;
       state.loading = false;
       state.error = null;
-      localStorage.removeItem('user');
-      localStorage.removeItem('staffDetails');
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      .addCase(fetchUserDetails.pending, (state) => {
+      .addCase(fetchUserDetails.pending, state => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchUserDetails.fulfilled, (state, action) => {
+        console.log({ details: action.payload });
         state.loading = false;
-        state.user = action.payload.user;
-        state.staffDetails = action.payload.staffDetails;
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
-        localStorage.setItem(
-          'staffDetails',
-          JSON.stringify(action.payload.staffDetails)
-        );
+        state.staffDetails = action.payload;
       })
       .addCase(fetchUserDetails.rejected, (state, action) => {
         state.loading = false;

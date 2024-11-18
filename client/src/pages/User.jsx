@@ -9,22 +9,20 @@ import {
   Box,
   Divider,
 } from '@mui/material';
-// import { getUserDetailsFromToken } from '../util';
+import { getUserDetailsFromToken } from '../util';
 
 const User = () => {
   const dispatch = useDispatch();
-  const { user, staffDetails, loading, error } = useSelector(
-    (state) => state.user
-  );
+  const { staffDetails, loading, error } = useSelector(state => state.user);
 
   useEffect(() => {
-    if (!user) {
-      const userId = localStorage.getItem('userId'); // Replace with token decoding logic
+    if (Object.keys(staffDetails.length === 0)) {
+      const { userId } = getUserDetailsFromToken() || {};
       if (userId) {
         dispatch(fetchUserDetails(userId));
       }
     }
-  }, [dispatch, user]);
+  }, [dispatch]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -72,19 +70,23 @@ const User = () => {
           }}
         >
           <Typography variant='h6' sx={{ mb: 2 }}>
-            <strong>Name:</strong> {staffDetails?.firstName}{' '}
-            {staffDetails?.lastName} {user?.username}
+            <strong>Name:</strong>{' '}
+            {`${staffDetails?.firstName} ${staffDetails?.lastName}` || 'N/A'}
           </Typography>
           <Typography variant='h6' sx={{ mb: 2 }}>
-            <strong>Role:</strong> {user?.role}
+            <strong>Role:</strong> {staffDetails?.user?.role || 'N/A'}
           </Typography>
           {staffDetails?.specialization && (
             <Typography variant='h6' sx={{ mb: 2 }}>
-              <strong>Specialization:</strong> {staffDetails?.specialization}
+              <strong>Specialization:</strong>{' '}
+              {staffDetails?.specialization || 'N/A'}
             </Typography>
           )}
           <Typography variant='h6' sx={{ mb: 2 }}>
-            <strong>Email:</strong> {user?.email}
+            <strong>Email:</strong> {staffDetails?.user?.email || 'N/A'}
+          </Typography>
+          <Typography variant='h6' sx={{ mb: 2 }}>
+            <strong>Secondary Email:</strong> {staffDetails?.email || 'N/A'}
           </Typography>
           <Typography variant='h6' sx={{ mb: 2 }}>
             <strong>Phone:</strong> {staffDetails?.phone || 'N/A'}

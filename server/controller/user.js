@@ -62,26 +62,33 @@ export const getUserDetails = async (req, res) => {
   }
 };
 
-
-// Get logged-in user details
 export const getLoggedInUser = async (req, res) => {
   const { userId } = req.query;
-  console.log('Received userId:', userId); // Log received userId
-
   if (!userId) {
     return res.status(400).json({ message: 'User ID not provided' });
   }
-
   try {
-    const user = await User.findById(userId).select('-password'); // Exclude password
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+    // const staffData = await Staff.findOne()
+    //   .populate({
+    //     path: 'user',
+    //     select: '-password',
+    //     match: { _id: userId },
+    //   })
+    //   .exec();
 
-    const staffDetails = await Staff.findOne({ user: userId });
-    res.status(200).json({ user, staffDetails });
+    // const staffData = await Staff.findOne({ user: userId })
+    //   .populate({ path: 'user', select: '-password' }) // Populate `user` and exclude `password`
+    //   .exec();
+
+    const staffData = await Staff.findOne({ user: userId })
+      .populate({ path: 'user', select: '-password' }) // Populate the `user` field and exclude the `password`
+      .exec();
+
+    if (!staffData) {
+      return res.status(404).json({ message: 'Staff not found' });
+    }
+    res.json(staffData);
   } catch (error) {
-    console.error('Error fetching user details:', error);
     res.status(500).json({ message: 'Failed to fetch user details' });
   }
 };

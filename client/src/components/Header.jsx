@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -33,7 +33,18 @@ const Header = ({ username = 'Username' }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const role = useSelector(state => state.auth.role);
-  const { user } = useSelector((state) => state.user);
+  const userFirstName = useSelector(
+    state => state.user?.staffDetails?.firstName
+  );
+
+  useEffect(() => {
+    if (!userFirstName) {
+      const { userId } = getUserDetailsFromToken() || {};
+      if (userId) {
+        dispatch(fetchUserDetails(userId));
+      }
+    }
+  }, [dispatch]);
 
   const navLinks = getNavItemsForUser(role);
 
@@ -48,26 +59,13 @@ const Header = ({ username = 'Username' }) => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     dispatch(clearUserData());
-    dispatch(clearUserDetails()); // Clear user state
+    dispatch(clearUserDetails());
     handleMenuClose();
     navigate('/');
   };
 
   const handleMyAccount = async () => {
     try {
-      const { userId } = getUserDetailsFromToken();
-      if (!userId) {
-        console.error('Token expired or userId not found. Logging out...');
-        handleLogout(); // Redirect to login
-        return;
-      }
-  
-      if (!user) {
-        console.log('Fetching user details...');
-        await dispatch(fetchUserDetails(userId));
-        console.log("data is fetched that user is logged first")
-      }
-  
       handleMenuClose();
       navigate('/user');
     } catch (error) {
@@ -79,7 +77,7 @@ const Header = ({ username = 'Username' }) => {
   const handleToggleDrawer = open => () => {
     setMobileNavOpen(open);
   };
-  
+
   const isMenuOpen = Boolean(anchorEl);
 
   return (
@@ -105,7 +103,7 @@ const Header = ({ username = 'Username' }) => {
                 underline='none'
                 marginRight={2}
               >
-                {page.charAt(1).toUpperCase() + page.slice(2)}
+                {page?.charAt(1).toUpperCase() + page.slice(2)}
               </Link>
             ))}
           </Box>
@@ -117,8 +115,8 @@ const Header = ({ username = 'Username' }) => {
             }}
           >
             <Chip
-              avatar={<Avatar>{username.charAt(0)}</Avatar>}
-              label={username}
+              avatar={<Avatar>{userFirstName?.charAt(0)}</Avatar>}
+              label={userFirstName}
               variant='outlined'
               color='primary'
               onClick={handleMenuOpen}
@@ -184,7 +182,7 @@ const Header = ({ username = 'Username' }) => {
               <ListItem key={index} disablePadding>
                 <ListItemButton component='a' href={link}>
                   <ListItemText
-                    primary={link.charAt(1).toUpperCase() + link.slice(2)}
+                    primary={link?.charAt(1).toUpperCase() + link.slice(2)}
                   />
                 </ListItemButton>
               </ListItem>
@@ -194,5 +192,5 @@ const Header = ({ username = 'Username' }) => {
       </Drawer>
     </Box>
   );
-}
+};
 export default Header;

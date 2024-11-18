@@ -16,6 +16,7 @@ import { loginUser } from '../services/auth';
 import { useNavigation } from '../hooks/useNavigation';
 import Logo from '../images/logo2.png';
 import { showSnackbar } from '../slices/snackbar';
+import { fetchUserDetails } from '../slices/user';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -41,6 +42,9 @@ const Login = () => {
             role,
           })
         );
+
+        // Now fetch additional user details from the staff table and store it in redux
+        dispatch(fetchUserDetails(decodedToken.userId));
 
         redirectToDashboard(role);
       } catch (error) {
