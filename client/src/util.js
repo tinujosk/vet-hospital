@@ -1,14 +1,14 @@
 import { jwtDecode } from 'jwt-decode';
 
 const permissions = {
-  admin: ['/admin', '/doctor', '/patients', '/nurse', '/treatment'],
-  doctor: ['/doctor', '/patients', '/treatment'],
-  nurse: ['/nurse', '/patients'],
-  lab: ['/lab', '/patients'],
-  pharmacist: ['/pharmacy', '/patients'],
+  admin: ['/admin', '/doctor', '/patients', '/nurse', '/treatment','/user'],
+  doctor: ['/doctor', '/patients', '/treatment','/user'],
+  nurse: ['/nurse', '/patients','/user'],
+  lab: ['/lab', '/patients','/user'],
+  pharmacist: ['/pharmacy', '/patients','/user'],
 };
 
-const hideFromNav = ['/treatment'];
+const hideFromNav = ['/treatment','/user'];
 
 export const getUserDetailsFromToken = () => {
   const token = localStorage.getItem('token');

@@ -22,3 +22,10 @@ export const getUserDetails = async () => {
     throw error;
   }
 };
+
+export const fetchLoggedInUserDetails = async (userId) => {
+  const response = await axios.get(`${API_URL}/user/details`, {
+    params: { userId },
+  });
+  return response.data;
+};

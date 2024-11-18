@@ -46,7 +46,7 @@ export const getUserDetails = async (req, res) => {
     // const UserData = await User.find();
     const staffData = await Staff.find().populate({
       path: 'user',
-      select: 'email role password',
+      select: 'email role',
     });
 
     if (staffData.length === 0) {
@@ -59,5 +59,29 @@ export const getUserDetails = async (req, res) => {
   } catch (error) {
     console.error('Error creating user:', error);
     res.status(500).json({ error: 'Failed to Get user Details' });
+  }
+};
+
+
+// Get logged-in user details
+export const getLoggedInUser = async (req, res) => {
+  const { userId } = req.query;
+  console.log('Received userId:', userId); // Log received userId
+
+  if (!userId) {
+    return res.status(400).json({ message: 'User ID not provided' });
+  }
+
+  try {
+    const user = await User.findById(userId).select('-password'); // Exclude password
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const staffDetails = await Staff.findOne({ user: userId });
+    res.status(200).json({ user, staffDetails });
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    res.status(500).json({ message: 'Failed to fetch user details' });
   }
 };
