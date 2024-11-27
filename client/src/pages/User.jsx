@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchUserDetails } from '../slices/user';
 import {
   Typography,
   Button,
@@ -9,10 +8,13 @@ import {
   Box,
   Divider,
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { getUserDetailsFromToken } from '../util';
+import { fetchUserDetails } from '../slices/userSlice';
 
 const User = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { staffDetails, loading, error } = useSelector(state => state.user);
 
   useEffect(() => {
@@ -70,26 +72,27 @@ const User = () => {
           }}
         >
           <Typography variant='h6' sx={{ mb: 2 }}>
-            <strong>Name:</strong>{' '}
+            <strong>{t('name')}:</strong>{' '}
             {`${staffDetails?.firstName} ${staffDetails?.lastName}` || 'N/A'}
           </Typography>
           <Typography variant='h6' sx={{ mb: 2 }}>
-            <strong>Role:</strong> {staffDetails?.user?.role || 'N/A'}
+            <strong>{t('role')}:</strong> {staffDetails?.user?.role || 'N/A'}
           </Typography>
           {staffDetails?.specialization && (
             <Typography variant='h6' sx={{ mb: 2 }}>
-              <strong>Specialization:</strong>{' '}
+              <strong>{t('specialization')}:</strong>{' '}
               {staffDetails?.specialization || 'N/A'}
             </Typography>
           )}
           <Typography variant='h6' sx={{ mb: 2 }}>
-            <strong>Email:</strong> {staffDetails?.user?.email || 'N/A'}
+            <strong>{t('email')}:</strong> {staffDetails?.user?.email || 'N/A'}
           </Typography>
           <Typography variant='h6' sx={{ mb: 2 }}>
-            <strong>Secondary Email:</strong> {staffDetails?.email || 'N/A'}
+            <strong>{t('secondaryEmail')}:</strong>{' '}
+            {staffDetails?.email || 'N/A'}
           </Typography>
           <Typography variant='h6' sx={{ mb: 2 }}>
-            <strong>Phone:</strong> {staffDetails?.phone || 'N/A'}
+            <strong>{t('phone')}:</strong> {staffDetails?.phone || 'N/A'}
           </Typography>
           <Button
             variant='contained'
@@ -97,7 +100,7 @@ const User = () => {
             onClick={handlePasswordChange}
             sx={{ mt: 2 }}
           >
-            Change Password
+            {t('changePassword')}
           </Button>
         </Box>
       </Box>
