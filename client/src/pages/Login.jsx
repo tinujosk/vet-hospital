@@ -11,12 +11,12 @@ import {
 } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { setUserData } from '../slices/auth';
-import { loginUser } from '../services/auth';
+import { setUserData } from '../slices/authSlice';
+import { loginUser } from '../services/authService';
 import { useNavigation } from '../hooks/useNavigation';
 import Logo from '../images/logo2.png';
-import { showSnackbar } from '../slices/snackbar';
-import { fetchUserDetails } from '../slices/user';
+import { showSnackbar } from '../slices/snackbarSlice';
+import { fetchUserDetails } from '../slices/userSlice';
 
 const Login = () => {
   const [email, setEmail] = useState('');

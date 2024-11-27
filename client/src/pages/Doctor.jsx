@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Container } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import PatientDetails from '../components/PatientDetails';
-import { getAppointments } from '../services/appointment';
+import { getAppointments } from '../services/appointmentService';
 import Loading from '../components/Loading';
-import { getPatientById } from '../services/patient';
+import { getPatientById } from '../services/patientService';
 import GenericTable from '../components/GenericTable';
 import PieChart from '../components/PieChart';
 
@@ -25,6 +26,7 @@ function DoctorPage() {
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleRowClick = async row => {
     setLoading(true);
@@ -79,7 +81,7 @@ function DoctorPage() {
         fontSize={{ xs: 20, sm: 30 }}
         display={{ xs: 'none', lg: 'block' }}
       >
-        Your Recent Appointments
+        {t('recentAppointments')}
       </Typography>
       <Container
         maxWidth='lg'
@@ -100,7 +102,9 @@ function DoctorPage() {
         >
           <Box display='flex' justifyContent='center' alignItems='center'>
             <Box textAlign='center'>
-              <Typography variant='h5'>Overview of Appointments</Typography>
+              <Typography variant='h5'>
+                {t('overviewOfAppointments')}
+              </Typography>
               <PieChart rawData={appointments} />
             </Box>
           </Box>

@@ -1,6 +1,6 @@
 import User from '../model/User.js';
 import Staff from '../model/Staff.js';
-import { sendPasswordEmail } from './emailService.js';
+import { sendPasswordEmail } from './emailServiceController.js';
 
 export const createUser = async (req, res) => {
   try {

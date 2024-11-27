@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import Login from './pages/Login';
 import Admin from './pages/Admin';
 import Doctor from './pages/Doctor';
@@ -13,7 +14,7 @@ import PatientList from './pages/PatientList';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import { getUserDetailsFromToken } from './util';
-import { setUserData, clearUserData } from './slices/auth';
+import { setUserData, clearUserData } from './slices/authSlice';
 import User from './pages/User';
 
 const theme = createTheme({
@@ -75,6 +76,7 @@ const theme = createTheme({
 
 export default function App() {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   useEffect(() => {
     try {
@@ -97,7 +99,7 @@ export default function App() {
             element={
               <ProtectedRoute
                 element={<Doctor />}
-                title="Doctor's Dashboard"
+                title={t('doctorsDashboard')}
                 path='/doctor'
               />
             }
@@ -107,7 +109,7 @@ export default function App() {
             element={
               <ProtectedRoute
                 element={<Treatment />}
-                title='Patient Treatment'
+                title={t('patientTreatment')}
                 path='/treatment'
               />
             }
@@ -117,7 +119,7 @@ export default function App() {
             element={
               <ProtectedRoute
                 element={<Admin />}
-                title='Admin Dashboard'
+                title={t('adminDashboard')}
                 path='/admin'
               />
             }
@@ -127,7 +129,7 @@ export default function App() {
             element={
               <ProtectedRoute
                 element={<Nurse />}
-                title="Nurse's Dashboard"
+                title={t('nursesDashboard')}
                 path='/nurse'
               />
             }
@@ -157,7 +159,7 @@ export default function App() {
             element={
               <ProtectedRoute
                 element={<PatientList />}
-                title="Patient's List"
+                title={t('patientsList')}
                 path='/patients'
               />
             }

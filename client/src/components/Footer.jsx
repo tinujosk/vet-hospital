@@ -1,8 +1,11 @@
 import React from 'react';
 import { Box, Grid, Typography, Container, IconButton } from '@mui/material';
 import { Facebook, Instagram, Twitter, LinkedIn } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
+  const { t } = useTranslation();
+
   return (
     <Box
       sx={{
@@ -16,50 +19,49 @@ const Footer = () => {
         <Grid container spacing={4}>
           <Grid item xs={12} sm={6} md={3}>
             <Typography variant='h6' gutterBottom>
-              About VetClinicPro
+              {t('aboutVetClinicPro')}
             </Typography>
             <Typography variant='body2' color='inherit'>
-              At VetClinicPro, we provide top-notch care for your pets with a
-              dedicated team of professionals.
+              {t('vetClinicProDescription')}
             </Typography>
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
             <Typography variant='h6' gutterBottom>
-              Services
+              {t('services')}
             </Typography>
             <Typography variant='body2' color='inherit'>
-              Pet Health Checkups
+              {t('petHealthCheckups')}
             </Typography>
             <Typography variant='body2' color='inherit'>
-              Vaccinations
+              {t('vaccinations')}
             </Typography>
             <Typography variant='body2' color='inherit'>
-              Dental Care
+              {t('dentalCare')}
             </Typography>
             <Typography variant='body2' color='inherit'>
-              Emergency Services
+              {t('emergencyServices')}
             </Typography>
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
             <Typography variant='h6' gutterBottom>
-              Contact Us
+              {t('contactUs')}
             </Typography>
             <Typography variant='body2' color='inherit'>
-              Phone: +1-800-VET-PRO
+              {t('phone')}: +1-800-VET-PRO
             </Typography>
             <Typography variant='body2' color='inherit'>
-              Email: support@vetclinicpro.com
+              {t('email')}: support@vetclinicpro.com
             </Typography>
             <Typography variant='body2' color='inherit'>
-              Address: Conestoga Doon, Ontario, Canada.
+              {t('address')}: Conestoga Doon, Ontario, Canada.
             </Typography>
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
             <Typography variant='h6' gutterBottom>
-              Follow Us
+              {t('followUs')}
             </Typography>
             <Box sx={{ display: 'flex', gap: 2 }}>
               <IconButton
@@ -107,7 +109,7 @@ const Footer = () => {
           }}
         >
           <Typography variant='body2' color='inherit'>
-            &copy; {new Date().getFullYear()} VetClinicPro. All rights reserved.
+            &copy; {new Date().getFullYear()} {t('allRightsReserved')}
           </Typography>
         </Box>
       </Container>

@@ -16,9 +16,11 @@ import { styled } from '@mui/material/styles';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
+import { useTranslation } from 'react-i18next';
 import Search from '../components/Search';
 
 const dateFields = ['createdAt', 'updatedAt', 'appointmentDate'];
+const translateTableFields = ['status', 'user.role'];
 
 // Generic Table which is configurable to render all tables in the applications.
 export default function GenericTable({
@@ -37,6 +39,7 @@ export default function GenericTable({
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const { t } = useTranslation();
 
   // Styled component to highlight matched text
   const HighlightedTableCell = styled(TableCell)(
@@ -75,7 +78,11 @@ export default function GenericTable({
 
   const renderCellContent = (row, column) => {
     const value = column.field.includes('.')
-      ? getNestedValue(row, column.field)
+      ? translateTableFields.includes(column.field)
+        ? t(getNestedValue(row, column.field))
+        : getNestedValue(row, column.field)
+      : translateTableFields.includes(column.field)
+      ? t(row[column.field])
       : row[column.field];
 
     if (value && dateFields.includes(column.field)) {
@@ -126,10 +133,10 @@ export default function GenericTable({
                 <TableRow>
                   {columns.map(column => (
                     <TableCell key={column.field}>
-                      {column.headerName}
+                      {t(column.headerName)}
                     </TableCell>
                   ))}
-                  {actions && <TableCell>Actions</TableCell>}
+                  {actions && <TableCell>{t('actions')}</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -191,7 +198,7 @@ export default function GenericTable({
         </>
       ) : (
         <Typography variant='h4' color='gray' align='center'>
-          There is nothing to display as of now
+          {t('noDataMessage')}
         </Typography>
       )}
     </Box>
