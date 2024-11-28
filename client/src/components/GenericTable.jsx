@@ -15,6 +15,8 @@ import {
 import { styled } from '@mui/material/styles';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 import { useTranslation } from 'react-i18next';
 import Search from '../components/Search';
@@ -34,12 +36,34 @@ export default function GenericTable({
   width,
   maxHeight,
 }) {
-  // const [paginatedRows, setPaginatedRows] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [sortConfig, setSortConfig] = useState({
+    field: null,
+    direction: 'asc',
+  });
   const { t } = useTranslation();
+
+  const handleSort = field => {
+    const direction =
+      sortConfig.field === field && sortConfig.direction === 'asc'
+        ? 'desc'
+        : 'asc';
+    setSortConfig({ field, direction });
+
+    const sortedData = [...filteredData].sort((a, b) => {
+      const aValue = getNestedValue(a, field);
+      const bValue = getNestedValue(b, field);
+
+      if (aValue < bValue) return direction === 'asc' ? -1 : 1;
+      if (aValue > bValue) return direction === 'asc' ? 1 : -1;
+
+      return 0;
+    });
+    setFilteredData(sortedData);
+  };
 
   // Styled component to highlight matched text
   const HighlightedTableCell = styled(TableCell)(
@@ -132,8 +156,26 @@ export default function GenericTable({
               <TableHead>
                 <TableRow>
                   {columns.map(column => (
-                    <TableCell key={column.field}>
-                      {t(column.headerName)}
+                    <TableCell
+                      key={column.field}
+                      onClick={() => handleSort(column.field)}
+                    >
+                      <Box
+                        sx={{
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        {t(column.headerName)}
+
+                        {sortConfig.field === column.field &&
+                          (sortConfig.direction === 'asc' ? (
+                            <ArrowUpwardIcon fontSize='small' />
+                          ) : (
+                            <ArrowDownwardIcon fontSize='small' />
+                          ))}
+                      </Box>
                     </TableCell>
                   ))}
                   {actions && <TableCell>{t('actions')}</TableCell>}
