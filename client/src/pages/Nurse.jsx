@@ -21,6 +21,8 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import PatientDetails from '../components/PatientDetails';
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable'; 
 import {
   createPatient,
   getPatients,
@@ -414,9 +416,8 @@ function NursePage() {
       if (time >= breakStart && time < breakEnd) continue;
       const hours = Math.floor(time);
       const minutes = time % 1 === 0 ? '00' : '30';
-      const formattedTime = `${hours > 12 ? hours - 12 : hours}:${minutes} ${
-        hours >= 12 ? 'PM' : 'AM'
-      }`;
+      const formattedTime = `${hours > 12 ? hours - 12 : hours}:${minutes} ${hours >= 12 ? 'PM' : 'AM'
+        }`;
       timeSlots.push(formattedTime);
     }
 
@@ -505,20 +506,86 @@ function NursePage() {
         }}
       >
         <Box sx={{ display: 'flex', gap: 2, marginBottom: { xs: 2, sm: 4 } }}>
-          <Button
-            variant='contained'
-            color='primary'
+          <Box
             onClick={handleOpenCreateModal}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              padding: 3,
+              borderRadius: 8,
+              cursor: 'pointer',
+              width: 200,
+              height: 80,
+              textAlign: 'center',
+              backgroundColor: '#ffffff',
+              border: '2px solid #1976d2', 
+              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', 
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              '&:hover': {
+                transform: 'scale(1.05)',
+                boxShadow: '0px 6px 15px rgba(0, 0, 0, 0.3)', 
+              },
+            }}
           >
-            {t('registerPatient')}
-          </Button>
-          <Button
-            variant='contained'
-            color='secondary'
+            <PersonAddAltIcon
+              sx={{
+                color: '#1976d2',
+                fontSize: 60, 
+                mb: 1,
+              }}
+            />
+            <Typography
+              variant="h6"
+              sx={{
+                color: '#1976d2',
+                fontWeight: 'bold',
+              }}
+            >
+              {t('registerPatient')}
+            </Typography>
+          </Box>
+          <Box
             onClick={handleOpenAppointmentModal}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              padding: 3,
+              borderRadius: 8,
+              cursor: 'pointer',
+              width: 200,
+              height: 80,
+              textAlign: 'center',
+              backgroundColor: '#ffffff',
+              border: '2px solid #d32f2f', 
+              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', 
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              '&:hover': {
+                transform: 'scale(1.05)',
+                boxShadow: '0px 6px 15px rgba(0, 0, 0, 0.3)', 
+              },
+            }}
           >
-            {t('createAppointment')}
-          </Button>
+            <EventAvailableIcon
+              sx={{
+                color: '#d32f2f', 
+                fontSize: 60,
+                mb: 1,
+              }}
+            />
+            <Typography
+              variant="h6"
+              sx={{
+                color: '#d32f2f', 
+                fontWeight: 'bold',
+              }}
+            >
+              {t('createAppointment')}
+            </Typography>
+          </Box>
         </Box>
 
         <Typography
@@ -944,8 +1011,8 @@ function NursePage() {
             value={
               editedAppointment.doctorID
                 ? doctorOptions.find(
-                    option => option.value === editedAppointment.doctorID
-                  ) || null
+                  option => option.value === editedAppointment.doctorID
+                ) || null
                 : null
             }
             onChange={(event, selectedOption) => {
