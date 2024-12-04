@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Container } from '@mui/material';
-import { getPatients, updatePatient } from '../services/patient';
+import { useTranslation } from 'react-i18next';
+import { getPatients, updatePatient } from '../services/patientService';
 import PatientDetails from '../components/PatientDetails';
 import GenericTable from '../components/GenericTable';
 import Loading from '../components/Loading';
@@ -19,6 +20,7 @@ function PatientPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -73,7 +75,7 @@ function PatientPage() {
         marginBottom={2}
         fontSize={{ xs: 20, sm: 30 }}
       >
-        Registered Patients
+        {t('registeredPatients')}
       </Typography>
       <Container
         maxWidth='lg'

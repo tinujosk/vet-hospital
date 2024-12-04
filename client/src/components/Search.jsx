@@ -1,6 +1,7 @@
 import { styled, alpha } from '@mui/material/styles';
 import { InputBase } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import { useTranslation } from 'react-i18next';
 
 const SearchWrapper = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -47,13 +48,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function Search({ onChange, style }) {
+  const { t } = useTranslation();
   return (
     <SearchWrapper>
       <SearchIconWrapper>
         <SearchIcon />
       </SearchIconWrapper>
       <StyledInputBase
-        placeholder='Search…'
+        placeholder={`${t('search')}...`}
         inputProps={{ 'aria-label': 'search' }}
         onChange={onChange}
       />

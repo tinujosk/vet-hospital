@@ -1,13 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './slices/auth';
-import snackbarReducer from './slices/snackbar';
-import userReducer from './slices/user';
+import authReducer from './slices/authSlice';
+import snackbarReducer from './slices/snackbarSlice';
+import userReducer from './slices/userSlice';
 
 const store = configureStore({
   reducer: {
     auth: authReducer, // Add your reducers here
     snackbar: snackbarReducer,
-    user: userReducer
+    user: userReducer,
   },
 });
 

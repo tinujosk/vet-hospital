@@ -15,15 +15,16 @@ import {
   Stack,
 } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { showSnackbar } from '../slices/snackbar';
+import { useTranslation } from 'react-i18next';
 import AddIcon from '@mui/icons-material/Add';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import PersonIcon from '@mui/icons-material/Person';
 import ScienceIcon from '@mui/icons-material/Science';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
-import { createUser, getUserDetails } from '../services/user.js';
+import { createUser, getUserDetails } from '../services/userService.js';
 import Loading from '../components/Loading';
 import GenericTable from '../components/GenericTable.jsx';
+import { showSnackbar } from '../slices/snackbarSlice.js';
 
 const columns = [
   { headerName: 'User ID', field: 'staffId' },
@@ -31,8 +32,8 @@ const columns = [
   { headerName: 'Last Name', field: 'lastName' },
   { headerName: 'Role', field: 'user.role' },
   { headerName: 'Specialization', field: 'specialization' },
-  { headerName: 'User Email', field: 'email' },
-  { headerName: 'Owner Phone', field: 'phone' },
+  { headerName: 'Email', field: 'email' },
+  { headerName: 'Phone', field: 'phone' },
 ];
 
 const Admin = () => {
@@ -57,6 +58,7 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
 
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   //function to Auto generate the password...
   const generatePassword = () => {
@@ -228,28 +230,28 @@ const Admin = () => {
           <Card>
             <CardContent>
               <LocalHospitalIcon fontSize='large' color='primary' />
-              <Typography variant='h6'>Doctors</Typography>
+              <Typography variant='h6'>{t('doctors')}</Typography>
               <Typography variant='h4'>{summary.doctor}</Typography>
             </CardContent>
           </Card>
           <Card>
             <CardContent>
               <PersonIcon fontSize='large' color='primary' />
-              <Typography variant='h6'>Nurses</Typography>
+              <Typography variant='h6'>{t('nurses')}</Typography>
               <Typography variant='h4'>{summary.nurse}</Typography>
             </CardContent>
           </Card>
           <Card>
             <CardContent>
               <ScienceIcon fontSize='large' color='primary' />
-              <Typography variant='h6'>Lab Technicians</Typography>
+              <Typography variant='h6'>{t('labTechnicians')}</Typography>
               <Typography variant='h4'>{summary.lab}</Typography>
             </CardContent>
           </Card>
           <Card>
             <CardContent>
               <MedicalServicesIcon fontSize='large' color='primary' />
-              <Typography variant='h6'>Pharmacists</Typography>
+              <Typography variant='h6'>{t('pharmacists')}</Typography>
               <Typography variant='h4'>{summary.pharmacist}</Typography>
             </CardContent>
           </Card>
@@ -268,7 +270,7 @@ const Admin = () => {
             onClick={() => setDrawerOpen(true)}
             sx={{ marginBottom: 2 }}
           >
-            Add User
+            {t('addUser')}
           </Button>
         </Box>
         <Typography
@@ -277,7 +279,7 @@ const Admin = () => {
           marginBottom={2}
           fontSize={{ xs: 20, sm: 30 }}
         >
-          Current Users
+          {t('currentUsers')}
         </Typography>
 
         <GenericTable
@@ -297,12 +299,12 @@ const Admin = () => {
       >
         <Box sx={{ width: 300, padding: 3 }}>
           <Typography variant='h6' sx={{ marginBottom: 2 }}>
-            Add New User
+            {t('addNewUser')}
           </Typography>
 
           <TextField
             fullWidth
-            label='First Name'
+            label={t('firstName')}
             name='firstName'
             value={newUser.firstName}
             onChange={handleInputChange}
@@ -312,7 +314,7 @@ const Admin = () => {
           />
           <TextField
             fullWidth
-            label='Last Name'
+            label={t('lastName')}
             name='lastName'
             value={newUser.lastName}
             onChange={handleInputChange}
@@ -322,7 +324,7 @@ const Admin = () => {
           />
           <TextField
             fullWidth
-            label='Specialization'
+            label={t('specialization')}
             name='specialization'
             value={newUser.specialization}
             onChange={handleInputChange}
@@ -332,7 +334,7 @@ const Admin = () => {
           />
           <TextField
             fullWidth
-            label='Email'
+            label={t('email')}
             variant='outlined'
             name='email'
             value={newUser.email}
@@ -352,22 +354,22 @@ const Admin = () => {
           /> */}
 
           <FormControl fullWidth margin='normal'>
-            <InputLabel>Role</InputLabel>
+            <InputLabel>{t('role')}</InputLabel>
             <Select
               value={newUser.role}
               onChange={handleRoleChange}
               label='Role'
             >
-              <MenuItem value='doctor'>Doctor</MenuItem>
-              <MenuItem value='nurse'>Nurse</MenuItem>
-              <MenuItem value='lab'>Lab</MenuItem>
-              <MenuItem value='pharmacist'>Pharmacist</MenuItem>
+              <MenuItem value='doctor'>{t('doctor')}</MenuItem>
+              <MenuItem value='nurse'>{t('nurse')}</MenuItem>
+              <MenuItem value='lab'>{t('lab')}</MenuItem>
+              <MenuItem value='pharmacist'>{t('pharmacist')}</MenuItem>
             </Select>
           </FormControl>
 
           <TextField
             fullWidth
-            label='Phone Number'
+            label={t('phoneNumber')}
             name='phone'
             value={newUser.phone}
             onChange={handleInputChange}
@@ -382,7 +384,7 @@ const Admin = () => {
             onClick={handleAddUser}
             sx={{ marginTop: 2 }}
           >
-            Add User
+            {t('addUser')}
           </Button>
         </Box>
       </Drawer>

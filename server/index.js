@@ -2,40 +2,39 @@ import express from 'express';
 import cors from 'cors';
 import multer from 'multer';
 import {} from './configs/db.js';
-import login from './controller/login.js';
+import login from './controller/loginController.js';
 import {
   createPatient,
   getPatients,
   getPatient,
   updatePatient,
   uploadImage,
-} from './controller/patient.js';
+} from './controller/patientController.js';
 import {
   createAppointment,
   getAppointments,
   getAppointment,
   updateAppointment,
-} from './controller/appointment.js';
-import { getOwners } from './controller/owner.js';
-import { getMedications } from './controller/medication.js';
+} from './controller/appointmentController.js';
+import { getOwners } from './controller/ownerController.js';
+import { getMedications } from './controller/medicationController.js';
 import {
   createPrescription,
   getPrescription,
-} from './controller/prescription.js';
+} from './controller/prescriptionController.js';
 import {
   createUser,
   getUserDetails,
-  getLoggedInUser
-} from './controller/user.js'
+  getLoggedInUser,
+  resetPassword,
+  sendForgotPasswordEmail,
+  resetPasswordWithToken
+} from './controller/userController.js';
 
-import { getDoctors } from './controller/doctor.js';
+import { getDoctors } from './controller/doctorController.js';
 
 const app = express();
 const upload = multer({ dest: 'uploads/' });
-
-
-
-
 
 app.use(cors());
 app.use(express.json());
@@ -68,8 +67,11 @@ app.get('/prescriptions/:id', getPrescription);
 
 // User routes and handlers
 app.post('/user', createUser);
-app.get('/user', getUserDetails)
+app.get('/user', getUserDetails);
 app.get('/user/details', getLoggedInUser);
+app.post('/user/resetpassword', resetPassword)
+app.post('/forgot-password', sendForgotPasswordEmail)
+app.post('/reset-password', resetPasswordWithToken); 
 
 //Doctor routes and handlers
 app.get('/doctors', getDoctors);

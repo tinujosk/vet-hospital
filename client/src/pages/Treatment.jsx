@@ -10,41 +10,37 @@ import {
   StepLabel,
   StepContent,
   Box,
-  Container,
 } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Loading from '../components/Loading';
 import AddMedications from '../components/AddMedication';
 import MedicationTable from '../components/MedicationTable';
-import { getAppointment } from '../services/appointment';
-import { createPrescription } from '../services/prescription';
-import { showSnackbar } from '../slices/snackbar';
+import { getAppointment } from '../services/appointmentService';
+import { createPrescription } from '../services/prescriptionService';
+import { showSnackbar } from '../slices/snackbarSlice';
 
-const treatmentSteps = [
+const getTreatmentSteps = t => [
   {
-    label: 'Case Opened',
-    description: 'The case has been opened. Initial Symptoms noted.',
+    label: t('caseOpenedLabel'),
+    description: t('caseOpenedDescription'),
   },
   {
-    label: 'Preliminary Examination',
-    description:
-      'The nurse performed an initial examination of the patient, checking for visible signs of illness or injury.',
+    label: t('preliminaryExaminationLabel'),
+    description: t('preliminaryExaminationDescription'),
   },
   {
-    label: 'Diagnosis & Prescription',
-    description:
-      'The doctor has provided the necessary prescription or therapy based on the diagnosis, and a lab test have been ordered.',
+    label: t('diagnosisAndPrescriptionLabel'),
+    description: t('diagnosisAndPrescriptionDescription'),
   },
   {
-    label: 'Lab Tests Perfomed',
-    description:
-      'The lab tests have been performed, and the medical report is available for download.',
+    label: t('labTestsPerformedLabel'),
+    description: t('labTestsPerformedDescription'),
   },
   {
-    label: 'Treatment Completed',
-    description:
-      'The treatment process is completed, and the patient is either discharged or monitored for further improvement.',
+    label: t('treatmentCompletedLabel'),
+    description: t('treatmentCompletedDescription'),
   },
 ];
 
@@ -66,6 +62,7 @@ const Treatment = () => {
   const [errors, setErrors] = useState({ medicalCondition: '' });
 
   const { id } = useParams();
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const handleDeleteMedications = id => {
@@ -80,7 +77,7 @@ const Treatment = () => {
     let isValid = true;
 
     if (!prescription.medicalCondition) {
-      tempErrors.medicalCondition = '* Patients medical condition is required';
+      tempErrors.medicalCondition = t('medicalConditionRequired');
       isValid = false;
     }
 
@@ -133,7 +130,10 @@ const Treatment = () => {
         if (result) {
           setLoading(false);
           dispatch(
-            showSnackbar({ message: 'Prescription added', severity: 'success' })
+            showSnackbar({
+              message: t('prescriptionAdded'),
+              severity: 'success',
+            })
           );
           fetchAppointment();
         }
@@ -154,7 +154,7 @@ const Treatment = () => {
       }}
     >
       <Typography variant='h5' marginBottom={4} fontSize={{ xs: 20, sm: 30 }}>
-        Case #{appointment?.appointmentId}
+        {`${t('case')} ${appointment?.appointmentId}`}
         <Typography
           sx={{
             display: { xs: 'block', md: 'inline' },
@@ -164,7 +164,9 @@ const Treatment = () => {
           }}
         >
           (
-          {`Appointment for: ${appointment?.patient?.name}, ${appointment?.patient?.species}, ${appointment?.patient?.age} yrs`}
+          {`${t('appointmentFor')}: ${appointment?.patient?.name}, ${
+            appointment?.patient?.species
+          }, ${appointment?.patient?.age} yrs`}
           )
         </Typography>
       </Typography>
@@ -181,12 +183,11 @@ const Treatment = () => {
             sx={{ minWidth: 300 }}
           >
             <Typography variant='h5' gutterBottom marginBottom={3}>
-              Prescription
+              {t('prescription')}
             </Typography>
             {appointment?.status === 'Pending' ? (
               <Typography textAlign='center' variant='h6'>
-                The preliminary examination has to be completed by the Nurse
-                before a prescription can be given.
+                {t('preliminaryExaminationRequired')}
               </Typography>
             ) : (
               <form onSubmit={handleSubmit}>
@@ -215,8 +216,7 @@ const Treatment = () => {
                         textAlign='center'
                         padding={5}
                       >
-                        {' '}
-                        No Medications Added
+                        {t('noMedicationsAdded')}
                       </Typography>
                     )}
                     <Button
@@ -225,13 +225,13 @@ const Treatment = () => {
                       onClick={() => setIsModalOpen(true)}
                       sx={{ marginTop: 2 }}
                     >
-                      Add Medications
+                      {t('addMedications')}
                     </Button>
                   </Grid>
 
                   <Grid xs={12}>
                     <TextField
-                      label='Medical Condition'
+                      label={t('medicalCondition')}
                       name='medicalCondition'
                       value={prescription?.medicalCondition}
                       onChange={handleChange}
@@ -242,7 +242,7 @@ const Treatment = () => {
                   </Grid>
                   <Grid xs={12}>
                     <TextField
-                      label='Notes'
+                      label={t('notes')}
                       name='notes'
                       value={prescription?.notes}
                       onChange={handleChange}
@@ -268,12 +268,11 @@ const Treatment = () => {
                         gutterBottom
                         sx={{ fontSize: '16px', color: 'red' }}
                       >
-                        You have already submitted the prescription. Any changes
-                        will be overwritten and will request new lab tests.
+                        {t('prescriptionAlreadySubmitted')}
                       </Typography>
                     )}
                     <Button type='submit' variant='contained' color='primary'>
-                      Submit Prescription
+                      {t('submitPrescription')}
                     </Button>
                   </Grid>
                 </Grid>
@@ -283,22 +282,25 @@ const Treatment = () => {
         </Box>
         <Box width={{ xs: '100%', md: '35%' }}>
           <Typography variant='h5' gutterBottom>
-            Treatment Status
+            {t('treatmentStatus')}
           </Typography>
           <Stepper activeStep={activeStep} orientation='vertical'>
-            {treatmentSteps.map((step, index) => (
+            {getTreatmentSteps(t).map((step, index) => (
               <Step key={step.label}>
                 <StepLabel
                   optional={
-                    index === treatmentSteps.length - 1 ? (
-                      <Typography variant='caption'>Last step</Typography>
+                    index === getTreatmentSteps(t).length - 1 ? (
+                      <Typography variant='caption'>
+                        {' '}
+                        {t('lastStep')}
+                      </Typography>
                     ) : (
                       <Typography variant='caption'>
                         {index == 0
-                          ? `Opened on
+                          ? `${t('openedOn')}
                           ${new Date(appointment.createdAt).toLocaleString()}`
                           : activeStep === index &&
-                            `Last updated ${new Date(
+                            `${t('lastUpdated')} ${new Date(
                               appointment.updatedAt
                             ).toLocaleString()}`}
                       </Typography>
