@@ -76,6 +76,7 @@ const AddMedicationsForm = ({ isModalOpen, closeModal, setMedications }) => {
       const newMedication = {
         medication: selectedMedicine._id,
         name: selectedMedicine.name,
+        price: selectedMedicine.price,
         dosage,
         frequency,
         duration,

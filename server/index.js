@@ -32,6 +32,7 @@ import {
 } from './controller/userController.js';
 
 import { getDoctors } from './controller/doctorController.js';
+import { paymentWebhook } from './controller/paymentWebHook.js';
 
 const app = express();
 const upload = multer({ dest: 'uploads/' });
@@ -75,6 +76,14 @@ app.post('/reset-password', resetPasswordWithToken);
 
 //Doctor routes and handlers
 app.get('/doctors', getDoctors);
+
+// let it be here, but I will call it from controller after diagnosis
+// app.post('/create-payment-link', processPayment);
+app.post(
+  '/payment-webhook',
+  express.raw({ type: 'application/json' }),
+  paymentWebhook
+);
 
 app.listen(3001, () => {
   console.log('Server listening on port 3001');

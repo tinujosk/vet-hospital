@@ -12,6 +12,7 @@ const MedicationSchema = new Schema(
     dosageForm: { type: String, required: true },
     manufacturer: { type: String, required: true },
     strength: { type: String, required: true },
+    price: { type: Number, required: true },
   },
   { timestamps: true }
 );
