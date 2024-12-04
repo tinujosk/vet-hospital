@@ -16,6 +16,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { getUserDetailsFromToken } from './util';
 import { setUserData, clearUserData } from './slices/authSlice';
 import User from './pages/User';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 const theme = createTheme({
   palette: {
@@ -200,6 +202,8 @@ export default function App() {
               />
             }
           />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
+          <Route path='/reset-password/:token' element={<ResetPassword />} />
         </Routes>
       </Router>
     </ThemeProvider>
