@@ -19,14 +19,15 @@ import {
 import { Menu as MenuIcon, Close as CloseIcon } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { clearUserData } from '../slices/auth';
-import { clearUserDetails } from '../slices/user'; // For clearing user state
 import { Link as RouterLink } from 'react-router-dom';
-import { getNavItemsForUser } from '../util';
-import { fetchUserDetails } from '../slices/user';
-import { getUserDetailsFromToken } from '../util';
+import { useTranslation } from 'react-i18next';
+import { fetchUserDetails, clearUserDetails } from '../slices/userSlice';
+import { clearUserData } from '../slices/authSlice';
+import { getUserDetailsFromToken, getNavItemsForUser } from '../util';
+import LanguageSwitch from './LanguageSwitch';
 
-const Header = ({ username = 'Username' }) => {
+const Header = () => {
+  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const [isMobileNavOpen, setMobileNavOpen] = useState(false);
 
@@ -105,10 +106,11 @@ const Header = ({ username = 'Username' }) => {
                 underline='none'
                 marginRight={2}
               >
-                {page?.charAt(1).toUpperCase() + page.slice(2)}
+                {t(page.slice(1))}
               </Link>
             ))}
           </Box>
+          <LanguageSwitch />
           <Box
             sx={{
               display: 'flex',
@@ -125,7 +127,6 @@ const Header = ({ username = 'Username' }) => {
               sx={{ ml: 2, cursor: 'pointer' }}
             />
           </Box>
-
           <IconButton
             edge='start'
             color='secondary'

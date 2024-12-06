@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Snackbar, Alert } from '@mui/material';
-import { hideSnackbar } from '../slices/snackbar';
+import { hideSnackbar } from '../slices/snackbarSlice';
 
 const GlobalSnackbar = () => {
   const dispatch = useDispatch();

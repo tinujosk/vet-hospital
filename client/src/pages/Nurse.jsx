@@ -19,6 +19,7 @@ import {
   Container,
   FormHelperText,
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import PatientDetails from '../components/PatientDetails';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable'; 
@@ -27,14 +28,14 @@ import {
   getPatients,
   getPatientById,
   uploadPatientImage,
-} from '../services/patient';
+} from '../services/patientService';
 import {
   createAppointment,
   getAppointments,
   updateAppointment,
-} from '../services/appointment';
-import { getOwners } from '../services/owner';
-import { getDoctors } from '../services/doctor';
+} from '../services/appointmentService';
+import { getOwners } from '../services/ownerService';
+import { getDoctors } from '../services/doctorService';
 import GenericTable from '../components/GenericTable';
 import BarChart from '../components/BarChart';
 import PieChart from '../components/PieChart';
@@ -69,6 +70,7 @@ function NursePage() {
   const [errors, setErrors] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+  const { t } = useTranslation();
 
   const initialPatientState = {
     patientname: '',
@@ -541,7 +543,7 @@ function NursePage() {
                 fontWeight: 'bold',
               }}
             >
-              Register Patient
+              {t('registerPatient')}
             </Typography>
           </Box>
           <Box
@@ -581,7 +583,7 @@ function NursePage() {
                 fontWeight: 'bold',
               }}
             >
-              Create Appointment
+              {t('createAppointment')}
             </Typography>
           </Box>
         </Box>
@@ -592,7 +594,7 @@ function NursePage() {
           marginBottom={2}
           fontSize={{ xs: 20, sm: 30 }}
         >
-          Appointments
+          {t('appointments')}
         </Typography>
 
         <GenericTable
@@ -619,13 +621,13 @@ function NursePage() {
 
       {/* Create Patient Modal */}
       <Dialog open={createModalOpen} onClose={handleCloseCreateModal}>
-        <DialogTitle>Register Patient</DialogTitle>
+        <DialogTitle> {t('registerPatient')}</DialogTitle>
 
         <DialogContent>
-          <Typography>Patient Details</Typography>
+          <Typography>{t('patientDetails')}</Typography>
           <TextField
             margin='dense'
-            label='Patient Name'
+            label={t('patientName')}
             name='patientname'
             value={newPatient.patientname}
             onChange={handleInputChange}
@@ -636,7 +638,7 @@ function NursePage() {
           />
           <TextField
             margin='dense'
-            label='Species'
+            label={t('species')}
             name='species'
             value={newPatient.species}
             onChange={handleInputChange}
@@ -647,7 +649,7 @@ function NursePage() {
           />
           <TextField
             margin='dense'
-            label='Breed'
+            label={t('breed')}
             name='breed'
             value={newPatient.breed}
             onChange={handleInputChange}
@@ -658,7 +660,7 @@ function NursePage() {
           />
           <TextField
             margin='dense'
-            label='Age'
+            label={t('age')}
             name='age'
             value={newPatient.age}
             onChange={handleInputChange}
@@ -677,7 +679,7 @@ function NursePage() {
           />
           <label htmlFor='patient-image-upload'>
             <Button variant='outlined' component='span' color='primary'>
-              Upload Image
+              {t('uploadImage')}
             </Button>
           </label>
 
@@ -694,23 +696,23 @@ function NursePage() {
           )}
 
           <FormControl fullWidth margin='dense' required>
-            <InputLabel id='gender-label'>Gender</InputLabel>
+            <InputLabel id='gender-label'>{t('gender')}</InputLabel>
             <Select
               labelId='gender-label'
               name='gender'
               value={newPatient.gender || ''}
               onChange={handleInputChange}
-              label='Gender'
+              label={t('gender')}
             >
-              <MenuItem value=''>Select Gender</MenuItem>
-              <MenuItem value='Male'>Male</MenuItem>
-              <MenuItem value='Female'>Female</MenuItem>
+              <MenuItem value=''>{t('selectGender')}</MenuItem>
+              <MenuItem value='Male'>{t('male')}</MenuItem>
+              <MenuItem value='Female'>{t('female')}</MenuItem>
             </Select>
           </FormControl>
 
           <TextField
             margin='dense'
-            label='Weight'
+            label={t('weight')}
             name='weight'
             value={newPatient.weight}
             onChange={handleInputChange}
@@ -721,7 +723,7 @@ function NursePage() {
           />
 
           <Typography variant='subtitle1' gutterBottom>
-            Owner Details
+            {t('ownerDetails')}
           </Typography>
 
           <FormControl>
@@ -733,12 +735,12 @@ function NursePage() {
               <FormControlLabel
                 value='same'
                 control={<Radio />}
-                label='Existing Owner'
+                label={t('existingOwner')}
               />
               <FormControlLabel
                 value='new'
                 control={<Radio />}
-                label='New Owner'
+                label={t('newOwner')}
               />
             </RadioGroup>
           </FormControl>
@@ -766,7 +768,7 @@ function NursePage() {
               renderInput={params => (
                 <TextField
                   {...params}
-                  label='Select Owner'
+                  label={t('selectOwner')}
                   placeholder='Select Owner'
                   required
                   margin='normal'
@@ -841,17 +843,17 @@ function NursePage() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseCreateModal} color='primary'>
-            Cancel
+            {t('cancel')}
           </Button>
           <Button onClick={handleSubmit} color='primary'>
-            Create
+            {t('create')}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Create Appointment Modal */}
       <Dialog open={appointmentModalOpen} onClose={handleCloseAppointmentModal}>
-        <DialogTitle>Create New Appointment</DialogTitle>
+        <DialogTitle>{t('createNewAppointment')}</DialogTitle>
         <DialogContent>
           <Autocomplete
             options={patientOptions}
@@ -868,7 +870,7 @@ function NursePage() {
             renderInput={params => (
               <TextField
                 {...params}
-                label='Select Patient'
+                label={t('selectPatient')}
                 error={!!errors.patient}
                 helperText={errors.patient}
                 required
@@ -913,7 +915,7 @@ function NursePage() {
             renderInput={params => (
               <TextField
                 {...params}
-                label='Select Doctor'
+                label={t('selectDoctor')}
                 error={!!errors.doctor}
                 helperText={errors.doctor}
                 required
@@ -955,13 +957,13 @@ function NursePage() {
             required
           />
           <FormControl fullWidth margin='dense' required>
-            <InputLabel id='time-slot-label'>Select Time Slot</InputLabel>
+            <InputLabel id='time-slot-label'>{t('selectTimeSlot')}</InputLabel>
             <Select
               labelId='time-slot-label'
               name='timeSlot'
               value={newAppointment.timeSlot || ''}
               onChange={handleAppointmentInputChange}
-              label='Select Time Slot'
+              label={t('selectTimeSlot')}
             >
               {timeSlotOptions.map((slot, index) => (
                 <MenuItem key={index} value={slot}>
@@ -976,7 +978,7 @@ function NursePage() {
 
           <TextField
             margin='dense'
-            label='Reason'
+            label={t('reason')}
             name='reason'
             value={newAppointment.reason}
             onChange={handleAppointmentInputChange}
@@ -988,10 +990,10 @@ function NursePage() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseAppointmentModal} color='primary'>
-            Cancel
+            {t('cancel')}
           </Button>
           <Button onClick={handleAppointmentSubmit} color='primary'>
-            Create
+            {t('create')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -1132,7 +1134,7 @@ function NursePage() {
       </Dialog>
       <Container>
         <Typography variant='h5' textAlign='center' marginBottom={2}>
-          Overview of Appointments
+          {t('overviewOfAppointments')}
         </Typography>
         <Box
           display='flex'

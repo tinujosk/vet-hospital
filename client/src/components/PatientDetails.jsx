@@ -13,6 +13,7 @@ import {
   Select,
   MenuItem,
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import CloseIcon from '@mui/icons-material/Close';
 import NoImage from '../images/noimage.png';
 
@@ -26,6 +27,7 @@ function PatientDetails({
   const { patientData, ownerData } = patientDetails;
   const [updatedPatient, setUpdatedPatient] = useState({});
   const [updatedOwner, setUpdatedOwner] = useState({});
+  const { t } = useTranslation();
 
   useEffect(() => {
     setUpdatedPatient(patientData);
@@ -67,23 +69,23 @@ function PatientDetails({
           marginBottom={2}
         >
           <Typography variant='h5' component='h2' gutterBottom>
-            Patient Details
+            {t('patientDetails')}
           </Typography>
           <IconButton onClick={handleCloseDrawer}>
             <CloseIcon />
           </IconButton>
         </Box>
         <Box
-          component="img"
+          component='img'
           sx={{ width: '100%', height: 'auto' }}
-          alt="Patient Image"
+          alt='Patient Image'
           src={patientData?.image || NoImage}
         />
         <Paper elevation={3} sx={{ padding: 2, marginBottom: 6 }}>
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <Typography variant='body1'>
-                <strong>Name:</strong>
+                <strong>{t('name')}:</strong>
               </Typography>
               <TextField
                 value={updatedPatient?.name}
@@ -95,7 +97,7 @@ function PatientDetails({
             </Grid>
             <Grid item xs={6}>
               <Typography variant='body1'>
-                <strong>Species:</strong>
+                <strong>{t('species')}:</strong>
               </Typography>
               <TextField
                 value={updatedPatient?.species}
@@ -109,7 +111,7 @@ function PatientDetails({
             </Grid>
             <Grid item xs={6}>
               <Typography variant='body1'>
-                <strong>Breed:</strong>
+                <strong>{t('breed')}:</strong>
               </Typography>
               <TextField
                 value={updatedPatient?.breed}
@@ -123,7 +125,7 @@ function PatientDetails({
             </Grid>
             <Grid item xs={6}>
               <Typography variant='body1'>
-                <strong>Age:</strong>
+                <strong>{t('age')}:</strong>
               </Typography>
               <TextField
                 type='number'
@@ -136,7 +138,7 @@ function PatientDetails({
             </Grid>
             <Grid item xs={6}>
               <Typography variant='body1'>
-                <strong>Gender:</strong>
+                <strong>{t('gender')}:</strong>
               </Typography>
               <FormControl
                 variant='standard'
@@ -150,14 +152,14 @@ function PatientDetails({
                     handlePatientInputChange('gender', e.target.value)
                   }
                 >
-                  <MenuItem value='Male'>Male</MenuItem>
-                  <MenuItem value='Female'>Female</MenuItem>
+                  <MenuItem value='Male'>{t('male')}</MenuItem>
+                  <MenuItem value='Female'>{t('female')}</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
             <Grid item xs={6}>
               <Typography variant='body1'>
-                <strong>Weight:</strong>
+                <strong>{t('weight')}:</strong>
               </Typography>
               <TextField
                 value={updatedPatient?.weight}
@@ -174,9 +176,9 @@ function PatientDetails({
             </Grid>
             <Grid item xs={12}>
               <Typography variant='h6' component='h3' gutterBottom>
-                Medical History:
+                {t('medicalHistory')}:
               </Typography>
-              Not available
+              {t('notAvailable')}
               {/* <ul>
                 {patientData?.medicalHistory?.map((item, index) => (
                   <li key={index}>
@@ -190,7 +192,7 @@ function PatientDetails({
             </Grid>
             <Grid item xs={6}>
               <Typography variant='body1'>
-                <strong>Owner First Name:</strong>
+                <strong>{t('ownerFirstName')}:</strong>
               </Typography>
               <TextField
                 value={updatedOwner?.firstName}
@@ -204,7 +206,7 @@ function PatientDetails({
             </Grid>
             <Grid item xs={6}>
               <Typography variant='body1'>
-                <strong>Owner Last Name:</strong>
+                <strong>{t('ownerLastName')}:</strong>
               </Typography>
               <TextField
                 value={updatedOwner?.lastName}
@@ -218,7 +220,7 @@ function PatientDetails({
             </Grid>
             <Grid item xs={6}>
               <Typography variant='body1'>
-                <strong>Owner Phone:</strong>
+                <strong>{t('ownerPhone')}:</strong>
               </Typography>
               <TextField
                 value={updatedOwner?.phone}
@@ -230,7 +232,7 @@ function PatientDetails({
             </Grid>
             <Grid item xs={6}>
               <Typography variant='body1'>
-                <strong>Owner Email:</strong>
+                <strong>{t('ownerEmail')}:</strong>
               </Typography>
               <TextField
                 value={updatedOwner?.email}
@@ -242,7 +244,7 @@ function PatientDetails({
             </Grid>
             <Grid item xs={12}>
               <Typography variant='body1'>
-                <strong>Owner Address:</strong>
+                <strong>{t('ownerAddress')}:</strong>
               </Typography>
               <TextField
                 value={updatedOwner?.address}
@@ -263,7 +265,7 @@ function PatientDetails({
                 onClick={handleSubmit}
                 disabled={!editMode}
               >
-                Update Patient Details
+                {t('updatePatientDetails')}
               </Button>
             </Grid>
           </Grid>

@@ -9,7 +9,8 @@ import {
   DialogContent,
   DialogActions,
 } from '@mui/material';
-import { searchMedication } from '../services/medication';
+import { useTranslation } from 'react-i18next';
+import { searchMedication } from '../services/medicationService';
 
 const AddMedicationsForm = ({ isModalOpen, closeModal, setMedications }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -24,6 +25,7 @@ const AddMedicationsForm = ({ isModalOpen, closeModal, setMedications }) => {
     frequency: '',
     duration: '',
   });
+  const { t } = useTranslation();
 
   const validate = () => {
     let tempErrors = {
@@ -35,21 +37,21 @@ const AddMedicationsForm = ({ isModalOpen, closeModal, setMedications }) => {
     let isValid = true;
 
     if (!selectedMedicine) {
-      tempErrors.selectedMedicine = 'Please select a medicine';
+      tempErrors.selectedMedicine = t('pleaseSelectMedicine');
       isValid = false;
     }
     if (!dosage) {
-      tempErrors.dosage = 'Please select a dosage';
+      tempErrors.dosage = t('pleaseSelectDosage');
       isValid = false;
     }
 
     if (!frequency) {
-      tempErrors.frequency = 'Please select a frequency';
+      tempErrors.frequency = t('pleaseSelectFrequency');
       isValid = false;
     }
 
     if (!duration) {
-      tempErrors.duration = 'Please select a duration';
+      tempErrors.duration = t('pleaseSelectDuration');
       isValid = false;
     }
 
@@ -90,8 +92,8 @@ const AddMedicationsForm = ({ isModalOpen, closeModal, setMedications }) => {
   };
 
   return (
-    <Dialog open={isModalOpen} onClose={closeModal} fullWidth maxWidth="sm">
-      <DialogTitle>Add Medications</DialogTitle>
+    <Dialog open={isModalOpen} onClose={closeModal} fullWidth maxWidth='sm'>
+      <DialogTitle>{t('addMedications')}</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -104,11 +106,11 @@ const AddMedicationsForm = ({ isModalOpen, closeModal, setMedications }) => {
               renderInput={params => (
                 <TextField
                   {...params}
-                  label="Search Medicine"
-                  variant="outlined"
+                  label={t('searchMedicine')}
+                  variant='outlined'
                   fullWidth
                   onChange={handleSearch}
-                  placeholder="Type to search..."
+                  placeholder={`${t('typeToSearch')}...`}
                   error={!!errors.selectedMedicine}
                   helperText={errors.selectedMedicine}
                 />
@@ -117,55 +119,55 @@ const AddMedicationsForm = ({ isModalOpen, closeModal, setMedications }) => {
           </Grid>
           <Grid item xs={4}>
             <TextField
-              label="Dosage"
-              variant="outlined"
+              label={t('dosage')}
+              variant='outlined'
               fullWidth
               value={dosage}
               onChange={e => setDosage(e.target.value)}
-              placeholder="e.g., 500mg"
+              placeholder={t('e500mg')}
               error={!!errors.dosage}
               helperText={errors.dosage}
             />
           </Grid>
           <Grid item xs={4}>
             <TextField
-              label="Frequency"
-              variant="outlined"
+              label={t('frequency')}
+              variant='outlined'
               fullWidth
               value={frequency}
               onChange={e => setFrequency(e.target.value)}
-              placeholder="e.g., twice a day"
+              placeholder={t('eTwiceADay')}
               error={!!errors.frequency}
               helperText={errors.frequency}
             />
           </Grid>
           <Grid item xs={4}>
             <TextField
-              label="Duration"
-              variant="outlined"
+              label={t('duration')}
+              variant='outlined'
               fullWidth
               value={duration}
               onChange={e => setDuration(e.target.value)}
-              placeholder="e.g., for a week"
+              placeholder={t('eForAWeek')}
               error={!!errors.duration}
               helperText={errors.duration}
             />
           </Grid>
           <Grid item xs={12}>
             <Button
-              variant="contained"
-              color="primary"
+              variant='contained'
+              color='primary'
               onClick={handleAddMedicine}
               fullWidth
             >
-              Add to Prescription
+              {t('addToPrescription')}
             </Button>
           </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={closeModal} color="secondary">
-          Cancel
+        <Button onClick={closeModal} color='secondary'>
+          {t('cancel')}
         </Button>
       </DialogActions>
     </Dialog>

@@ -9,10 +9,10 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Box,
 } from '@mui/material';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useTranslation } from 'react-i18next';
 
 const theme = createTheme({
   palette: {
@@ -31,6 +31,8 @@ export default function MedicationTable({
   medications,
   handleDeleteMedications,
 }) {
+  const { t } = useTranslation();
+
   return (
     <ThemeProvider theme={theme}>
       <TableContainer component={Paper} sx={{ marginTop: 2 }}>
@@ -42,10 +44,10 @@ export default function MedicationTable({
         >
           <TableHead>
             <TableRow>
-              <TableCell>Medicine</TableCell>
-              <TableCell align='right'>Dosage</TableCell>
-              <TableCell align='right'>Frequency</TableCell>
-              <TableCell align='right'>Duration</TableCell>
+              <TableCell>{t('medicine')}</TableCell>
+              <TableCell align='right'>{t('dosage')}</TableCell>
+              <TableCell align='right'>{t('frequency')}</TableCell>
+              <TableCell align='right'>{t('duration')}</TableCell>
               <TableCell align='right'></TableCell>
             </TableRow>
           </TableHead>

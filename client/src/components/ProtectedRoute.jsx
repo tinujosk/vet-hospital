@@ -2,9 +2,8 @@ import React from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import Layout from './Layout';
-import { isTokenExpired } from '../util';
-import { clearUserData } from '../slices/auth';
-import { hasPermission } from '../util';
+import { isTokenExpired, hasPermission } from '../util';
+import { clearUserData } from '../slices/authSlice';
 
 const ProtectedRoute = ({ element, path, title }) => {
   const dispatch = useDispatch();

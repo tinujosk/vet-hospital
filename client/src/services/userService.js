@@ -29,3 +29,21 @@ export const fetchLoggedInUserDetails = async (userId) => {
   });
   return response.data;
 };
+
+export const resetPassword = async (userId, newPassword) =>{
+  console.log('Reset Password Payload:', { userId, newPassword });
+  const response = await axios.post(`${API_URL}/user/resetpassword`,{
+    userId, 
+    newPassword
+  });
+  return response.data;
+}
+
+export const resetPasswordWithToken = async (token, newPassword) =>{
+  console.log('Reset Password Payload:', { token, newPassword });
+  const response = await axios.post(`${API_URL}/reset-password`,{
+    token, 
+    newPassword
+  });
+  return response.data;
+}
