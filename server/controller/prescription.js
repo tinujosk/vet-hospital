@@ -3,9 +3,10 @@ import Appointment from '../model/Appointment.js';
 
 export const createPrescription = async (req, res) => {
   try {
-    const { appointment, medications, medicalCondition, notes } = req.body;
+    const { appointment, medications, medicalCondition, notes,labTests } = req.body;
     const newPrescription = new Prescription({
       medications,
+      labTests,
       notes,
       medicalCondition,
     });

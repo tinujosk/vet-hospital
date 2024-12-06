@@ -30,6 +30,8 @@ import {
 
 import { getDoctors } from './controller/doctor.js';
 
+import { createLabDetails,uploadImages } from './controller/labreport.js';
+
 const app = express();
 const upload = multer({ dest: 'uploads/' });
 
@@ -73,6 +75,11 @@ app.get('/user/details', getLoggedInUser);
 
 //Doctor routes and handlers
 app.get('/doctors', getDoctors);
+
+
+app.post('/lab/createlab', createLabDetails);
+app.post('/lab/uploadimages', upload.array('file'), uploadImages);
+
 
 app.listen(3001, () => {
   console.log('Server listening on port 3001');

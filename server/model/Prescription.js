@@ -15,6 +15,7 @@ const PrescriptionSchema = Schema(
         duration: String,
       },
     ],
+    labTests: [{ type: String }],
   },
   { timestamps: true }
 );

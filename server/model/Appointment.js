@@ -22,6 +22,7 @@ const AppointmentSchema = new Schema(
       default: null,
     },
     labreport: { type: Schema.Types.ObjectId, ref: 'LabReport', default: null },
+    payment: { type: Schema.Types.ObjectId, ref: 'LabReport', default: null },
   },
   { timestamps: true }
 );
