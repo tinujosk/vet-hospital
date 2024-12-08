@@ -18,81 +18,81 @@ Problem Statement
 How can veterinary hospitals streamline operations, ensuring seamless workflows and secure financial transactions while reducing errors?
 
 Objectives/Goals
-•	Implement a role-based management system with secure access control.
-•	Automate key processes like billing and inventory management.
-•	Integrate payment processing for seamless financial transactions.
-•	Provide an intuitive interface for all stakeholders.
+a) Implement a role-based management system with secure access control.
+b) Automate key processes like billing and inventory management.
+c) Integrate payment processing for seamless financial transactions.
+d) Provide an intuitive interface for all stakeholders.
 
 Scope and Limitations
 Scope:
-•	Focuses on role-based management (Admin, Doctor, Nurse, Lab Assistant, Pharmacist).
-•	Covers operations such as patient management, billing, and inventory updates.
-•	Integrates a secure payment system for financial transactions.
+a) Focuses on role-based management (Admin, Doctor, Nurse, Lab Assistant, Pharmacist).
+b) Covers operations such as patient management, billing, and inventory updates.
+c) Integrates a secure payment system for financial transactions.
 Limitations:
-•	Does not include advanced analytics or revenue monitoring in this version.
-•	Limited to on-premise deployment in the current scope.
+a) Does not include advanced analytics or revenue monitoring in this version.
+b) Limited to on-premise deployment in the current scope.
 
 3. Literature Review
 --------------------
 Existing Solutions:
-•	Traditional hospital management systems for human healthcare are robust but lack customization for veterinary operations.
-•	Standalone tools exist for scheduling, inventory, or billing but do not provide an integrated solution.
+a) Traditional hospital management systems for human healthcare are robust but lack customization for veterinary operations.
+b) Standalone tools exist for scheduling, inventory, or billing but do not provide an integrated solution.
 Gaps Identified:
-•	Lack of comprehensive, role-based solutions tailored for veterinary workflows.
-•	Limited support for integrated payment processing in existing veterinary management systems.
+a) Lack of comprehensive, role-based solutions tailored for veterinary workflows.
+b) Limited support for integrated payment processing in existing veterinary management systems.
 VetClinic Pro addresses these gaps by offering a unified system with role-based functionality and payment integration.
 
 4. Methodology
 --------------
 Approach
-•	Role-Based Design: Assign tasks and dashboards based on user roles to streamline operations and avoid overlap.
-•	Secure Authentication: Implement user login with role-based redirection.
-•	Payment Integration: Enable secure online and offline payment options for patients.
+a) Role-Based Design: Assign tasks and dashboards based on user roles to streamline operations and avoid overlap.
+b) Secure Authentication: Implement user login with role-based redirection.
+c) Payment Integration: Enable secure online and offline payment options for patients.
 Tools and Technologies
-•	Programming Languages: JavaScript (Node.js for backend).
-•	Frameworks: React.js, Express.js, Redux, Material UI, D3.js.
-•	Database: MongoDB.
-•	Payment Gateway: Stripe Payments.
+a) Programming Languages: JavaScript (Node.js for backend).
+b) Frameworks: React.js, Express.js, Redux, Material UI, D3.js.
+c) Database: MongoDB.
+d) Payment Gateway: Stripe Payments.
 Data Collection and Analysis
-•	Collect user and patient data during registration.
-•	Analyse payment records and appointment schedules to ensure smooth transactions.
+a) Collect user and patient data during registration.
+b) Analyse payment records and appointment schedules to ensure smooth transactions.
 
 5. Project Design/Implementation
 --------------------------------
 System Architecture
-•	Frontend: Role-specific dashboards providing access to relevant features.
-•	Backend: RESTful APIs and JWT Tokens for authentication, database queries, and payment processing.
-•	Database: A NoSQL structure with collections for users, patients, appointments, inventory, and payment records.
+a) Frontend: Role-specific dashboards providing access to relevant features.
+b) Backend: RESTful APIs and JWT Tokens for authentication, database queries, and payment processing.
+c) Database: A NoSQL structure with collections for users, patients, appointments, inventory, and payment records.
 Key Features
-•	Admin: User management.
-•	Nurse: Patient registration, preliminary tests, and appointment scheduling.
-•	Doctor: Patient treatment, prescriptions, and lab test management.
-•	Lab Assistant: Lab test results and billing.
-•	Pharmacist: Inventory updates, dispensing medicines, and billing.
+a) Admin: User management.
+b) Nurse: Patient registration, preliminary tests, and appointment scheduling.
+c) Doctor: Patient treatment, prescriptions, and lab test management.
+d) Lab Assistant: Lab test results and billing.
+e) Pharmacist: Inventory updates, dispensing medicines, and billing.
 
 Workflows
 Authentication:
-• The user logs in.
-• The system verifies credentials and redirects to the respective dashboard.
+a) The user logs in.
+b) The system verifies credentials and redirects to the respective dashboard.
 Payment Processing:
-• The payment links are automatically sent to the owner’s email after the prescription.
-• The system redirects the user to a secure payment portal.
-• Payment confirmation updates the database and appointment records.
+a) The payment links are automatically sent to the owner’s email after the prescription.
+b) The system redirects the user to a secure payment portal.
+c) Payment confirmation updates the database and appointment records.
 
 6. Challenges and Solutions
 ---------------------------
 Challenges
-• Integration with Payment Gateway: Ensuring secure and seamless payment processing.
+a) Integration with Payment Gateway: Ensuring secure and seamless payment processing.
     Solution: Integrated a third-party payment processor with encrypted transactions.
-• Role-Specific Access Control: Initial overlaps in role permissions confused.
+b) Role-Specific Access Control: Initial overlaps in role permissions confused.
     Solution: Refined access controls and conducted extensive user testing.
 
 7. References
 -------------
-• React.js Documentation: https://legacy.reactjs.org/
-• Node.js Documentation: https://nodejs.org/docs/
-• Stripe Payment Gateway Documentation: https://stripe.com/docs/
-• MongoDB Documentation: https://www.mongodb.com/docs/
+a) React.js Documentation: https://legacy.reactjs.org/
+b) Node.js Documentation: https://nodejs.org/docs/
+c) Stripe Payment Gateway Documentation: https://stripe.com/docs/
+d) MongoDB Documentation: https://www.mongodb.com/docs/
 
 
 Application Flow In Detail
