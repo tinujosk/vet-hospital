@@ -1,14 +1,14 @@
 # vet-hospital
-Veterinary Hospital Management System project
+**Veterinary Hospital Management System project**
 
 VetClinic Pro is a veterinary hospital management system designed to streamline operations within a veterinary hospital. This application caters to the needs of different stakeholders, including Admins, Doctors, Nurses, Lab Assistants, and Pharmacists, by providing role-based dashboards, treatment workflows, payments and other functionalities.
 
 1. Abstract
 -----------
-Problem Addressed: Managing a veterinary hospital involves complex operations, such as patient registration, treatment workflows, inventory management, and billing. Manual systems often result in inefficiencies, errors, and delays.
-Methodology: VetClinic Pro implements a role-based management system with secure authentication, streamlined workflows, and payment integration for efficient operation and enhanced patient care.
-Key Results and Findings: The system automates key processes like billing and inventory updates, ensures role-specific task management, and enables secure payment processing, improving overall operational efficiency.
-Significance: VetClinic Pro transforms veterinary hospital operations by providing a user-friendly, efficient, and scalable solution, ensuring better care and seamless financial transactions.
+- Problem Addressed: Managing a veterinary hospital involves complex operations, such as patient registration, treatment workflows, inventory management, and billing. Manual systems often result in inefficiencies, errors, and delays.
+- Methodology: VetClinic Pro implements a role-based management system with secure authentication, streamlined workflows, and payment integration for efficient operation and enhanced patient care.
+- Key Results and Findings: The system automates key processes like billing and inventory updates, ensures role-specific task management, and enables secure payment processing, improving overall operational efficiency.
+- Significance: VetClinic Pro transforms veterinary hospital operations by providing a user-friendly, efficient, and scalable solution, ensuring better care and seamless financial transactions.
 
 2. Introduction
 ---------------
@@ -18,85 +18,85 @@ Problem Statement
 How can veterinary hospitals streamline operations, ensuring seamless workflows and secure financial transactions while reducing errors?
 
 Objectives/Goals
-a) Implement a role-based management system with secure access control.
-b) Automate key processes like billing and inventory management.
-c) Integrate payment processing for seamless financial transactions.
-d) Provide an intuitive interface for all stakeholders.
+* Implement a role-based management system with secure access control.
+* Automate key processes like billing and inventory management.
+* Integrate payment processing for seamless financial transactions.
+* Provide an intuitive interface for all stakeholders.
 
 Scope and Limitations
 Scope:
-a) Focuses on role-based management (Admin, Doctor, Nurse, Lab Assistant, Pharmacist).
-b) Covers operations such as patient management, billing, and inventory updates.
-c) Integrates a secure payment system for financial transactions.
+* Focuses on role-based management (Admin, Doctor, Nurse, Lab Assistant, Pharmacist).
+* Covers operations such as patient management, billing, and inventory updates.
+* Integrates a secure payment system for financial transactions.
 Limitations:
-a) Does not include advanced analytics or revenue monitoring in this version.
-b) Limited to on-premise deployment in the current scope.
+* Does not include advanced analytics or revenue monitoring in this version.
+* Limited to on-premise deployment in the current scope.
 
 3. Literature Review
 --------------------
 Existing Solutions:
-a) Traditional hospital management systems for human healthcare are robust but lack customization for veterinary operations.
-b) Standalone tools exist for scheduling, inventory, or billing but do not provide an integrated solution.
+* Traditional hospital management systems for human healthcare are robust but lack customization for veterinary operations.
+* Standalone tools exist for scheduling, inventory, or billing but do not provide an integrated solution.
 Gaps Identified:
-a) Lack of comprehensive, role-based solutions tailored for veterinary workflows.
-b) Limited support for integrated payment processing in existing veterinary management systems.
+* Lack of comprehensive, role-based solutions tailored for veterinary workflows.
+* Limited support for integrated payment processing in existing veterinary management systems.
 VetClinic Pro addresses these gaps by offering a unified system with role-based functionality and payment integration.
 
 4. Methodology
 --------------
 Approach
-a) Role-Based Design: Assign tasks and dashboards based on user roles to streamline operations and avoid overlap.
-b) Secure Authentication: Implement user login with role-based redirection.
-c) Payment Integration: Enable secure online and offline payment options for patients.
+* Role-Based Design: Assign tasks and dashboards based on user roles to streamline operations and avoid overlap.
+* Secure Authentication: Implement user login with role-based redirection.
+* Payment Integration: Enable secure online and offline payment options for patients.
 Tools and Technologies
-a) Programming Languages: JavaScript (Node.js for backend).
-b) Frameworks: React.js, Express.js, Redux, Material UI, D3.js.
-c) Database: MongoDB.
-d) Payment Gateway: Stripe Payments.
+* Programming Languages: JavaScript (Node.js for backend).
+* Frameworks: React.js, Express.js, Redux, Material UI, D3.js.
+* Database: MongoDB.
+* Payment Gateway: Stripe Payments.
 Data Collection and Analysis
-a) Collect user and patient data during registration.
-b) Analyse payment records and appointment schedules to ensure smooth transactions.
+* Collect user and patient data during registration.
+* Analyse payment records and appointment schedules to ensure smooth transactions.
 
 5. Project Design/Implementation
 --------------------------------
 System Architecture
-a) Frontend: Role-specific dashboards providing access to relevant features.
-b) Backend: RESTful APIs and JWT Tokens for authentication, database queries, and payment processing.
-c) Database: A NoSQL structure with collections for users, patients, appointments, inventory, and payment records.
+* Frontend: Role-specific dashboards providing access to relevant features.
+* Backend: RESTful APIs and JWT Tokens for authentication, database queries, and payment processing.
+* Database: A NoSQL structure with collections for users, patients, appointments, inventory, and payment records.
 Key Features
-a) Admin: User management.
-b) Nurse: Patient registration, preliminary tests, and appointment scheduling.
-c) Doctor: Patient treatment, prescriptions, and lab test management.
-d) Lab Assistant: Lab test results and billing.
-e) Pharmacist: Inventory updates, dispensing medicines, and billing.
+* Admin: User management.
+* Nurse: Patient registration, preliminary tests, and appointment scheduling.
+* Doctor: Patient treatment, prescriptions, and lab test management.
+* Lab Assistant: Lab test results and billing.
+* Pharmacist: Inventory updates, dispensing medicines, and billing.
 
 Workflows
 Authentication:
-a) The user logs in.
-b) The system verifies credentials and redirects to the respective dashboard.
+* The user logs in.
+* The system verifies credentials and redirects to the respective dashboard.
 Payment Processing:
-a) The payment links are automatically sent to the owner’s email after the prescription.
-b) The system redirects the user to a secure payment portal.
-c) Payment confirmation updates the database and appointment records.
+* The payment links are automatically sent to the owner’s email after the prescription.
+* The system redirects the user to a secure payment portal.
+* Payment confirmation updates the database and appointment records.
 
 6. Challenges and Solutions
 ---------------------------
 Challenges
-a) Integration with Payment Gateway: Ensuring secure and seamless payment processing.
+* Integration with Payment Gateway: Ensuring secure and seamless payment processing.
     Solution: Integrated a third-party payment processor with encrypted transactions.
-b) Role-Specific Access Control: Initial overlaps in role permissions confused.
+* Role-Specific Access Control: Initial overlaps in role permissions confused.
     Solution: Refined access controls and conducted extensive user testing.
 
 7. References
 -------------
-a) React.js Documentation: https://legacy.reactjs.org/
-b) Node.js Documentation: https://nodejs.org/docs/
-c) Stripe Payment Gateway Documentation: https://stripe.com/docs/
-d) MongoDB Documentation: https://www.mongodb.com/docs/
+* React.js Documentation: https://legacy.reactjs.org/
+* Node.js Documentation: https://nodejs.org/docs/
+* Stripe Payment Gateway Documentation: https://stripe.com/docs/
+* MongoDB Documentation: https://www.mongodb.com/docs/
 
 
 Application Flow In Detail
-==========================
+---------------------------
 
 Authentication and Autherization
 
