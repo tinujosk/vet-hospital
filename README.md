@@ -1,8 +1,102 @@
 # vet-hospital
 Veterinary Hospital Management System project
 
-Application Flow
-=================
+VetClinic Pro is a veterinary hospital management system designed to streamline operations within a veterinary hospital. This application caters to the needs of different stakeholders, including Admins, Doctors, Nurses, Lab Assistants, and Pharmacists, by providing role-based dashboards, treatment workflows, payments and other functionalities.
+
+1. Abstract
+-----------
+Problem Addressed: Managing a veterinary hospital involves complex operations, such as patient registration, treatment workflows, inventory management, and billing. Manual systems often result in inefficiencies, errors, and delays.
+Methodology: VetClinic Pro implements a role-based management system with secure authentication, streamlined workflows, and payment integration for efficient operation and enhanced patient care.
+Key Results and Findings: The system automates key processes like billing and inventory updates, ensures role-specific task management, and enables secure payment processing, improving overall operational efficiency.
+Significance: VetClinic Pro transforms veterinary hospital operations by providing a user-friendly, efficient, and scalable solution, ensuring better care and seamless financial transactions.
+
+2. Introduction
+---------------
+Background
+Veterinary hospitals manage various operations, such as patient registration, treatment, lab tests, and pharmacy services. Current systems often lack integration, leading to inefficiencies and communication gaps.
+Problem Statement
+How can veterinary hospitals streamline operations, ensuring seamless workflows and secure financial transactions while reducing errors?
+
+Objectives/Goals
+•	Implement a role-based management system with secure access control.
+•	Automate key processes like billing and inventory management.
+•	Integrate payment processing for seamless financial transactions.
+•	Provide an intuitive interface for all stakeholders.
+
+Scope and Limitations
+Scope:
+•	Focuses on role-based management (Admin, Doctor, Nurse, Lab Assistant, Pharmacist).
+•	Covers operations such as patient management, billing, and inventory updates.
+•	Integrates a secure payment system for financial transactions.
+Limitations:
+•	Does not include advanced analytics or revenue monitoring in this version.
+•	Limited to on-premise deployment in the current scope.
+
+3. Literature Review
+--------------------
+Existing Solutions:
+•	Traditional hospital management systems for human healthcare are robust but lack customization for veterinary operations.
+•	Standalone tools exist for scheduling, inventory, or billing but do not provide an integrated solution.
+Gaps Identified:
+•	Lack of comprehensive, role-based solutions tailored for veterinary workflows.
+•	Limited support for integrated payment processing in existing veterinary management systems.
+VetClinic Pro addresses these gaps by offering a unified system with role-based functionality and payment integration.
+
+5. Methodology
+--------------
+Approach
+•	Role-Based Design: Assign tasks and dashboards based on user roles to streamline operations and avoid overlap.
+•	Secure Authentication: Implement user login with role-based redirection.
+•	Payment Integration: Enable secure online and offline payment options for patients.
+Tools and Technologies
+•	Programming Languages: JavaScript (Node.js for backend).
+•	Frameworks: React.js, Express.js, Redux, Material UI, D3.js.
+•	Database: MongoDB.
+•	Payment Gateway: Stripe Payments.
+Data Collection and Analysis
+•	Collect user and patient data during registration.
+•	Analyse payment records and appointment schedules to ensure smooth transactions.
+
+6. Project Design/Implementation
+--------------------------------
+System Architecture
+•	Frontend: Role-specific dashboards providing access to relevant features.
+•	Backend: RESTful APIs and JWT Tokens for authentication, database queries, and payment processing.
+•	Database: A NoSQL structure with collections for users, patients, appointments, inventory, and payment records.
+Key Features
+•	Admin: User management.
+•	Nurse: Patient registration, preliminary tests, and appointment scheduling.
+•	Doctor: Patient treatment, prescriptions, and lab test management.
+•	Lab Assistant: Lab test results and billing.
+•	Pharmacist: Inventory updates, dispensing medicines, and billing.
+
+Workflows
+Authentication:
+1.	The user logs in.
+2.	The system verifies credentials and redirects to the respective dashboard.
+Payment Processing:
+1.	The payment links are automatically sent to the owner’s email after the prescription.
+2.	The system redirects the user to a secure payment portal.
+3.	Payment confirmation updates the database and appointment records.
+
+6. Challenges and Solutions
+---------------------------
+Challenges
+1.	Integration with Payment Gateway: Ensuring secure and seamless payment processing.
+o	Solution: Integrated a third-party payment processor with encrypted transactions.
+2.	Role-Specific Access Control: Initial overlaps in role permissions confused.
+o	Solution: Refined access controls and conducted extensive user testing.
+
+7. References
+-------------
+1.	React.js Documentation: https://legacy.reactjs.org/
+2.	Node.js Documentation: https://nodejs.org/docs/
+3.	Stripe Payment Gateway Documentation: https://stripe.com/docs/
+4.	MongoDB Documentation: https://www.mongodb.com/docs/
+
+
+Application Flow In Detail
+==========================
 
 Authentication and Autherization
 
@@ -43,9 +137,3 @@ Pharmacists
 2) Check medicine prescribed by doctor and deliver it to patient.
 3) Create pharmacy bill (automatic) and attach it to appointment.
 4) View patient/Owner details.
-
-Shared Component Ideas
-
-1) Pharmacy inventory Table, and stock details (Shared among pharmacy, admin, doctor - to see availability)
-2) Patient/Owner component (Nurse can edit details)
-3) Medical history (Should this be a separate component?)
