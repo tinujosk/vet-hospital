@@ -42,7 +42,7 @@ Gaps Identified:
 •	Limited support for integrated payment processing in existing veterinary management systems.
 VetClinic Pro addresses these gaps by offering a unified system with role-based functionality and payment integration.
 
-5. Methodology
+4. Methodology
 --------------
 Approach
 •	Role-Based Design: Assign tasks and dashboards based on user roles to streamline operations and avoid overlap.
@@ -57,7 +57,7 @@ Data Collection and Analysis
 •	Collect user and patient data during registration.
 •	Analyse payment records and appointment schedules to ensure smooth transactions.
 
-6. Project Design/Implementation
+5. Project Design/Implementation
 --------------------------------
 System Architecture
 •	Frontend: Role-specific dashboards providing access to relevant features.
