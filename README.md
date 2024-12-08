@@ -72,27 +72,27 @@ Key Features
 
 Workflows
 Authentication:
-1.	The user logs in.
-2.	The system verifies credentials and redirects to the respective dashboard.
+• The user logs in.
+• The system verifies credentials and redirects to the respective dashboard.
 Payment Processing:
-1.	The payment links are automatically sent to the owner’s email after the prescription.
-2.	The system redirects the user to a secure payment portal.
-3.	Payment confirmation updates the database and appointment records.
+• The payment links are automatically sent to the owner’s email after the prescription.
+• The system redirects the user to a secure payment portal.
+• Payment confirmation updates the database and appointment records.
 
 6. Challenges and Solutions
 ---------------------------
 Challenges
-1.	Integration with Payment Gateway: Ensuring secure and seamless payment processing.
-o	Solution: Integrated a third-party payment processor with encrypted transactions.
-2.	Role-Specific Access Control: Initial overlaps in role permissions confused.
-o	Solution: Refined access controls and conducted extensive user testing.
+• Integration with Payment Gateway: Ensuring secure and seamless payment processing.
+    Solution: Integrated a third-party payment processor with encrypted transactions.
+• Role-Specific Access Control: Initial overlaps in role permissions confused.
+    Solution: Refined access controls and conducted extensive user testing.
 
 7. References
 -------------
-1.	React.js Documentation: https://legacy.reactjs.org/
-2.	Node.js Documentation: https://nodejs.org/docs/
-3.	Stripe Payment Gateway Documentation: https://stripe.com/docs/
-4.	MongoDB Documentation: https://www.mongodb.com/docs/
+• React.js Documentation: https://legacy.reactjs.org/
+• Node.js Documentation: https://nodejs.org/docs/
+• Stripe Payment Gateway Documentation: https://stripe.com/docs/
+• MongoDB Documentation: https://www.mongodb.com/docs/
 
 
 Application Flow In Detail
