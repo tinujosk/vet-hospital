@@ -4,11 +4,10 @@ import { processPayment } from './paymentController.js';
 
 export const createPrescription = async (req, res) => {
   try {
-    const { appointment, medications, medicalCondition, notes, labTestBill } =
-      req.body;
-
+    const { appointment, medications, medicalCondition, notes,labTests, labTestBill } = req.body;
     const newPrescription = new Prescription({
       medications,
+      labTests,
       notes,
       medicalCondition,
     });

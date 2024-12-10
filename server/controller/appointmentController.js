@@ -22,6 +22,7 @@ export const getAppointments = async (req, res) => {
   try {
     const appointments = await Appointment.find()
     .populate('patient')
+    .populate('prescription')
     .populate('doctor');
 
     if (appointments.length === 0) {

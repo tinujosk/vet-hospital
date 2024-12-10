@@ -10,6 +10,11 @@ import {
   StepLabel,
   StepContent,
   Box,
+  Container,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  
 } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -60,6 +65,9 @@ const Treatment = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({ medicalCondition: '' });
+  const [labTests, setLabTests] = useState([]);
+  const [selectedLabTests, setSelectedLabTests] = useState([]);
+
 
   const { id } = useParams();
   const { t } = useTranslation();
@@ -115,6 +123,14 @@ const Treatment = () => {
     });
   };
 
+  const handleLabTestChange = (test) => {
+    setSelectedLabTests((prev) =>
+      prev.includes(test)
+        ? prev.filter((item) => item !== test)
+        : [...prev, test]
+    );
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
     if (validate()) {
@@ -122,6 +138,7 @@ const Treatment = () => {
         const newPrescription = {
           ...prescription,
           medications,
+          labTests: selectedLabTests,
           appointment: appointment._id,
         };
 
@@ -251,6 +268,24 @@ const Treatment = () => {
                       rows={4}
                     />
                   </Grid>
+                  <Grid xs={12}>
+                    <FormGroup>
+                      <Typography variant='h6'>Select Lab Tests</Typography>
+                      {['Blood Test', 'X-Ray', 'MRI', 'CT Scan'].map((test) => (
+                        <FormControlLabel
+                          key={test}
+                          control={
+                            <Checkbox
+                              checked={selectedLabTests.includes(test)}
+                              onChange={() => handleLabTestChange(test)}
+                            />
+                          }
+                          label={test}
+                        />
+                      ))}
+                    </FormGroup>
+                  </Grid>
+
                   {/* <FormGroup>
                       <FormControlLabel
                         control={

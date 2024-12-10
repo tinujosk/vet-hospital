@@ -34,6 +34,8 @@ import {
 import { getDoctors } from './controller/doctorController.js';
 import { paymentWebhook } from './controller/paymentWebHook.js';
 
+import { createLabDetails,uploadImages } from './controller/labreport.js';
+
 const app = express();
 const upload = multer({ dest: 'uploads/' });
 
@@ -76,6 +78,9 @@ app.post('/reset-password', resetPasswordWithToken);
 
 //Doctor routes and handlers
 app.get('/doctors', getDoctors);
+
+app.post('/lab/createlab', createLabDetails);
+app.post('/lab/uploadimages', upload.array('file'), uploadImages);
 
 // let it be here, but I will call it from controller after diagnosis
 // app.post('/create-payment-link', processPayment);

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { API_URL } from '../constants';
 
 export const createPrescription = async prescription => {
+  console.log('prescription:', prescription);
   try {
     const response = await axios.post(`${API_URL}/prescriptions`, prescription);
     return response.data;
