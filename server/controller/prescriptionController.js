@@ -1,9 +1,10 @@
 import Prescription from '../model/Prescription.js';
 import Appointment from '../model/Appointment.js';
+import { processPayment } from './paymentController.js';
 
 export const createPrescription = async (req, res) => {
   try {
-    const { appointment, medications, medicalCondition, notes,labTests } = req.body;
+    const { appointment, medications, medicalCondition, notes,labTests, labTestBill } = req.body;
     const newPrescription = new Prescription({
       medications,
       labTests,
@@ -12,15 +13,40 @@ export const createPrescription = async (req, res) => {
     });
     const savedPrescription = await newPrescription.save();
 
+    // calculate medicine total.
+    const medicationsTotal = medications.reduce(
+      (total, medicine) => total + medicine.price,
+      0
+    );
+
     const updatedAppointment = await Appointment.findByIdAndUpdate(
       appointment,
-      { prescription: savedPrescription._id, status: 'Diagnosed' },
+      {
+        prescription: savedPrescription._id,
+        status: 'Diagnosed',
+      },
       { new: true }
-    );
+    ).populate({
+      path: 'patient',
+      populate: { path: 'owner' },
+    });
 
     if (!updatedAppointment) {
       return res.status(404).json({ message: 'Appointment not found' });
     }
+
+    const paymentDetails = {
+      appointment,
+      labTestBill: labTestBill || 0,
+      medicineBill: medicationsTotal || 0,
+      totalBill: (labTestBill || 0) + (medicationsTotal || 0),
+      email: updatedAppointment.patient?.owner?.email,
+      customerName: updatedAppointment.patient?.owner?.firstName,
+    };
+
+    // send the payment link
+    processPayment(paymentDetails);
+
     return res.status(201).json(savedPrescription);
   } catch (error) {
     console.error('Error creating prescription:', error);

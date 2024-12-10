@@ -9,6 +9,7 @@ const medications = [
     dosageForm: 'Tablet',
     manufacturer: 'Pharma Inc.',
     strength: '500mg',
+    price: 5.0, // Price in USD
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -18,6 +19,7 @@ const medications = [
     dosageForm: 'Tablet',
     manufacturer: 'HealthCorp',
     strength: '200mg',
+    price: 8.0,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -28,6 +30,7 @@ const medications = [
     dosageForm: 'Capsule',
     manufacturer: 'BioPharm',
     strength: '250mg',
+    price: 12.0,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -37,6 +40,7 @@ const medications = [
     dosageForm: 'Tablet',
     manufacturer: 'MediLife',
     strength: '10mg',
+    price: 15.0,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -47,6 +51,7 @@ const medications = [
     dosageForm: 'Tablet',
     manufacturer: 'Wellness Pharma',
     strength: '500mg',
+    price: 10.0,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -56,6 +61,7 @@ const medications = [
     dosageForm: 'Tablet',
     manufacturer: 'CardioMed',
     strength: '20mg',
+    price: 20.0,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -65,6 +71,7 @@ const medications = [
     dosageForm: 'Tablet',
     manufacturer: 'PharmaPlus',
     strength: '500mg',
+    price: 18.0,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -74,6 +81,7 @@ const medications = [
     dosageForm: 'Tablet',
     manufacturer: 'HeartCare Ltd.',
     strength: '5mg',
+    price: 7.0,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -83,6 +91,7 @@ const medications = [
     dosageForm: 'Capsule',
     manufacturer: 'Digestive Health',
     strength: '20mg',
+    price: 10.0,
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -92,6 +101,7 @@ const medications = [
     dosageForm: 'Tablet',
     manufacturer: 'HydroPharm',
     strength: '25mg',
+    price: 9.0,
   },
 ];
 
