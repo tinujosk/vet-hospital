@@ -28,13 +28,16 @@ import {
   getLoggedInUser,
   resetPassword,
   sendForgotPasswordEmail,
-  resetPasswordWithToken
+  resetPasswordWithToken,
 } from './controller/userController.js';
 
 import { getDoctors } from './controller/doctorController.js';
 import { paymentWebhook } from './controller/paymentWebHook.js';
 
-import { createLabDetails,uploadImages } from './controller/labReportController.js';
+import {
+  createLabDetails,
+  uploadImages,
+} from './controller/labReportController.js';
 
 const app = express();
 const upload = multer({ dest: 'uploads/' });
@@ -72,9 +75,9 @@ app.get('/prescriptions/:id', getPrescription);
 app.post('/user', createUser);
 app.get('/user', getUserDetails);
 app.get('/user/details', getLoggedInUser);
-app.post('/user/resetpassword', resetPassword)
-app.post('/forgot-password', sendForgotPasswordEmail)
-app.post('/reset-password', resetPasswordWithToken); 
+app.post('/user/resetpassword', resetPassword);
+app.post('/forgot-password', sendForgotPasswordEmail);
+app.post('/reset-password', resetPasswordWithToken);
 
 //Doctor routes and handlers
 app.get('/doctors', getDoctors);
@@ -90,6 +93,6 @@ app.post(
   paymentWebhook
 );
 
-app.listen(3001, () => {
+app.listen(3001, '0.0.0.0', () => {
   console.log('Server listening on port 3001');
 });
