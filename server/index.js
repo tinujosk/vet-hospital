@@ -34,7 +34,7 @@ import {
 import { getDoctors } from './controller/doctorController.js';
 import { paymentWebhook } from './controller/paymentWebHook.js';
 
-import { createLabDetails,uploadImages } from './controller/labreport.js';
+import { createLabDetails,uploadImages } from './controller/labReportController.js';
 
 const app = express();
 const upload = multer({ dest: 'uploads/' });

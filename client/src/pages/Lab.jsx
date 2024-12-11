@@ -16,13 +16,10 @@ import {
   Snackbar,
   Alert,
   Chip,
-} from '@mui/material';
-import { getAppointments } from '../services/appointmentService';
-import { getPatientById } from '../services/patientService';
-import {
-  createLabDetails,
-  uploadImageToCloudinary,
-} from '../services/labService';
+} from "@mui/material";
+import { getAppointments } from "../services/appointmentService";
+import { getPatientById } from "../services/patientService";
+import { createLabDetails, uploadImageToCloudinary } from "../services/labService";
 
 const LabTechnicianPage = () => {
   const [appointments, setAppointments] = useState([]);
@@ -68,26 +65,21 @@ const LabTechnicianPage = () => {
     const processLabRequests = async () => {
       const requests = await Promise.all(
         appointments
-          .filter(
-            appointment =>
-              appointment.prescription?.labTests?.length > 0 && // Filter appointments with test types
-              appointment.status === 'Diagnosed' // Only show diagnosed appointments
-          )
-          .map(async appointment => {
-            const patientDetails = await getPatientById(
-              appointment.patient?._id
-            );
+          .filter(appointment => 
+            appointment.prescription?.labTests?.length > 0 && // Filter appointments with test types
+            appointment.status === "Diagnosed" // Only show diagnosed appointments
+          )         
+          .map(async (appointment) => {
+            const patientDetails = await getPatientById(appointment.patient?._id);
             return {
               appointmentId: appointment._id,
               appointmentId1: appointment.appointmentId,
               patientId: patientDetails?._id,
               patientId1: patientDetails?.patientId,
-              patientName: patientDetails?.name || 'N/A',
-              testType:
-                appointment.prescription?.labTests?.join(', ') ||
-                'No Lab Tests',
-              doctorName: appointment.doctor?.firstName || 'N/A',
-              paymentStatus: appointment.payment ? 'Paid' : 'Unpaid',
+              patientName: patientDetails?.name || "N/A",
+              testType: appointment.prescription?.labTests?.join(", ") || "No Lab Tests",
+              doctorName: appointment.doctor?.firstName || "N/A",
+              paymentStatus: appointment.payment?.paymentStatus ?? "Pending",
             };
           })
       );
@@ -135,8 +127,8 @@ const LabTechnicianPage = () => {
     }
   };
 
-  const handleStartTest = async test => {
-    if (test.paymentStatus === 'Paid') {
+  const handleStartTest = async (test) => {
+    if (test.paymentStatus === "Completed") {
       const patientDetails = await getPatientById(test.patientId);
       setTestResults({
         ...initialTestResults,
@@ -170,11 +162,10 @@ const LabTechnicianPage = () => {
 
     try {
       await createLabDetails({ ...testResults, patient: patientDetails });
-      setToast({
-        open: true,
-        message: 'Lab report submitted successfully!',
-        severity: 'success',
-      });
+          setLabRequests((prev) =>
+      prev.filter((request) => request.appointmentId !== testResults.appointmentId)
+    );
+      setToast({ open: true, message: "Lab report submitted successfully!", severity: "success" });
       setTestResultDialog(false);
       setTestResults(initialTestResults);
       setImagePreview([]);
@@ -202,11 +193,11 @@ const LabTechnicianPage = () => {
               }}
             >
               <Chip
-                label={test.paymentStatus}
+                label={test.paymentStatus === "Completed" ? "Paid" : "Unpaid"}
+
                 style={{
-                  backgroundColor:
-                    test.paymentStatus === 'Paid' ? 'green' : 'red',
-                  color: 'white',
+                  backgroundColor: test.paymentStatus === "Completed" ? "green" : "red",
+                  color: "white",
                 }}
               />
             </div>
@@ -223,17 +214,14 @@ const LabTechnicianPage = () => {
           <CardActions>
             <Button
               onClick={() => handleStartTest(test)}
-              disabled={test.paymentStatus !== 'Paid'}
+              disabled={test.paymentStatus !== "Completed"}
               style={{
-                backgroundColor:
-                  test.paymentStatus === 'Paid' ? 'green' : '#d32f2f',
-                color: 'white',
+                backgroundColor: test.paymentStatus === "Completed" ? "green" : "#d32f2f",
+                color: "white",
               }}
               variant='contained'
             >
-              {test.paymentStatus === 'Paid'
-                ? 'Perform Test'
-                : 'Payment Pending'}
+              {test.paymentStatus === "Completed" ? "Perform Test" : "Payment Pending"}
             </Button>
           </CardActions>
         </Card>
@@ -249,25 +237,19 @@ const LabTechnicianPage = () => {
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <Typography variant='h5'>
-              Paid Tests (
-              {labRequests.filter(r => r.paymentStatus === 'Paid').length})
+            <Typography variant="h5">
+              Paid Tests ({labRequests.filter((r) => r.paymentStatus === "Completed").length})
             </Typography>
             <Grid container spacing={2}>
-              {renderTestCards(
-                labRequests.filter(r => r.paymentStatus === 'Paid')
-              )}
+              {renderTestCards(labRequests.filter((r) => r.paymentStatus === "Completed"))}
             </Grid>
           </Grid>
           <Grid item xs={12}>
-            <Typography variant='h5'>
-              Pending Payment Tests (
-              {labRequests.filter(r => r.paymentStatus === 'Unpaid').length})
+            <Typography variant="h5">
+              Pending Payment Tests ({labRequests.filter((r) => r.paymentStatus !== "Completed").length})
             </Typography>
             <Grid container spacing={2}>
-              {renderTestCards(
-                labRequests.filter(r => r.paymentStatus === 'Unpaid')
-              )}
+              {renderTestCards(labRequests.filter((r) => r.paymentStatus !== "Completed"))}
             </Grid>
           </Grid>
         </Grid>
