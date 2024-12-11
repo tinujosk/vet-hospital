@@ -21,6 +21,9 @@ jobs:
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws configure set default.region ${{ secrets.AWS_REGION }}
         aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
+        echo "${{ secrets.EC2_SSH_KEY }}" | base64 -d > ec2_key.pem
+        chmod 600 ec2_key.pem
+        scp -i ec2_key.pem ~/.docker/config.json ec2-user@${{ secrets.EC2_INSTANCE_IP }}:~/.docker/
 
     # Build and Push Client Image to ECR
     - name: Build and push Client Docker image
