@@ -49,7 +49,8 @@ jobs:
           #docker pull ${{ secrets.ECR_REPOSITORY_URI }}:client
           #docker stop vethospital-client || true
           #docker rm vethospital-client || true
-          docker run -d --name vethospital-client -p 80:3000 ${{ secrets.ECR_REPOSITORY_URI }}:client
+          # docker run -d --name vethospital-client -p 80:3000 ${{ secrets.ECR_REPOSITORY_URI }}:client
+          docker run -d --name vethospital-client -p 80:3000 vet-hospital:client
 
           # Pull and Run Server Image
           #docker pull ${{ secrets.ECR_REPOSITORY_URI }}:server
