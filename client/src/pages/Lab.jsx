@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -28,19 +28,23 @@ const LabTechnicianPage = () => {
   const [testResultDialog, setTestResultDialog] = useState(false);
   const [patientDetails, setPatientDetails] = useState(null);
   const [imagePreview, setImagePreview] = useState([]);
-  const [toast, setToast] = useState({ open: false, message: "", severity: "info" });
+  const [toast, setToast] = useState({
+    open: false,
+    message: '',
+    severity: 'info',
+  });
 
   const initialTestResults = {
-    appointmentId: "",
-    patientId: "",
-    patientName: "",
-    testType: "",
-    technician: "Current Technician",
-    datePerformed: new Date().toISOString().split("T")[0],
-    generalObservations: "",
+    appointmentId: '',
+    patientId: '',
+    patientName: '',
+    testType: '',
+    technician: 'Current Technician',
+    datePerformed: new Date().toISOString().split('T')[0],
+    generalObservations: '',
     images: [],
-    medicalFindings: "",
-    recommendedFollowUp: "",
+    medicalFindings: '',
+    recommendedFollowUp: '',
   };
 
   const [testResults, setTestResults] = useState(initialTestResults);
@@ -51,7 +55,7 @@ const LabTechnicianPage = () => {
         const data = await getAppointments();
         setAppointments(data);
       } catch (error) {
-        console.error("Failed to fetch appointments:", error);
+        console.error('Failed to fetch appointments:', error);
       }
     };
     fetchAppointments();
@@ -81,34 +85,45 @@ const LabTechnicianPage = () => {
       );
       setLabRequests(requests);
     };
-    
+
     if (appointments.length > 0) processLabRequests();
   }, [appointments]);
-  
 
-  const handleImageUpload = async (e) => {
+  const handleImageUpload = async e => {
     const files = e.target.files;
     if (files.length === 0) {
-      setToast({ open: true, message: "No files selected", severity: "warning" });
+      setToast({
+        open: true,
+        message: 'No files selected',
+        severity: 'warning',
+      });
       return;
     }
 
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
-      formData.append("file", files[i]);
+      formData.append('file', files[i]);
     }
 
     try {
       const uploadedImages = await uploadImageToCloudinary(formData);
-      setTestResults((prev) => ({
+      setTestResults(prev => ({
         ...prev,
         images: [...prev.images, ...uploadedImages],
       }));
-      setImagePreview((prev) => [...prev, ...uploadedImages.map((img) => img.url)]);
-      setToast({ open: true, message: "Images uploaded successfully", severity: "success" });
+      setImagePreview(prev => [...prev, ...uploadedImages.map(img => img.url)]);
+      setToast({
+        open: true,
+        message: 'Images uploaded successfully',
+        severity: 'success',
+      });
     } catch (error) {
-      console.error("Error uploading images:", error.message);
-      setToast({ open: true, message: "Image upload failed", severity: "error" });
+      console.error('Error uploading images:', error.message);
+      setToast({
+        open: true,
+        message: 'Image upload failed',
+        severity: 'error',
+      });
     }
   };
 
@@ -126,14 +141,22 @@ const LabTechnicianPage = () => {
       setSelectedTest(test);
       setTestResultDialog(true);
     } else {
-      setToast({ open: true, message: "Test cannot be performed. Payment is pending.", severity: "error" });
+      setToast({
+        open: true,
+        message: 'Test cannot be performed. Payment is pending.',
+        severity: 'error',
+      });
     }
   };
 
-  const handleSubmitTestResult = async (e) => {
+  const handleSubmitTestResult = async e => {
     e.preventDefault();
     if (testResults.images.length === 0) {
-      setToast({ open: true, message: "Please upload images before submitting.", severity: "warning" });
+      setToast({
+        open: true,
+        message: 'Please upload images before submitting.',
+        severity: 'warning',
+      });
       return;
     }
 
@@ -147,17 +170,28 @@ const LabTechnicianPage = () => {
       setTestResults(initialTestResults);
       setImagePreview([]);
     } catch (error) {
-      console.error("Failed to submit lab details:", error.message);
-      setToast({ open: true, message: "Failed to submit lab details.", severity: "error" });
+      console.error('Failed to submit lab details:', error.message);
+      setToast({
+        open: true,
+        message: 'Failed to submit lab details.',
+        severity: 'error',
+      });
     }
   };
 
-  const renderTestCards = (tests) => {
-    return tests.map((test) => (
+  const renderTestCards = tests => {
+    return tests.map(test => (
       <Grid item xs={12} sm={6} md={4} key={test.appointmentId}>
         <Card>
           <CardContent>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 8,
+              }}
+            >
               <Chip
                 label={test.paymentStatus === "Completed" ? "Paid" : "Unpaid"}
 
@@ -167,12 +201,12 @@ const LabTechnicianPage = () => {
                 }}
               />
             </div>
-            <Typography variant="h6">{test.patientName}</Typography>
-            <Typography color="textSecondary" gutterBottom>
-              Patient ID: {test.patientId1 || "N/A"}
+            <Typography variant='h6'>{test.patientName}</Typography>
+            <Typography color='textSecondary' gutterBottom>
+              Patient ID: {test.patientId1 || 'N/A'}
             </Typography>
-            <Typography color="textSecondary" gutterBottom>
-              Appointment ID: {test.appointmentId1 || "N/A"}
+            <Typography color='textSecondary' gutterBottom>
+              Appointment ID: {test.appointmentId1 || 'N/A'}
             </Typography>
             <Typography>Test Type: {test.testType}</Typography>
             <Typography>Doctor: {test.doctorName}</Typography>
@@ -185,7 +219,7 @@ const LabTechnicianPage = () => {
                 backgroundColor: test.paymentStatus === "Completed" ? "green" : "#d32f2f",
                 color: "white",
               }}
-              variant="contained"
+              variant='contained'
             >
               {test.paymentStatus === "Completed" ? "Perform Test" : "Payment Pending"}
             </Button>
@@ -193,14 +227,12 @@ const LabTechnicianPage = () => {
         </Card>
       </Grid>
     ));
-    
-    
   };
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth='lg'>
       <Box sx={{ my: 4 }}>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant='h4' gutterBottom>
           Lab Technician Dashboard
         </Typography>
         <Grid container spacing={3}>
@@ -221,23 +253,38 @@ const LabTechnicianPage = () => {
             </Grid>
           </Grid>
         </Grid>
-        <Dialog open={testResultDialog} onClose={() => setTestResultDialog(false)} maxWidth="md" fullWidth>
-          <DialogTitle>Lab Test Results - {testResults.patientName}</DialogTitle>
+        <Dialog
+          open={testResultDialog}
+          onClose={() => setTestResultDialog(false)}
+          maxWidth='md'
+          fullWidth
+        >
+          <DialogTitle>
+            Lab Test Results - {testResults.patientName}
+          </DialogTitle>
           <DialogContent>
             <form onSubmit={handleSubmitTestResult}>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Test Type" value={testResults.testType} InputProps={{ readOnly: true }} />
+                  <TextField
+                    fullWidth
+                    label='Test Type'
+                    value={testResults.testType}
+                    InputProps={{ readOnly: true }}
+                  />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
                     multiline
                     rows={4}
-                    label="General Observations"
+                    label='General Observations'
                     value={testResults.generalObservations}
-                    onChange={(e) =>
-                      setTestResults((prev) => ({ ...prev, generalObservations: e.target.value }))
+                    onChange={e =>
+                      setTestResults(prev => ({
+                        ...prev,
+                        generalObservations: e.target.value,
+                      }))
                     }
                   />
                 </Grid>
@@ -246,47 +293,57 @@ const LabTechnicianPage = () => {
                     fullWidth
                     multiline
                     rows={4}
-                    label="Medical Findings"
+                    label='Medical Findings'
                     value={testResults.medicalFindings}
-                    onChange={(e) =>
-                      setTestResults((prev) => ({ ...prev, medicalFindings: e.target.value }))
+                    onChange={e =>
+                      setTestResults(prev => ({
+                        ...prev,
+                        medicalFindings: e.target.value,
+                      }))
                     }
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="Recommended Follow-up"
+                    label='Recommended Follow-up'
                     value={testResults.recommendedFollowUp}
-                    onChange={(e) =>
-                      setTestResults((prev) => ({ ...prev, recommendedFollowUp: e.target.value }))
+                    onChange={e =>
+                      setTestResults(prev => ({
+                        ...prev,
+                        recommendedFollowUp: e.target.value,
+                      }))
                     }
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <input
-                    accept="image/*"
-                    type="file"
+                    accept='image/*'
+                    type='file'
                     multiple
                     onChange={handleImageUpload}
-                    style={{ display: "none" }}
-                    id="lab-image-upload"
+                    style={{ display: 'none' }}
+                    id='lab-image-upload'
                   />
-                  <label htmlFor="lab-image-upload">
-                    <Button variant="outlined" component="span">
+                  <label htmlFor='lab-image-upload'>
+                    <Button variant='outlined' component='span'>
                       Upload Images
                     </Button>
                   </label>
                 </Grid>
                 {imagePreview.length > 0 && (
                   <Grid item xs={12}>
-                    <Box display="flex" flexWrap="wrap" gap={2}>
+                    <Box display='flex' flexWrap='wrap' gap={2}>
                       {imagePreview.map((preview, index) => (
                         <img
                           key={index}
                           src={preview}
-                          alt="preview"
-                          style={{ width: 100, height: 100, objectFit: "cover" }}
+                          alt='preview'
+                          style={{
+                            width: 100,
+                            height: 100,
+                            objectFit: 'cover',
+                          }}
                         />
                       ))}
                     </Box>
@@ -296,10 +353,17 @@ const LabTechnicianPage = () => {
             </form>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setTestResultDialog(false)} color="secondary">
+            <Button
+              onClick={() => setTestResultDialog(false)}
+              color='secondary'
+            >
               Cancel
             </Button>
-            <Button onClick={handleSubmitTestResult} color="primary" variant="contained">
+            <Button
+              onClick={handleSubmitTestResult}
+              color='primary'
+              variant='contained'
+            >
               Submit
             </Button>
           </DialogActions>
@@ -307,9 +371,16 @@ const LabTechnicianPage = () => {
         <Snackbar
           open={toast.open}
           autoHideDuration={3000}
-          onClose={() => setToast({ open: false, message: "", severity: "info" })}
+          onClose={() =>
+            setToast({ open: false, message: '', severity: 'info' })
+          }
         >
-          <Alert onClose={() => setToast({ open: false, message: "", severity: "info" })} severity={toast.severity}>
+          <Alert
+            onClose={() =>
+              setToast({ open: false, message: '', severity: 'info' })
+            }
+            severity={toast.severity}
+          >
             {toast.message}
           </Alert>
         </Snackbar>
