@@ -7,7 +7,8 @@ export const createAppointment = async (req, res) => {
     const savedAppointment = await newAppointment.save();
     const populatedAppointment = await Appointment.findById(savedAppointment._id)
       .populate('patient')
-      .populate('doctor');
+      .populate('doctor')
+      .populate('payment');
 
     return res.status(201).json(populatedAppointment);
   } catch (error) {
@@ -23,7 +24,8 @@ export const getAppointments = async (req, res) => {
     const appointments = await Appointment.find()
     .populate('patient')
     .populate('prescription')
-    .populate('doctor');
+    .populate('doctor')
+    .populate('payment');
 
     if (appointments.length === 0) {
       console.log('No appointments found.');

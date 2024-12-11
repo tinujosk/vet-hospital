@@ -47,13 +47,12 @@ export const createLabDetails = async (req, res) => {
       const { filePath, fileName } = await generateLabReportPDF(newLabReport, patientVCid, ownerDetails);
       pdfPath = filePath;
 
-      // Ensure the local folder exists, or create it
+   
       const localFolder = path.join(__dirname, '../uploads/labreports');
       if (!fs.existsSync(localFolder)) {
         fs.mkdirSync(localFolder, { recursive: true });
       }
 
-      // Save a local copy of the PDF (make sure the directory exists or create it)
       const localPath = path.join(localFolder, fileName);
       fs.copyFileSync(filePath, localPath);  // Save a local copy
       console.log('Local PDF saved at:', localPath);
@@ -66,12 +65,13 @@ export const createLabDetails = async (req, res) => {
       });
       console.log('PDF Upload Result:', pdfUploadResult);
 
-      // Add PDF URL to lab report
-      newLabReport.pdfPath = pdfUploadResult.secure_url;
-      console.log('PDF URL:', newLabReport.pdfPath);
+      // // Add PDF URL to lab report
+      // newLabReport.pdfPath = pdfUploadResult.secure_url;
+      // console.log('PDF URL:', newLabReport.pdfPath);
+      newLabReport.pdfPath = localPath;
     } catch (pdfError) {
       console.error('Error generating/uploading PDF:', pdfError);
-      // Continue without PDF if generation fails
+    
     }
 
     const savedLabReport = await newLabReport.save();
