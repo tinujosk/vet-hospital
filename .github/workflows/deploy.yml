@@ -50,7 +50,7 @@ jobs:
           #docker tag ${{ secrets.ECR_REPOSITORY_URI }}:client foo:latest
           docker stop vethospital-client || true
           docker rm vethospital-client || true
-          docker run --rm -d -p 80:3000 ${{ secrets.ECR_REPOSITORY_URI }}:client
+          docker run --rm -d -p 80:80 ${{ secrets.ECR_REPOSITORY_URI }}:client
           
           # Pull and Run Server Image
           #docker pull ${{ secrets.ECR_REPOSITORY_URI }}:server
