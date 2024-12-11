@@ -6,7 +6,7 @@ services:
     build:
       context: ./client
     ports:
-      - "3000:80"  # Map React app to port 3000
+      - "80:80" 
     depends_on:
       - server
 
@@ -14,6 +14,6 @@ services:
     build:
       context: ./server
     ports:
-      - "3001:3001"  # Map Node.js server to port 5000
+      - "3001:3001"  
     environment:
       - NODE_ENV=production
