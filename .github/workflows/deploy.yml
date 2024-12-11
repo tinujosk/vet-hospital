@@ -17,8 +17,6 @@ jobs:
     # Log in to Amazon ECR
     - name: Log in to Amazon ECR
       run: |
-        echo "AWS Access Key ID: ${{ secrets.AWS_ACCESS_KEY_ID }}" # This will NOT print the actual secret, just check that the secret is available.
-        echo "AWS Secret Access Key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}" # Again, this will NOT print the secret.
         aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws configure set default.region ${{ secrets.AWS_REGION }}
@@ -28,16 +26,15 @@ jobs:
     - name: Build and push Client Docker image
       run: |
         docker build -t vethospital-client ./client
-        docker tag vethospital-client:latest ${{ secrets.ECR_REPOSITORY_URI }}/vethospital-client:latest
-        docker push ${{ secrets.ECR_REPOSITORY_URI }}/vethospital-client:latest
+        docker tag vethospital-client:latest ${{ secrets.ECR_REPOSITORY_URI }}:client
+        docker push ${{ secrets.ECR_REPOSITORY_URI }}:client
 
     # Build and Push Server Image to ECR
     - name: Build and push Server Docker image
       run: |
         docker build -t vethospital-server ./server
-        docker tag vethospital-server:latest ${{ secrets.ECR_REPOSITORY_URI }}/vethospital-server:latest
-        docker push ${{ secrets.ECR_REPOSITORY_URI }}/vethospital-server:latest
-
+        docker tag vethospital-server:latest ${{ secrets.ECR_REPOSITORY_URI }}:server
+        docker push ${{ secrets.ECR_REPOSITORY_URI }}:server
     # Deploy Docker containers to EC2
     - name: Deploy Client and Server to EC2
       run: |
