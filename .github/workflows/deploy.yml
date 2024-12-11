@@ -56,5 +56,5 @@ jobs:
           #docker pull ${{ secrets.ECR_REPOSITORY_URI }}:server
           #docker stop vethospital-server || true
           #docker rm vethospital-server || true
-          docker run -d --name vethospital-server -p 5000:5000 ${{ secrets.ECR_REPOSITORY_URI }}/:server
+          # docker run -d --name vethospital-server -p 5000:5000 ${{ secrets.ECR_REPOSITORY_URI }}:server
         EOF
