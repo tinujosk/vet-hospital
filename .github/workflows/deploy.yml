@@ -17,6 +17,8 @@ jobs:
     # Log in to Amazon ECR
     - name: Log in to Amazon ECR
       run: |
+        echo "AWS Access Key ID: ${{ secrets.AWS_ACCESS_KEY_ID }}" # This will NOT print the actual secret, just check that the secret is available.
+        echo "AWS Secret Access Key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}" # Again, this will NOT print the secret.
         aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws configure set default.region ${{ secrets.AWS_REGION }}
