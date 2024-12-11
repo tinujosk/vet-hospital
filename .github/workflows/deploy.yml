@@ -49,7 +49,8 @@ jobs:
           #docker pull ${{ secrets.ECR_REPOSITORY_URI }}:client
           #docker stop vethospital-client || true
           #docker rm vethospital-client || true
-          docker run --rm -d -p 3000:3000 ${{ secrets.ECR_REPOSITORY_URI }}:client
+          # docker run --rm -d -p 3000:3000 ${{ secrets.ECR_REPOSITORY_URI }}:client
+          docker run --rm -d -p 3000:3000 654654573249.dkr.ecr.us-east-2.amazonaws.com/vet-hospital:client
 
           # Pull and Run Server Image
           #docker pull ${{ secrets.ECR_REPOSITORY_URI }}:server
