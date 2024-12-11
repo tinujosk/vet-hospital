@@ -40,7 +40,7 @@ jobs:
       run: |
         echo "${{ secrets.EC2_SSH_KEY }}" | base64 -d > ec2_key.pem
         chmod 600 ec2_key.pem
-        ssh -o StrictHostKeyChecking=no -i ec2_key.pem ec2-user@${{ secrets.EC2_INSTANCE_IP }} << 'EOF'
+        ssh -t -o StrictHostKeyChecking=no -i ec2_key.pem ec2-user@${{ secrets.EC2_INSTANCE_IP }} << 'EOF'
           # Log in to ECR
           $(aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }})
 
