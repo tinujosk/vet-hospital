@@ -1,19 +1,25 @@
-# not using as of now
-version: '3.8'
-
+version: '3'
 services:
-  client:
-    build:
-      context: ./client
-    ports:
-      - "80:80" 
-    depends_on:
-      - server
-
   server:
-    build:
-      context: ./server
+    image: 654654573249.dkr.ecr.us-east-2.amazonaws.com/vet-hospital:server
     ports:
-      - "3001:3001"  
+      - "3001:3001" 
+    networks:
+      - app-network
     environment:
       - NODE_ENV=production
+    restart: always
+
+  client:
+    image: 654654573249.dkr.ecr.us-east-2.amazonaws.com/vet-hospital:client
+    ports:
+      - "80:80" 
+    networks:
+      - app-network
+    environment:
+      - NODE_ENV=production
+    restart: always
+
+networks:
+  app-network:
+    driver: bridge
