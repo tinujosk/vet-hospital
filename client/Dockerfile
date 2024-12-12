@@ -26,6 +26,9 @@ RUN npm run build
 # Use a lightweight web server to serve the static files
 FROM nginx:alpine
 
+# Copy custom Nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
 COPY --from=build /app/build /usr/share/nginx/html
 
 # Expose port 80 for the container
