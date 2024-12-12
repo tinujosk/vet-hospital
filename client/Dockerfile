@@ -4,6 +4,15 @@ FROM node:18 AS build
 # Set the working directory
 WORKDIR /app
 
+# Accept build argument for API_URL
+ARG EC2_INSTANCE_IP
+
+# Optional: Print the value of EC2_INSTANCE_IP to verify
+RUN echo "EC2_INSTANCE_IP is set to: $EC2_INSTANCE_IP"
+
+# Set environment variable in the container
+ENV SERVER_IP=$EC2_INSTANCE_IP
+
 # Copy package.json and install dependencies
 COPY package*.json ./
 RUN npm install
@@ -16,15 +25,6 @@ RUN npm run build
 
 # Use a lightweight web server to serve the static files
 FROM nginx:alpine
-
-# Accept build argument for API_URL
-ARG EC2_INSTANCE_IP
-
-# Optional: Print the value of EC2_INSTANCE_IP to verify
-RUN echo "EC2_INSTANCE_IP is set to: $EC2_INSTANCE_IP"
-
-# Set environment variable in the container
-ENV SERVER_IP=$EC2_INSTANCE_IP
 
 COPY --from=build /app/build /usr/share/nginx/html
 
