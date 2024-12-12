@@ -9,6 +9,7 @@ services:
     environment:
       - NODE_ENV=production
     restart: always
+    pull_policy: always
 
   client:
     image: 654654573249.dkr.ecr.us-east-2.amazonaws.com/vet-hospital:client
@@ -19,6 +20,7 @@ services:
     environment:
       - NODE_ENV=production
     restart: always
+    pull_policy: always
 
 networks:
   app-network:
