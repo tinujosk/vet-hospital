@@ -15,6 +15,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  useMediaQuery,
 } from '@mui/material';
 import { Menu as MenuIcon, Close as CloseIcon } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
@@ -30,6 +31,7 @@ const Header = () => {
   const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const [isMobileNavOpen, setMobileNavOpen] = useState(false);
+  const isMobile = useMediaQuery('(max-width:600px)');
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -93,7 +95,7 @@ const Header = () => {
         <Toolbar>
           <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
             <Link component={RouterLink} color='secondary' underline='none'>
-              VetClinic Pro
+              {isMobile ? 'VCP' : 'VetClinic Pro'}
             </Link>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
@@ -149,8 +151,8 @@ const Header = () => {
               horizontal: 'right',
             }}
           >
-            <MenuItem onClick={handleMyAccount}>My account</MenuItem>
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            <MenuItem onClick={handleMyAccount}>{t('myAccount')}</MenuItem>
+            <MenuItem onClick={handleLogout}>{t('logout')}</MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>

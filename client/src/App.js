@@ -18,6 +18,7 @@ import { setUserData, clearUserData } from './slices/authSlice';
 import User from './pages/User';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import GlobalSnackbar from './components/GlobalSnackbar';
 
 const theme = createTheme({
   palette: {
@@ -141,7 +142,7 @@ export default function App() {
             element={
               <ProtectedRoute
                 element={<Lab />}
-                title='Lab Dashboard'
+                title={t('labDashboard')}
                 path='/lab'
               />
             }
@@ -197,7 +198,7 @@ export default function App() {
             element={
               <ProtectedRoute
                 element={<User />}
-                title='My Account'
+                title={t('myAccount')}
                 path='/user'
               />
             }
@@ -206,6 +207,7 @@ export default function App() {
           <Route path='/reset-password/:token' element={<ResetPassword />} />
         </Routes>
       </Router>
+      <GlobalSnackbar />
     </ThemeProvider>
   );
 }

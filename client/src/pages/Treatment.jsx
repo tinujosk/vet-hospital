@@ -10,11 +10,9 @@ import {
   StepLabel,
   StepContent,
   Box,
-  Container,
   FormGroup,
   FormControlLabel,
   Checkbox,
-  
 } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -67,7 +65,6 @@ const Treatment = () => {
   const [errors, setErrors] = useState({ medicalCondition: '' });
   const [labTests, setLabTests] = useState([]);
   const [selectedLabTests, setSelectedLabTests] = useState([]);
-
 
   const { id } = useParams();
   const { t } = useTranslation();
@@ -123,11 +120,9 @@ const Treatment = () => {
     });
   };
 
-  const handleLabTestChange = (test) => {
-    setSelectedLabTests((prev) =>
-      prev.includes(test)
-        ? prev.filter((item) => item !== test)
-        : [...prev, test]
+  const handleLabTestChange = test => {
+    setSelectedLabTests(prev =>
+      prev.includes(test) ? prev.filter(item => item !== test) : [...prev, test]
     );
   };
 
@@ -270,8 +265,10 @@ const Treatment = () => {
                   </Grid>
                   <Grid xs={12}>
                     <FormGroup>
-                      <Typography variant='h6'>Select Lab Tests</Typography>
-                      {['Blood Test', 'X-Ray', 'MRI', 'CT Scan'].map((test) => (
+                      <Typography variant='h6'>
+                        {t('selectLabTests')}
+                      </Typography>
+                      {['Blood Test', 'X-Ray', 'MRI', 'CT Scan'].map(test => (
                         <FormControlLabel
                           key={test}
                           control={
@@ -280,7 +277,7 @@ const Treatment = () => {
                               onChange={() => handleLabTestChange(test)}
                             />
                           }
-                          label={test}
+                          label={t(test)}
                         />
                       ))}
                     </FormGroup>

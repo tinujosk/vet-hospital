@@ -13,6 +13,7 @@ const PrescriptionSchema = Schema(
         dosage: String,
         frequency: String,
         duration: String,
+        price: Number,
       },
     ],
     labTests: [{ type: String }],
