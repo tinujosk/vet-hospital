@@ -11,6 +11,9 @@ RUN npm install
 # Copy the app files
 COPY . .
 
+# Build the React app for production
+RUN npm run build
+
 # Use a lightweight web server to serve the static files
 FROM nginx:alpine
 
@@ -22,9 +25,6 @@ RUN echo "EC2_INSTANCE_IP is set to: $EC2_INSTANCE_IP"
 
 # Set environment variable in the container
 ENV SERVER_IP=$EC2_INSTANCE_IP
-
-# Build the React app for production
-RUN npm run build
 
 COPY --from=build /app/build /usr/share/nginx/html
 
