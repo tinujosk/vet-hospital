@@ -13,13 +13,17 @@ import {
   DialogActions,
   DialogTitle,
   TextField,
-  Snackbar,
-  Alert,
   Chip,
-} from "@mui/material";
-import { getAppointments } from "../services/appointmentService";
-import { getPatientById } from "../services/patientService";
-import { createLabDetails, uploadImageToCloudinary } from "../services/labService";
+} from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { getAppointments } from '../services/appointmentService';
+import { getPatientById } from '../services/patientService';
+import {
+  createLabDetails,
+  uploadImageToCloudinary,
+} from '../services/labService';
+import { showSnackbar } from '../slices/snackbarSlice';
 
 const LabTechnicianPage = () => {
   const [appointments, setAppointments] = useState([]);
@@ -28,11 +32,9 @@ const LabTechnicianPage = () => {
   const [testResultDialog, setTestResultDialog] = useState(false);
   const [patientDetails, setPatientDetails] = useState(null);
   const [imagePreview, setImagePreview] = useState([]);
-  const [toast, setToast] = useState({
-    open: false,
-    message: '',
-    severity: 'info',
-  });
+
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const initialTestResults = {
     appointmentId: '',
@@ -65,21 +67,26 @@ const LabTechnicianPage = () => {
     const processLabRequests = async () => {
       const requests = await Promise.all(
         appointments
-          .filter(appointment => 
-            appointment.prescription?.labTests?.length > 0 && // Filter appointments with test types
-            appointment.status === "Diagnosed" // Only show diagnosed appointments
-          )         
-          .map(async (appointment) => {
-            const patientDetails = await getPatientById(appointment.patient?._id);
+          .filter(
+            appointment =>
+              appointment.prescription?.labTests?.length > 0 && // Filter appointments with test types
+              appointment.status === 'Diagnosed' // Only show diagnosed appointments
+          )
+          .map(async appointment => {
+            const patientDetails = await getPatientById(
+              appointment.patient?._id
+            );
             return {
               appointmentId: appointment._id,
               appointmentId1: appointment.appointmentId,
               patientId: patientDetails?._id,
               patientId1: patientDetails?.patientId,
-              patientName: patientDetails?.name || "N/A",
-              testType: appointment.prescription?.labTests?.join(", ") || "No Lab Tests",
-              doctorName: appointment.doctor?.firstName || "N/A",
-              paymentStatus: appointment.payment?.paymentStatus ?? "Pending",
+              patientName: patientDetails?.name || 'N/A',
+              testType:
+                appointment.prescription?.labTests?.join(', ') ||
+                'No Lab Tests',
+              doctorName: appointment.doctor?.firstName || 'N/A',
+              paymentStatus: appointment.payment?.paymentStatus ?? 'Pending',
             };
           })
       );
@@ -92,11 +99,12 @@ const LabTechnicianPage = () => {
   const handleImageUpload = async e => {
     const files = e.target.files;
     if (files.length === 0) {
-      setToast({
-        open: true,
-        message: 'No files selected',
-        severity: 'warning',
-      });
+      dispatch(
+        showSnackbar({
+          message: t('noFilesSelected'),
+          severity: 'warning',
+        })
+      );
       return;
     }
 
@@ -112,23 +120,25 @@ const LabTechnicianPage = () => {
         images: [...prev.images, ...uploadedImages],
       }));
       setImagePreview(prev => [...prev, ...uploadedImages.map(img => img.url)]);
-      setToast({
-        open: true,
-        message: 'Images uploaded successfully',
-        severity: 'success',
-      });
+      dispatch(
+        showSnackbar({
+          message: t('imageUploadSuccess'),
+          severity: 'success',
+        })
+      );
     } catch (error) {
       console.error('Error uploading images:', error.message);
-      setToast({
-        open: true,
-        message: 'Image upload failed',
-        severity: 'error',
-      });
+      dispatch(
+        showSnackbar({
+          message: t('imageUploadFailure'),
+          severity: 'error',
+        })
+      );
     }
   };
 
-  const handleStartTest = async (test) => {
-    if (test.paymentStatus === "Completed") {
+  const handleStartTest = async test => {
+    if (test.paymentStatus === 'Completed') {
       const patientDetails = await getPatientById(test.patientId);
       setTestResults({
         ...initialTestResults,
@@ -141,41 +151,51 @@ const LabTechnicianPage = () => {
       setSelectedTest(test);
       setTestResultDialog(true);
     } else {
-      setToast({
-        open: true,
-        message: 'Test cannot be performed. Payment is pending.',
-        severity: 'error',
-      });
+      dispatch(
+        showSnackbar({
+          message: t('testCannotBePerformedPaymentPending'),
+          severity: 'error',
+        })
+      );
     }
   };
 
   const handleSubmitTestResult = async e => {
     e.preventDefault();
     if (testResults.images.length === 0) {
-      setToast({
-        open: true,
-        message: 'Please upload images before submitting.',
-        severity: 'warning',
-      });
+      dispatch(
+        showSnackbar({
+          message: t('submitBeforeUpload'),
+          severity: 'warning',
+        })
+      );
       return;
     }
 
     try {
       await createLabDetails({ ...testResults, patient: patientDetails });
-          setLabRequests((prev) =>
-      prev.filter((request) => request.appointmentId !== testResults.appointmentId)
-    );
-      setToast({ open: true, message: "Lab report submitted successfully!", severity: "success" });
+      setLabRequests(prev =>
+        prev.filter(
+          request => request.appointmentId !== testResults.appointmentId
+        )
+      );
+      dispatch(
+        showSnackbar({
+          message: t('labReportSubmitSuccess'),
+          severity: 'success',
+        })
+      );
       setTestResultDialog(false);
       setTestResults(initialTestResults);
       setImagePreview([]);
     } catch (error) {
       console.error('Failed to submit lab details:', error.message);
-      setToast({
-        open: true,
-        message: 'Failed to submit lab details.',
-        severity: 'error',
-      });
+      dispatch(
+        showSnackbar({
+          message: t('labReportSubmitFailure'),
+          severity: 'error',
+        })
+      );
     }
   };
 
@@ -193,35 +213,42 @@ const LabTechnicianPage = () => {
               }}
             >
               <Chip
-                label={test.paymentStatus === "Completed" ? "Paid" : "Unpaid"}
-
+                label={test.paymentStatus === 'Completed' ? 'Paid' : 'Unpaid'}
                 style={{
-                  backgroundColor: test.paymentStatus === "Completed" ? "green" : "red",
-                  color: "white",
+                  backgroundColor:
+                    test.paymentStatus === 'Completed' ? 'green' : 'red',
+                  color: 'white',
                 }}
               />
             </div>
             <Typography variant='h6'>{test.patientName}</Typography>
             <Typography color='textSecondary' gutterBottom>
-              Patient ID: {test.patientId1 || 'N/A'}
+              {`${t('patientId')}: ${test.patientId1 || 'N/A'}`}
             </Typography>
             <Typography color='textSecondary' gutterBottom>
-              Appointment ID: {test.appointmentId1 || 'N/A'}
+              {`${t('appointmentId')}: ${test.appointmentId1 || 'N/A'}`}
             </Typography>
-            <Typography>Test Type: {test.testType}</Typography>
-            <Typography>Doctor: {test.doctorName}</Typography>
+            <Typography>
+              {`${t('testType')}: ${test.testType || 'N/A'}`}
+            </Typography>
+            <Typography>
+              {`${t('doctor')}: ${test.doctorName || 'N/A'}`}
+            </Typography>
           </CardContent>
           <CardActions>
             <Button
               onClick={() => handleStartTest(test)}
-              disabled={test.paymentStatus !== "Completed"}
+              disabled={test.paymentStatus !== 'Completed'}
               style={{
-                backgroundColor: test.paymentStatus === "Completed" ? "green" : "#d32f2f",
-                color: "white",
+                backgroundColor:
+                  test.paymentStatus === 'Completed' ? 'green' : '#d32f2f',
+                color: 'white',
               }}
               variant='contained'
             >
-              {test.paymentStatus === "Completed" ? "Perform Test" : "Payment Pending"}
+              {test.paymentStatus === 'Completed'
+                ? t('performTest')
+                : t('paymentPendingText')}
             </Button>
           </CardActions>
         </Card>
@@ -232,24 +259,34 @@ const LabTechnicianPage = () => {
   return (
     <Container maxWidth='lg'>
       <Box sx={{ my: 4 }}>
-        <Typography variant='h4' gutterBottom>
-          Lab Technician Dashboard
+        <Typography variant='h4' gutterBottom mb={4}>
+          {t('summaryOfPendingTests')}
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <Typography variant="h5">
-              Paid Tests ({labRequests.filter((r) => r.paymentStatus === "Completed").length})
+            <Typography variant='h5' gutterBottom>
+              {`${t('paidTests')} (
+              ${
+                labRequests.filter(r => r.paymentStatus === 'Completed').length
+              })`}
             </Typography>
             <Grid container spacing={2}>
-              {renderTestCards(labRequests.filter((r) => r.paymentStatus === "Completed"))}
+              {renderTestCards(
+                labRequests.filter(r => r.paymentStatus === 'Completed')
+              )}
             </Grid>
           </Grid>
           <Grid item xs={12}>
-            <Typography variant="h5">
-              Pending Payment Tests ({labRequests.filter((r) => r.paymentStatus !== "Completed").length})
+            <Typography variant='h5' gutterBottom>
+              {`${t('paymentPendingTests')} (
+              ${
+                labRequests.filter(r => r.paymentStatus !== 'Completed').length
+              })`}
             </Typography>
             <Grid container spacing={2}>
-              {renderTestCards(labRequests.filter((r) => r.paymentStatus !== "Completed"))}
+              {renderTestCards(
+                labRequests.filter(r => r.paymentStatus !== 'Completed')
+              )}
             </Grid>
           </Grid>
         </Grid>
@@ -260,7 +297,7 @@ const LabTechnicianPage = () => {
           fullWidth
         >
           <DialogTitle>
-            Lab Test Results - {testResults.patientName}
+            {`${t('labTestResults')} - ${testResults.patientName}`}
           </DialogTitle>
           <DialogContent>
             <form onSubmit={handleSubmitTestResult}>
@@ -278,7 +315,7 @@ const LabTechnicianPage = () => {
                     fullWidth
                     multiline
                     rows={4}
-                    label='General Observations'
+                    label={t('generalObservations')}
                     value={testResults.generalObservations}
                     onChange={e =>
                       setTestResults(prev => ({
@@ -293,7 +330,7 @@ const LabTechnicianPage = () => {
                     fullWidth
                     multiline
                     rows={4}
-                    label='Medical Findings'
+                    label={t('medicalFindings')}
                     value={testResults.medicalFindings}
                     onChange={e =>
                       setTestResults(prev => ({
@@ -306,7 +343,7 @@ const LabTechnicianPage = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label='Recommended Follow-up'
+                    label={t('recommendedFollowUp')}
                     value={testResults.recommendedFollowUp}
                     onChange={e =>
                       setTestResults(prev => ({
@@ -327,7 +364,7 @@ const LabTechnicianPage = () => {
                   />
                   <label htmlFor='lab-image-upload'>
                     <Button variant='outlined' component='span'>
-                      Upload Images
+                      {t('uploadImages')}
                     </Button>
                   </label>
                 </Grid>
@@ -357,33 +394,17 @@ const LabTechnicianPage = () => {
               onClick={() => setTestResultDialog(false)}
               color='secondary'
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               onClick={handleSubmitTestResult}
               color='primary'
               variant='contained'
             >
-              Submit
+              {t('submit')}
             </Button>
           </DialogActions>
         </Dialog>
-        <Snackbar
-          open={toast.open}
-          autoHideDuration={3000}
-          onClose={() =>
-            setToast({ open: false, message: '', severity: 'info' })
-          }
-        >
-          <Alert
-            onClose={() =>
-              setToast({ open: false, message: '', severity: 'info' })
-            }
-            severity={toast.severity}
-          >
-            {toast.message}
-          </Alert>
-        </Snackbar>
       </Box>
     </Container>
   );

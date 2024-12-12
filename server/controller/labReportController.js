@@ -6,6 +6,7 @@ import LabReport from '../model/LabReport.js';
 import Appointment from '../model/Appointment.js';
 import cloudinary from '../configs/cloudinary.js';
 import nodemailer from 'nodemailer';
+import { html } from 'd3';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,13 +20,8 @@ export const createLabDetails = async (req, res) => {
   let pdfPath = null;
 
   try {
-    const {
-      appointmentId,
-      patientId,
-      images,
-      patient,
-      ...labReportData
-    } = req.body;
+    const { appointmentId, patientId, images, patient, ...labReportData } =
+      req.body;
 
     const patientVCid = patient?.patientId;
     const ownerDetails = patient?.owner || {};
@@ -46,7 +42,11 @@ export const createLabDetails = async (req, res) => {
 
     try {
       // Generate PDF
-      const { filePath, fileName } = await generateLabReportPDF(newLabReport, patientVCid, ownerDetails);
+      const { filePath, fileName } = await generateLabReportPDF(
+        newLabReport,
+        patientVCid,
+        ownerDetails
+      );
       pdfPath = filePath;
       const localFolder = path.join(__dirname, '../uploads/labreports');
       if (!fs.existsSync(localFolder)) {
@@ -55,40 +55,49 @@ export const createLabDetails = async (req, res) => {
 
       const localPath = path.join(localFolder, fileName);
       fs.copyFileSync(filePath, localPath); // Save a local copy
-    
 
       // Upload PDF to Cloudinary
       const pdfUploadResult = await cloudinary.uploader.upload(localPath, {
         folder: 'lab_test_pdfs',
         resource_type: 'raw',
-        access_mode: 'public'
+        access_mode: 'public',
       });
-  
 
       newLabReport.pdfPath = localPath;
 
-
       if (email) {
         const transporter = nodemailer.createTransport({
-          service: 'gmail', 
+          service: 'gmail',
           auth: {
-            user: process.env.EMAIL_USER, 
-            pass: process.env.EMAIL_PASS  
-          }
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
         });
 
+        const htmlFilePath = path.join(
+          __dirname,
+          '..',
+          'templates',
+          'labReportEmail.html'
+        );
+        const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+
+        const emailHtml = htmlContent.replace('{{email}}', email || 'Customer');
+
         const mailOptions = {
-          from: process.env.EMAIL_USER, 
-          to: email, 
-          subject: `Lab Report for ${patient?.name || labReportData.patientName}`,
-          text: 'Please find the attached lab report.',
+          from: process.env.EMAIL_USER,
+          to: email,
+          subject: `Lab Report for ${
+            patient?.name || labReportData.patientName
+          }`,
+          html: emailHtml,
           attachments: [
             {
               filename: fileName,
               path: localPath,
-              contentType: 'application/pdf'
-            }
-          ]
+              contentType: 'application/pdf',
+            },
+          ],
         };
 
         await transporter.sendMail(mailOptions);
@@ -96,7 +105,6 @@ export const createLabDetails = async (req, res) => {
       } else {
         console.log('No email provided for the owner.');
       }
-
     } catch (pdfError) {
       console.error('Error generating/uploading PDF:', pdfError);
     }
@@ -109,7 +117,7 @@ export const createLabDetails = async (req, res) => {
         {
           status: 'LabTestsPerformed',
           labReportStatus: 'Completed',
-          labreport: savedLabReport._id
+          labreport: savedLabReport._id,
         },
         { new: true }
       );
@@ -123,7 +131,7 @@ export const createLabDetails = async (req, res) => {
     res.status(201).json({
       success: true,
       data: savedLabReport,
-      pdfUrl: newLabReport.pdfPath
+      pdfUrl: newLabReport.pdfPath,
     });
   } catch (error) {
     if (pdfPath && fs.existsSync(pdfPath)) {
@@ -135,11 +143,11 @@ export const createLabDetails = async (req, res) => {
     }
 
     console.error('Error creating lab report:', error);
-    res.status(500).json({ message: 'Failed to create lab report', error: error.message });
+    res
+      .status(500)
+      .json({ message: 'Failed to create lab report', error: error.message });
   }
 };
-
-
 
 export const uploadImages = async (req, res) => {
   try {
@@ -161,6 +169,8 @@ export const uploadImages = async (req, res) => {
     res.json({ success: true, data: uploadedImages });
   } catch (error) {
     console.error('Error uploading images to Cloudinary:', error);
-    res.status(500).json({ message: 'Failed to upload images', error: error.message });
+    res
+      .status(500)
+      .json({ message: 'Failed to upload images', error: error.message });
   }
 };

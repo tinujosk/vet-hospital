@@ -2,9 +2,17 @@ import Prescription from '../model/Prescription.js';
 import Appointment from '../model/Appointment.js';
 import { processPayment } from './paymentController.js';
 
+const labTestsPrice = {
+  'Blood Test': 25,
+  'X-Ray': 33,
+  MRI: 54,
+  'CT Scan': 80,
+};
+
 export const createPrescription = async (req, res) => {
   try {
-    const { appointment, medications, medicalCondition, notes,labTests, labTestBill } = req.body;
+    const { appointment, medications, medicalCondition, notes, labTests } =
+      req.body;
     const newPrescription = new Prescription({
       medications,
       labTests,
@@ -16,6 +24,11 @@ export const createPrescription = async (req, res) => {
     // calculate medicine total.
     const medicationsTotal = medications.reduce(
       (total, medicine) => total + medicine.price,
+      0
+    );
+
+    const labTestBill = labTests.reduce(
+      (total, labTest) => total + labTestsPrice[labTest],
       0
     );
 

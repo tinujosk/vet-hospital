@@ -1,1 +1,2 @@
-export const API_URL = 'http://18.188.102.234:3001';
+const serverIP = process.env.SERVER_IP || 'localhost';
+export const API_URL = `http://${serverIP}:3001`;

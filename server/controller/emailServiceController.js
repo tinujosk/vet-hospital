@@ -1,4 +1,11 @@
 import nodemailer from 'nodemailer';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import fs from 'fs';
+
+// Get the current file path and directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -9,11 +16,23 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendPasswordEmail = async (email, password) => {
+  const htmlFilePath = path.join(
+    __dirname,
+    '..',
+    'templates',
+    'userCreationEmail.html'
+  );
+  const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+
+  const emailHtml = htmlContent
+    .replace('{{email}}', email || 'Customer')
+    .replace('{{password}}', password || 'Password Generation Issue');
+
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
     subject: 'Your New Account Password',
-    text: `Welcome! Your new account password is: ${password}`,
+    html: emailHtml,
   };
 
   try {
@@ -26,13 +45,24 @@ export const sendPasswordEmail = async (email, password) => {
   }
 };
 
+export const sendResetEmail = async (email, resetLink) => {
+  const htmlFilePath = path.join(
+    __dirname,
+    '..',
+    'templates',
+    'forgotPasswordEmail.html'
+  );
+  const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
 
-export const sendResetEmail = async (email, token) => {
+  const emailHtml = htmlContent
+    .replace('{{email}}', email || 'Customer')
+    .replace('{{resetLink}}', resetLink || 'Link Generation Issue');
+
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
     subject: 'Password Reset',
-    text: `Here is your password reset token: ${token}`,
+    html: emailHtml,
   };
 
   try {
