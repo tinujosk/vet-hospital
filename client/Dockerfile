@@ -11,7 +11,7 @@ ARG EC2_INSTANCE_IP
 RUN echo "EC2_INSTANCE_IP is set to: $EC2_INSTANCE_IP"
 
 # Set environment variable in the container
-ENV SERVER_IP=$EC2_INSTANCE_IP
+ENV REACT_APP_SERVER_IP=$EC2_INSTANCE_IP
 
 # Copy package.json and install dependencies
 COPY package*.json ./
