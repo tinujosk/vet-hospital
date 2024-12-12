@@ -2,8 +2,9 @@ import User from '../model/User.js';
 import Staff from '../model/Staff.js';
 import { sendPasswordEmail, sendResetEmail } from './emailServiceController.js';
 import crypto from 'crypto';
+import { API_URL } from '../constants.js';
 
-const resetTokenStore = {}; 
+const resetTokenStore = {};
 
 export const createUser = async (req, res) => {
   try {
@@ -96,11 +97,12 @@ export const getLoggedInUser = async (req, res) => {
   }
 };
 
-
 export const resetPassword = async (req, res) => {
   const { userId, newPassword } = req.body;
   if (!userId || !newPassword) {
-    return res.status(400).json({ message: 'User ID and new password are required' });
+    return res
+      .status(400)
+      .json({ message: 'User ID and new password are required' });
   }
   try {
     const user = await User.findById(userId);
@@ -116,7 +118,6 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-
 export const sendForgotPasswordEmail = async (req, res) => {
   const { email } = req.body;
 
@@ -130,12 +131,12 @@ export const sendForgotPasswordEmail = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
     const resetToken = crypto.randomBytes(32).toString('hex');
-  
+
     resetTokenStore[resetToken] = {
       userId: user._id,
       expires: Date.now() + 3600000,
     };
-    const resetLink = `http://localhost:3000/reset-password/${resetToken}`;
+    const resetLink = `${API_URL}/reset-password/${resetToken}`;
     await sendResetEmail(email, resetLink);
 
     res.status(200).json({ message: 'Password reset email sent' });
@@ -149,14 +150,18 @@ export const resetPasswordWithToken = async (req, res) => {
   const { token, newPassword } = req.body;
 
   if (!token || !newPassword) {
-    return res.status(400).json({ message: 'Token and new password are required' });
+    return res
+      .status(400)
+      .json({ message: 'Token and new password are required' });
   }
 
   try {
-    const tokenData = resetTokenStore[token]; 
+    const tokenData = resetTokenStore[token];
 
     if (!tokenData || tokenData.expires < Date.now()) {
-      return res.status(400).json({ message: 'Invalid or expired reset token' });
+      return res
+        .status(400)
+        .json({ message: 'Invalid or expired reset token' });
     }
 
     const { userId } = tokenData;
@@ -166,11 +171,9 @@ export const resetPasswordWithToken = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    
     user.password = newPassword;
     await user.save();
 
-    
     delete resetTokenStore[token];
 
     res.status(200).json({ message: 'Password reset successfully' });
