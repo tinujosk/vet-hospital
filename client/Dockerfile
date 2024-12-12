@@ -11,6 +11,11 @@ RUN npm install
 # Copy the app files
 COPY . .
 
+# Accept build argument for API_URL
+ARG EC2_INSTANCE_IP
+# Set environment variable in the container
+ENV SERVER_IP=$EC2_INSTANCE_IP
+
 # Build the React app for production
 RUN npm run build
 
