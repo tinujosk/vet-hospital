@@ -24,6 +24,7 @@ import {
   uploadImageToCloudinary,
 } from '../services/labService';
 import { showSnackbar } from '../slices/snackbarSlice';
+import Loading from '../components/Loading';
 
 const LabTechnicianPage = () => {
   const [appointments, setAppointments] = useState([]);
@@ -32,6 +33,7 @@ const LabTechnicianPage = () => {
   const [testResultDialog, setTestResultDialog] = useState(false);
   const [patientDetails, setPatientDetails] = useState(null);
   const [imagePreview, setImagePreview] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -53,11 +55,14 @@ const LabTechnicianPage = () => {
 
   useEffect(() => {
     const fetchAppointments = async () => {
+      setLoading(true);
       try {
         const data = await getAppointments();
         setAppointments(data);
       } catch (error) {
         console.error('Failed to fetch appointments:', error);
+      } finally {
+        setLoading(false); 
       }
     };
     fetchAppointments();
@@ -65,6 +70,7 @@ const LabTechnicianPage = () => {
 
   useEffect(() => {
     const processLabRequests = async () => {
+      setLoading(true);
       const requests = await Promise.all(
         appointments
           .filter(
@@ -91,6 +97,7 @@ const LabTechnicianPage = () => {
           })
       );
       setLabRequests(requests);
+      setLoading(false);
     };
 
     if (appointments.length > 0) processLabRequests();
@@ -255,6 +262,10 @@ const LabTechnicianPage = () => {
       </Grid>
     ));
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <Container maxWidth='lg'>
