@@ -25,14 +25,14 @@ jobs:
     # Build and Push Client Image to ECR
     - name: Build and push Client Docker image
       run: |
-        docker build -t vethospital-client ./client
+        docker build --no-cache -t vethospital-client ./client
         docker tag vethospital-client:latest ${{ secrets.ECR_REPOSITORY_URI }}:client
         docker push ${{ secrets.ECR_REPOSITORY_URI }}:client
 
     # Build and Push Server Image to ECR
     - name: Build and push Server Docker image
       run: |
-        docker build -t vethospital-server ./server
+        docker build --no-cache -t vethospital-server ./server
         docker tag vethospital-server:latest ${{ secrets.ECR_REPOSITORY_URI }}:server
         docker push ${{ secrets.ECR_REPOSITORY_URI }}:server
 
