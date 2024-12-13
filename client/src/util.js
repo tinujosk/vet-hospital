@@ -1,16 +1,16 @@
 import { jwtDecode } from 'jwt-decode';
 
 const permissions = {
-  // admin: ['/admin', '/user'],
-  admin: [
-    '/admin',
-    '/doctor',
-    '/patients',
-    '/nurse',
-    '/treatment',
-    '/user',
-    '/lab',
-  ],
+  admin: ['/admin', '/user'],
+  // admin: [
+  //   '/admin',
+  //   '/doctor',
+  //   '/patients',
+  //   '/nurse',
+  //   '/treatment',
+  //   '/user',
+  //   '/lab',
+  // ],
   doctor: ['/doctor', '/patients', '/treatment', '/user'],
   nurse: ['/nurse', '/patients', '/user'],
   lab: ['/lab', '/patients', '/user'],
