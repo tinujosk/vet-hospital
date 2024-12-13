@@ -248,13 +248,13 @@ const Admin = () => {
               <Typography variant='h4'>{summary.lab}</Typography>
             </CardContent>
           </Card>
-          <Card>
+          {/* <Card>
             <CardContent>
               <MedicalServicesIcon fontSize='large' color='primary' />
               <Typography variant='h6'>{t('pharmacists')}</Typography>
               <Typography variant='h4'>{summary.pharmacist}</Typography>
             </CardContent>
-          </Card>
+          </Card> */}
         </Stack>
         <Box
           sx={{
